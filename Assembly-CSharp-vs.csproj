@@ -65,7 +65,9 @@
     <Compile Include="Assets\Scripts\Escenario\Procedural_Mesh.cs" />
     <Compile Include="Assets\Scripts\Escenario\Tile.cs" />
     <Compile Include="Assets\Scripts\Juego\Jugador.cs" />
+    <Compile Include="Assets\Scripts\Juego\JugadorMB.cs" />
     <Compile Include="Assets\Scripts\Juego\Objetivo.cs" />
+    <Compile Include="Assets\Scripts\Juego\ObjetivoMB.cs" />
     <Compile Include="Assets\Scripts\MDP\Accion.cs" />
     <Compile Include="Assets\Scripts\MDP\Arbol_Estados.cs" />
     <Compile Include="Assets\Scripts\MDP\Estado.cs" />

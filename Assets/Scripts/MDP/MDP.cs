@@ -76,15 +76,15 @@ public class MDP<S, A, O, T, R>
    public float[][][] Utilidad;
    public A[][][] Politica;
 
-   public MDP(S[] est, A[] acs, O[] objs, int na, T trn, R rep, float fac) {
-	  estados = new List<S>(est);
+   public MDP(List<S> est, List<A> acs, List<O> objs, int na, T trn, R rep, float fac) {
+	  estados = est;
 	  for (int i = 0; i < estados.Count; i++)
 		 estados[i].id = i;
-	  acciones = new List<A>(acs);
+	  acciones = acs;
 	  for (int j = 0; j < acciones.Count; j++)
 		 acciones[j].id = j;
 	  objetivos = new List<O>();
-	  for (int q = 0; q < objs.Length; q++) {
+	  for (int q = 0; q < objs.Count; q++) {
 		 objetivos.Insert(objs[q].GetID(), objs[q]);
 	  }
 
@@ -95,7 +95,6 @@ public class MDP<S, A, O, T, R>
 
 	  //Calcular_Utilidad_VI();
 	  Calcular_Utilidad_PI();
-	  //Calcular_Utilidad_Dijkstra();
 
 	  float max_utilidad = float.MinValue;
 	  for (int i = 0; i < Utilidad.Length; i++) {
@@ -112,54 +111,6 @@ public class MDP<S, A, O, T, R>
 			   Utilidad[i][j][q] /= max_utilidad;
 			}
 		 }
-	  }
-   }
-
-   public void Calcular_Utilidad_Dijkstra() {
-	  Utilidad = new float[numero_actores][][];
-	  Politica = new A[numero_actores][][];
-	  for (int actor_id = 0; actor_id < numero_actores; actor_id++) {
-		 Utilidad[actor_id] = new float[objetivos.Count][];
-		 Politica[actor_id] = new A[objetivos.Count][];
-		 for (int objetivo_id = 0; objetivo_id < objetivos.Count; objetivo_id++) {
-			Utilidad[actor_id][objetivo_id] = new float[estados.Count];
-			Politica[actor_id][objetivo_id] = new A[estados.Count];
-			foreach (S estado in estados) {
-			   Politica[actor_id][objetivo_id][estado.id] = null;
-			   Utilidad[actor_id][objetivo_id][estado.id] = 0;
-			}
-		 }
-	  }
-
-	  foreach (Estado_MDP estado in estados) {
-		 Estado nodo_estado = (Estado)estado;
-		 for (int actor_id = 0; actor_id < numero_actores; actor_id++) {
-			for (int objetivo_id = 0; objetivo_id < objetivos.Count; objetivo_id++) {
-			   A mejor_accion = null;
-			   int menor_distancia = int.MaxValue;
-			   foreach (A accion in estado.accionesValidas(actor_id)) {
-				  Estado nodo_estado_hijo = (Estado)estado.hijoAccion(accion);
-				  Vector2 posicion_actor = nodo_estado_hijo.estado_actual.posicion_jugadores[actor_id];
-				  Vector2 posicion_objetivo = recompensa.posicion_objetivo(objetivos[objetivo_id]);
-				  if (posicion_actor.Equals(posicion_objetivo)) {
-					 mejor_accion = accion;
-					 menor_distancia = 0;
-				  }
-				  else {
-					 // TODO: RE-IMPLEMENTAR LA DISTANCIA REAL ENTRE JUGADOR Y OBJETIVO
-					 // Vector2.mapa_dist.compute(posicion_actor.x, posicion_actor.y, posicion_objetivo.x, posicion_objetivo.y);
-					 int distancia = (int)Vector2.Distance(posicion_actor, posicion_objetivo);
-					 if (distancia < menor_distancia) {
-						mejor_accion = accion;
-						menor_distancia = distancia;
-					 }
-				  }
-			   }
-			   Politica[actor_id][objetivo_id][estado.id] = mejor_accion;
-			}
-		 }
-
-		 System.Console.WriteLine("Progreso: " + (estado.id * 100f / estados.Count) + "%.");
 	  }
    }
 

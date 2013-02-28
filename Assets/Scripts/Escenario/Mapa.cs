@@ -142,9 +142,7 @@ public class Mapa : MonoBehaviour {
    float offsetx, offsety;
 
    // Representacion interna
-   [SerializeField, HideInInspector]
    private GameObject mesh_objeto;
-   [SerializeField, HideInInspector]
    private GameObject piso;
 
    // Listas
@@ -155,12 +153,15 @@ public class Mapa : MonoBehaviour {
    private List<Vector2> intersecciones;
 
    // Objetivos
-   [SerializeField]
-   public List<Objetivo> objetivos;
+   private List<Objetivo> objetivos;
+   private List<ObjetivoMB> objetivos_mb;
 
    // Jugadores
-   [SerializeField]
-   public List<Jugador> jugadores;
+   private List<Jugador> jugadores;
+   private List<JugadorMB> jugadores_mb;
+
+   // Acciones
+   private List<Accion> acciones;
 
    public void OnDrawGizmosSelected() {
 	  if (conexiones_horizontales != null) {
@@ -258,30 +259,38 @@ public class Mapa : MonoBehaviour {
 
 	  if (objetivos == null) {
 		 objetivos = new List<Objetivo>();
+		 objetivos_mb = new List<ObjetivoMB>();
 	  }
 	  else {
 		 objetivos.Clear();
+		 objetivos_mb.Clear();
 	  }
 
 	  if (jugadores == null) {
 		 jugadores = new List<Jugador>();
+		 jugadores_mb = new List<JugadorMB>();
 	  }
 	  else {
-		 foreach (Jugador jugador in jugadores) {
+		 foreach (JugadorMB jugador in jugadores_mb) {
 			DestroyImmediate(jugador.gameObject);
 		 }
 		 jugadores.Clear();
+		 jugadores_mb.Clear();
 	  }
 
 	  if (mdp_objeto == null) {
 		 mdp_objeto = new GameObject("MDP");
 		 mdp_objeto.transform.parent = transform;
+		 //arbol_e = new Arbol_Estados(this, jugadores, acciones, objetivos);
 		 arbol_e = mdp_objeto.AddComponent<Arbol_Estados>();
 		 arbol_e.escenario_base = this;
+		 arbol_e.jugadores = jugadores;
+		 arbol_e.acciones_individuales = acciones;
+		 arbol_e.objetivos = objetivos;
+		 //resolucion_mdp = new ResolucionMDP(arbol_e);
 		 resolucion_mdp = mdp_objeto.AddComponent<ResolucionMDP>();
 		 resolucion_mdp.arbol_estados = arbol_e;
 	  }
-
 
 	  ancho = tamano_zona.x * cant_x;
 	  largo = tamano_zona.z * cant_y;
@@ -396,7 +405,7 @@ public class Mapa : MonoBehaviour {
 	  DestroyImmediate(mesh_objeto);
 	  DestroyImmediate(mdp_objeto);
 
-	  foreach (Jugador jugador in jugadores) {
+	  foreach (JugadorMB jugador in jugadores_mb) {
 		 DestroyImmediate(jugador.gameObject);
 	  }
    }
@@ -507,14 +516,14 @@ public class Mapa : MonoBehaviour {
 		 texto_objetivo.font = fuente_objetivos;
 		 zona_objetivo.renderer.sharedMaterial = fuente_material;
 
-		 Objetivo objetivo = texto_objetivo.gameObject.AddComponent<Objetivo>();
-		 objetivo.inicializar(nombre_objetivo, posicionRealARepresentacion(posicion), waypoint);
+		 ObjetivoMB objetivo_mb = texto_objetivo.gameObject.AddComponent<ObjetivoMB>();
+		 objetivo_mb.objetivo = new Objetivo(objetivo_mb, nombre_objetivo, posicionRealARepresentacion(posicion), waypoint);
 		 if (i % 2 == 1) {
-			objetivo.agregarComplementario(objetivos[i - 1]);
-			objetivos[i - 1].agregarComplementario(objetivo);
+			objetivo_mb.objetivo.agregarComplementario(objetivos[i - 1]);
+			objetivos[i - 1].agregarComplementario(objetivo_mb.objetivo);
 		 }
 
-		 objetivos.Add(objetivo);
+		 objetivos.Add(objetivo_mb.objetivo);
 	  }
    }
 
@@ -613,13 +622,10 @@ public class Mapa : MonoBehaviour {
 
 		 jugador_objeto.GetComponent<Control_Directo>().camara_3persona = camara;
 
-		 Jugador jugador = jugador_objeto.GetComponent<Jugador>();
-		 jugador.id = 0;
-		 jugador.nombre = jugador_objeto.name = "Jugador";
-		 jugador.representacion = '@';
-		 jugador.posicion = posicionRealARepresentacion(posicion);
-		 jugador.control = Jugador.TControl.DIRECTO;
-		 jugadores.Add(jugador);
+		 JugadorMB jugador_mb = jugador_objeto.AddComponent<JugadorMB>();
+		 jugador_mb.jugador = new Jugador(0, jugador_objeto.name = "Jugador", '@', posicionRealARepresentacion(posicion), Jugador.TControl.DIRECTO);
+		 jugadores.Add(jugador_mb.jugador);
+		 jugadores_mb.Add(jugador_mb);
 	  }
 
 	  for (int i = 1; i < cant_jugadores; i++) {
@@ -634,13 +640,10 @@ public class Mapa : MonoBehaviour {
 		 jugador_objeto.transform.position = posicion;
 		 jugador_objeto.transform.rotation = Random.rotationUniform;
 
-		 Jugador jugador = jugador_objeto.GetComponent<Jugador>();
-		 jugador.id = i;
-		 jugador.nombre = jugador_objeto.name = "Companero_" + i;
-		 jugador.representacion = '$';
-		 jugador.posicion = posicionRealARepresentacion(posicion);
-		 jugador.control = Jugador.TControl.IA;
-		 jugadores.Add(jugador);
+		 JugadorMB jugador_mb = jugador_objeto.AddComponent<JugadorMB>();
+		 jugador_mb.jugador = new Jugador(i, jugador_objeto.name = "Companero_" + i, '$', posicionRealARepresentacion(posicion), Jugador.TControl.IA);
+		 jugadores.Add(jugador_mb.jugador);
+		 jugadores_mb.Add(jugador_mb);
 	  }
    }
 
@@ -772,10 +775,10 @@ public class Mapa : MonoBehaviour {
 	  fuente_material = info.GetValue("Fuente_Material", typeof(Material)) as Material;
 	  fuente_objetivos = info.GetValue("Fuente_Objetivos", typeof(Font)) as Font;
 
-	  ancho = (float)info.GetDouble("Ancho");
-	  largo = (float)info.GetDouble("Largo");
-	  offsetx = (float)info.GetDouble("Offsetx");
-	  offsety = (float)info.GetDouble("Offsety");
+	  ancho = (float)info.GetValue("Ancho", typeof(float));
+	  largo = (float)info.GetValue("Largo", typeof(float));
+	  offsetx = (float)info.GetValue("Offsetx", typeof(float));
+	  offsety = (float)info.GetValue("Offsety", typeof(float));
 
 	  mesh_objeto = info.GetValue("Mesh_Objeto", typeof(GameObject)) as GameObject;
 	  piso = info.GetValue("Piso", typeof(GameObject)) as GameObject;
@@ -789,6 +792,8 @@ public class Mapa : MonoBehaviour {
 	  objetivos = info.GetValue("Objetivos", typeof(List<Objetivo>)) as List<Objetivo>;
 
 	  jugadores = info.GetValue("Jugadores", typeof(List<Jugador>)) as List<Jugador>;
+
+	  acciones = info.GetValue("Acciones", typeof(List<Accion>)) as List<Accion>;
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
@@ -827,5 +832,7 @@ public class Mapa : MonoBehaviour {
 	  info.AddValue("Objetivos", objetivos);
 
 	  info.AddValue("Jugadores", jugadores);
+
+	  info.AddValue("Acciones", acciones);
    }
 }

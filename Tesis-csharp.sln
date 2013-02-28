@@ -1,8 +1,9 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-vs", "Assembly-CSharp-vs.csproj", "{1E246FA7-7ADA-6380-0122-E7550E5BE9EF}"
+# Visual Studio 2008
+
+Project("{BE4D73BF-1925-EB8A-4780-A092CBEA98D8}") = "Tesis", "Assembly-CSharp-vs.csproj", "{1E246FA7-7ADA-6380-0122-E7550E5BE9EF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-Editor-vs", "Assembly-CSharp-Editor-vs.csproj", "{B9326135-0FC2-7A54-1101-8CDB2D880CD2}"
+Project("{BE4D73BF-1925-EB8A-4780-A092CBEA98D8}") = "Tesis", "Assembly-CSharp-Editor-vs.csproj", "{B9326135-0FC2-7A54-1101-8CDB2D880CD2}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -22,10 +23,7 @@ Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
-	GlobalSection(ExtensibilityGlobals) = postSolution
-		VisualSVNWorkingCopyRoot = .
-	EndGlobalSection
-	GlobalSection(MonoDevelopProperties) = preSolution
+																																																											GlobalSection(MonoDevelopProperties) = preSolution
 		StartupItem = Assembly-CSharp.csproj
 		Policies = $0
 		$0.TextStylePolicy = $1
@@ -43,4 +41,5 @@ Global
 		$3.inheritsScope = text/plain
 		$3.scope = text/plain
 	EndGlobalSection
+
 EndGlobal

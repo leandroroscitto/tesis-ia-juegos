@@ -5,7 +5,7 @@ using PathRuntime;
 using System.Collections.Generic;
 
 [Serializable, RequireComponent(typeof(Radar))]
-public class Objetivo : MonoBehaviour, Objetivo_MDP, ISerializable {
+public class Objetivo : Objetivo_MDP, ISerializable {
    public int id;
    public bool cumplido;
    public Vector2 posicion;
@@ -15,16 +15,16 @@ public class Objetivo : MonoBehaviour, Objetivo_MDP, ISerializable {
 
    public Radar radar;
 
-   public Objetivo() {
-
+   public Objetivo(ObjetivoMB objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in) {
+	  inicializar(objetivo_mb, nombre_in, p, wayp_asociado_in);
    }
 
-   public void inicializar(string nombre_in, Vector2 p, Waypoint wayp_asociado_in) {
+   public void inicializar(ObjetivoMB objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in) {
 	  nombre = nombre_in;
 	  posicion = p;
 	  waypoint_asociado = wayp_asociado_in;
 
-	  radar = GetComponent<Radar>();
+	  radar = objetivo_mb.gameObject.AddComponent<Radar>();
 	  radar.DetectionRadius = 2.5f;
 	  radar.DetectDisabledVehicles = true;
 	  radar.LayersChecked = 1 << LayerMask.NameToLayer("Jugador");
