@@ -4,9 +4,8 @@ using System.Runtime.Serialization;
 using PathRuntime;
 using System.Collections.Generic;
 
-[Serializable, RequireComponent(typeof(Radar))]
-public class Objetivo : Objetivo_MDP, ISerializable {
-   public int id;
+[Serializable]
+public class Objetivo : Objetivo_MDP {
    public bool cumplido;
    public Vector2 posicion;
    public string nombre;
@@ -15,11 +14,12 @@ public class Objetivo : Objetivo_MDP, ISerializable {
 
    public Radar radar;
 
-   public Objetivo(ObjetivoMB objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in) {
+   public Objetivo(int i, ObjetoMB<Objetivo> objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in)
+	  : base(i) {
 	  inicializar(objetivo_mb, nombre_in, p, wayp_asociado_in);
    }
 
-   public void inicializar(ObjetivoMB objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in) {
+   public void inicializar(ObjetoMB<Objetivo> objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in) {
 	  nombre = nombre_in;
 	  posicion = p;
 	  waypoint_asociado = wayp_asociado_in;
@@ -34,17 +34,13 @@ public class Objetivo : Objetivo_MDP, ISerializable {
 	  complementario = obj;
    }
 
-   public int GetID() {
-	  return id;
-   }
-
    public override string ToString() {
 	  return "Objetivo_id: " + id + ", cumplido: " + cumplido + ", complementario_id: " + complementario.id;
    }
 
    // Serializacion
-   public Objetivo(SerializationInfo info, StreamingContext ctxt) {
-	  id = info.GetInt16("Id");
+   public Objetivo(SerializationInfo info, StreamingContext ctxt)
+	  : base(info, ctxt) {
 	  cumplido = info.GetBoolean("Cumplido");
 	  posicion = (Vector2)info.GetValue("Posicion", typeof(Vector2));
 	  nombre = info.GetString("Nombre");
@@ -52,8 +48,9 @@ public class Objetivo : Objetivo_MDP, ISerializable {
 	  waypoint_asociado = info.GetValue("Waypoint_Asociado", typeof(Waypoint)) as Waypoint;
    }
 
-   public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
-	  info.AddValue("Id", id);
+   public new void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
+	  base.GetObjectData(info, ctxt);
+
 	  info.AddValue("Cumplido", cumplido);
 	  info.AddValue("Posicion", posicion);
 	  info.AddValue("Nombre", nombre);

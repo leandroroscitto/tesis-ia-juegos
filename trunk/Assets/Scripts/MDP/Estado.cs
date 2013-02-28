@@ -19,7 +19,8 @@ public class Estado : Estado_MDP, ISerializable {
    // <id_jugador, acciones>
    public Dictionary<int, List<Accion>> acciones_hijos_actor;
 
-   public Estado(Estado_Juego e) {
+   public Estado(int i, Estado_Juego e)
+	  : base(i) {
 	  estado_actual = e;
 	  estados_padres = new List<Estado>();
 	  estados_padres_actor = new Dictionary<int, List<Estado>>();

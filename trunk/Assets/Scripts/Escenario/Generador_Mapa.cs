@@ -6,7 +6,7 @@ using Random = UnityEngine.Random;
 using PathRuntime;
 
 public class Generador_Mapa : MonoBehaviour {
-   [System.Serializable]
+   [Serializable]
    public class Parametros_Generador {
 	  public int min_hab_tam = 3;
 	  public int max_hab_tam = 4;
@@ -18,7 +18,7 @@ public class Generador_Mapa : MonoBehaviour {
 	  public LayerMask mascara_obstaculo;
    }
 
-   [System.Serializable]
+   [Serializable]
    public class Parametros_Visuales {
 	  public Material mesh_material;
 	  public Material piso_material;
@@ -26,7 +26,7 @@ public class Generador_Mapa : MonoBehaviour {
 	  public Material fuente_material;
    }
 
-   [System.Serializable]
+   [Serializable]
    public class Parametros_Jugadores {
 	  public int numero_jugadores;
 	  public GameObject jugador;
@@ -34,7 +34,7 @@ public class Generador_Mapa : MonoBehaviour {
 	  public Camara_3Persona camara;
    }
 
-   [System.Serializable]
+   [Serializable]
    public class Parametros_Tamano {
 	  public int cantidad_zonas_x, cantidad_zonas_y;
 	  public Vector3 escala;

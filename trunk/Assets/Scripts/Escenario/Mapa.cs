@@ -154,14 +154,16 @@ public class Mapa : MonoBehaviour {
 
    // Objetivos
    private List<Objetivo> objetivos;
-   private List<ObjetivoMB> objetivos_mb;
+   private List<ObjetoMB<Objetivo>> objetivos_mb;
 
    // Jugadores
    private List<Jugador> jugadores;
-   private List<JugadorMB> jugadores_mb;
+   private List<ObjetoMB<Jugador>> jugadores_mb;
 
    // Acciones
    private List<Accion> acciones;
+
+   // Operaciones
 
    public void OnDrawGizmosSelected() {
 	  if (conexiones_horizontales != null) {
@@ -259,7 +261,7 @@ public class Mapa : MonoBehaviour {
 
 	  if (objetivos == null) {
 		 objetivos = new List<Objetivo>();
-		 objetivos_mb = new List<ObjetivoMB>();
+		 objetivos_mb = new List<ObjetoMB<Objetivo>>();
 	  }
 	  else {
 		 objetivos.Clear();
@@ -268,10 +270,10 @@ public class Mapa : MonoBehaviour {
 
 	  if (jugadores == null) {
 		 jugadores = new List<Jugador>();
-		 jugadores_mb = new List<JugadorMB>();
+		 jugadores_mb = new List<ObjetoMB<Jugador>>();
 	  }
 	  else {
-		 foreach (JugadorMB jugador in jugadores_mb) {
+		 foreach (ObjetoMB<Jugador> jugador in jugadores_mb) {
 			DestroyImmediate(jugador.gameObject);
 		 }
 		 jugadores.Clear();
@@ -285,7 +287,7 @@ public class Mapa : MonoBehaviour {
 		 arbol_e = mdp_objeto.AddComponent<Arbol_Estados>();
 		 arbol_e.escenario_base = this;
 		 arbol_e.jugadores = jugadores;
-		 arbol_e.acciones_individuales = acciones;
+		 arbol_e.acciones = acciones;
 		 arbol_e.objetivos = objetivos;
 		 //resolucion_mdp = new ResolucionMDP(arbol_e);
 		 resolucion_mdp = mdp_objeto.AddComponent<ResolucionMDP>();
@@ -297,6 +299,8 @@ public class Mapa : MonoBehaviour {
 	  offsetx = (ancho - tamano_zona.x) / 2;
 	  offsety = (largo - tamano_zona.z) / 2;
    }
+
+   // Construccion
 
    public Habitacion crearHabitacion(int x1, int y1, int x2, int y2, Tile zona) {
 	  if (x1 > x2) {
@@ -400,16 +404,6 @@ public class Mapa : MonoBehaviour {
 	  }
    }
 
-   public void borrar() {
-	  DestroyImmediate(navigation_objeto);
-	  DestroyImmediate(mesh_objeto);
-	  DestroyImmediate(mdp_objeto);
-
-	  foreach (JugadorMB jugador in jugadores_mb) {
-		 DestroyImmediate(jugador.gameObject);
-	  }
-   }
-
    public void calcularParedes() {
 	  paredes.Clear();
 	  for (int i = 0; i < cant_x; i++) {
@@ -443,6 +437,18 @@ public class Mapa : MonoBehaviour {
 			   paredes.Add(new Pared(i, base_j, i, cant_y - 1));
 			}
 		 }
+	  }
+   }
+
+   // Generacion
+
+   public void borrar() {
+	  DestroyImmediate(navigation_objeto);
+	  DestroyImmediate(mesh_objeto);
+	  DestroyImmediate(mdp_objeto);
+
+	  foreach (ObjetoMB<Jugador> jugador in jugadores_mb) {
+		 DestroyImmediate(jugador.gameObject);
 	  }
    }
 
@@ -516,14 +522,14 @@ public class Mapa : MonoBehaviour {
 		 texto_objetivo.font = fuente_objetivos;
 		 zona_objetivo.renderer.sharedMaterial = fuente_material;
 
-		 ObjetivoMB objetivo_mb = texto_objetivo.gameObject.AddComponent<ObjetivoMB>();
-		 objetivo_mb.objetivo = new Objetivo(objetivo_mb, nombre_objetivo, posicionRealARepresentacion(posicion), waypoint);
+		 ObjetoMB<Objetivo> objetivo_mb = texto_objetivo.gameObject.AddComponent<ObjetoMB<Objetivo>>();
+		 objetivo_mb.objeto = new Objetivo(i, objetivo_mb, nombre_objetivo, posicionRealARepresentacion(posicion), waypoint);
 		 if (i % 2 == 1) {
-			objetivo_mb.objetivo.agregarComplementario(objetivos[i - 1]);
-			objetivos[i - 1].agregarComplementario(objetivo_mb.objetivo);
+			objetivo_mb.objeto.agregarComplementario(objetivos[i - 1]);
+			objetivos[i - 1].agregarComplementario(objetivo_mb.objeto);
 		 }
 
-		 objetivos.Add(objetivo_mb.objetivo);
+		 objetivos.Add(objetivo_mb.objeto);
 	  }
    }
 
@@ -622,9 +628,9 @@ public class Mapa : MonoBehaviour {
 
 		 jugador_objeto.GetComponent<Control_Directo>().camara_3persona = camara;
 
-		 JugadorMB jugador_mb = jugador_objeto.AddComponent<JugadorMB>();
-		 jugador_mb.jugador = new Jugador(0, jugador_objeto.name = "Jugador", '@', posicionRealARepresentacion(posicion), Jugador.TControl.DIRECTO);
-		 jugadores.Add(jugador_mb.jugador);
+		 ObjetoMB<Jugador> jugador_mb = jugador_objeto.AddComponent<ObjetoMB<Jugador>>();
+		 jugador_mb.objeto = new Jugador(0, jugador_objeto.name = "Jugador", '@', posicionRealARepresentacion(posicion), Jugador.TControl.DIRECTO);
+		 jugadores.Add(jugador_mb.objeto);
 		 jugadores_mb.Add(jugador_mb);
 	  }
 
@@ -640,9 +646,9 @@ public class Mapa : MonoBehaviour {
 		 jugador_objeto.transform.position = posicion;
 		 jugador_objeto.transform.rotation = Random.rotationUniform;
 
-		 JugadorMB jugador_mb = jugador_objeto.AddComponent<JugadorMB>();
-		 jugador_mb.jugador = new Jugador(i, jugador_objeto.name = "Companero_" + i, '$', posicionRealARepresentacion(posicion), Jugador.TControl.IA);
-		 jugadores.Add(jugador_mb.jugador);
+		 ObjetoMB<Jugador> jugador_mb = jugador_objeto.AddComponent<ObjetoMB<Jugador>>();
+		 jugador_mb.objeto = new Jugador(i, jugador_objeto.name = "Companero_" + i, '$', posicionRealARepresentacion(posicion), Jugador.TControl.IA);
+		 jugadores.Add(jugador_mb.objeto);
 		 jugadores_mb.Add(jugador_mb);
 	  }
    }
@@ -675,6 +681,8 @@ public class Mapa : MonoBehaviour {
 
 	  salida.Close();
    }
+
+   // Utilidades
 
    public void optimizarMallaNavegacion() {
 	  List<Waypoint> a_destruir = new List<Waypoint>();

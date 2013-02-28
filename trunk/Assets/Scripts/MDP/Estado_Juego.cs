@@ -13,7 +13,7 @@ public class Estado_Juego {
    // <id_objetivo>
    public HashSet<int> objetivos_no_cumplidos;
 
-   public Estado_Juego(int i, ref Mapa eb) {
+   public Estado_Juego(int i, Mapa eb) {
 	  id = i;
 	  escenario_base = eb;
 	  posicion_jugadores = new Dictionary<int, Vector3>();

@@ -7,7 +7,7 @@ using UnityEngine;
 public class ResolucionMDP : MonoBehaviour, ISerializable {
    [Serializable]
    public class TransicionJuego : Transicion_MDP<Estado, Accion>, ISerializable {
-	  public override float valor(Accion a, Estado s, Estado sp) {
+	  public override float getValor(Accion a, Estado s, Estado sp) {
 		 if (s.estados_hijos != null) {
 			float probabilidad_base = s.probabilidadHijoAccion(sp, a);
 			return probabilidad_base;
@@ -29,16 +29,16 @@ public class ResolucionMDP : MonoBehaviour, ISerializable {
    public class RecompensaJuego : Recompensa_MDP<Estado, Objetivo>, ISerializable {
 	  List<Objetivo> objetivos;
 
-	  public RecompensaJuego(ref List<Objetivo> objs)
+	  public RecompensaJuego(List<Objetivo> objs)
 		 : base() {
 		 objetivos = objs;
 	  }
 
-	  public override Vector2 posicion_objetivo(Objetivo obj) {
+	  public override Vector2 getPosicionObjetivo(Objetivo obj) {
 		 return obj.posicion;
 	  }
 
-	  public override float valor(Estado s, Objetivo o, int actor_id) {
+	  public override float getValor(Estado s, Objetivo o, int actor_id) {
 		 float resultado;
 		 resultado = (s.estado_actual.escenario_base.mapa.Length) * 2;
 		 resultado += (s.estado_actual.objetivos_cumplidos.Count - s.estado_actual.objetivos_no_cumplidos.Count);
@@ -85,9 +85,9 @@ public class ResolucionMDP : MonoBehaviour, ISerializable {
 
    public void resolverMDP() {
 	  TransicionJuego transicion = new TransicionJuego();
-	  RecompensaJuego recompensa = new RecompensaJuego(ref arbol_estados.objetivos);
+	  RecompensaJuego recompensa = new RecompensaJuego( arbol_estados.objetivos);
 
-	  mdp = new MDP<Estado, Accion, Objetivo, TransicionJuego, RecompensaJuego>(arbol_estados.estados, arbol_estados.acciones_individuales, arbol_estados.objetivos, arbol_estados.jugadores.Count, transicion, recompensa, 0.85f);
+	  mdp = new MDP<Estado, Accion, Objetivo, TransicionJuego, RecompensaJuego>(arbol_estados.estados, arbol_estados.acciones, arbol_estados.objetivos, arbol_estados.jugadores.Count, transicion, recompensa, 0.85f);
    }
 
    // Serializacion
