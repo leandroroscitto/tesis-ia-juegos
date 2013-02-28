@@ -10,9 +10,9 @@ public class Accion : Accion_MDP, ISerializable {
    public Waypoint destino;
    public float distancia;
 
-   public Accion(int i, Jugador j, Waypoint o, Waypoint d) {
+   public Accion(int i, Jugador j, Waypoint o, Waypoint d)
+	  : base(i, j.id) {
 	  jugador = j;
-	  actor_id = j.id;
 	  origen = o;
 	  destino = d;
 	  distancia = Vector3.Distance(o.Position, d.Position);
@@ -42,6 +42,7 @@ public class Accion : Accion_MDP, ISerializable {
 
    public new void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  base.GetObjectData(info, ctxt);
+
 	  info.AddValue("Jugador", jugador);
 	  info.AddValue("Origen", origen);
 	  info.AddValue("Destino", destino);

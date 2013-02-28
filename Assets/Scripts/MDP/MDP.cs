@@ -8,8 +8,8 @@ using Random = UnityEngine.Random;
 public abstract class Estado_MDP : ISerializable {
    public int id;
 
-   public Estado_MDP() {
-
+   public Estado_MDP(int i) {
+	  id = i;
    }
 
    public abstract Estado_MDP[] proximosEstados(int actor_id);
@@ -19,7 +19,7 @@ public abstract class Estado_MDP : ISerializable {
 
    // Serializacion
    public Estado_MDP(SerializationInfo info, StreamingContext ctxt) {
-	  id = info.GetInt32("Id");
+	  id = info.GetInt16("Id");
    }
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  info.AddValue("Id", id);
@@ -30,13 +30,14 @@ public abstract class Accion_MDP : ISerializable {
    public int id;
    public int actor_id;
 
-   public Accion_MDP() {
-
+   public Accion_MDP(int i, int ai) {
+	  id = i;
+	  actor_id = ai;
    }
 
    // Serializacion
    public Accion_MDP(SerializationInfo info, StreamingContext ctxt) {
-	  id = info.GetInt32("Id");
+	  id = info.GetInt16("Id");
 	  actor_id = info.GetInt16("Actor_Id");
    }
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
@@ -44,17 +45,30 @@ public abstract class Accion_MDP : ISerializable {
 	  info.AddValue("Actor_Id", actor_id);
    }
 }
-public interface Objetivo_MDP {
-   int GetID();
+[Serializable]
+public abstract class Objetivo_MDP : ISerializable {
+   public int id;
+
+   public Objetivo_MDP(int i) {
+	  id = i;
+   }
+
+   // Serializacion
+   public Objetivo_MDP(SerializationInfo info, StreamingContext ctxt) {
+	  id = info.GetInt16("Id");
+   }
+   public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
+	  info.AddValue("Id", id);
+   }
 }
 [Serializable]
 public abstract class Transicion_MDP<S, A> {
-   public abstract float valor(A a, S s, S sp);
+   public abstract float getValor(A a, S s, S sp);
 }
 [Serializable]
 public abstract class Recompensa_MDP<S, O> {
-   public abstract float valor(S s, O o, int actor_id);
-   public abstract Vector2 posicion_objetivo(O obj);
+   public abstract float getValor(S s, O o, int actor_id);
+   public abstract Vector2 getPosicionObjetivo(O obj);
 }
 
 [Serializable]
@@ -85,7 +99,7 @@ public class MDP<S, A, O, T, R>
 		 acciones[j].id = j;
 	  objetivos = new List<O>();
 	  for (int q = 0; q < objs.Count; q++) {
-		 objetivos.Insert(objs[q].GetID(), objs[q]);
+		 objetivos.Insert(objs[q].id, objs[q]);
 	  }
 
 	  numero_actores = na;
@@ -140,7 +154,7 @@ public class MDP<S, A, O, T, R>
 			for (int objetivo_id = 0; objetivo_id < objetivos.Count; objetivo_id++) {
 			   A accion = acciones_validas[Random.Range(0, acciones_validas.Length)];
 			   Politica_Aux[actor][objetivo_id][i.id] = accion;
-			   Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.valor(i, objetivos[objetivo_id], actor);
+			   Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.getValor(i, objetivos[objetivo_id], actor);
 			}
 		 }
 	  }
@@ -153,7 +167,7 @@ public class MDP<S, A, O, T, R>
 		 foreach (S i in estados) {
 			for (int actor = 0; actor < numero_actores; actor++) {
 			   for (int objetivo_id = 0; objetivo_id < objetivos.Count; objetivo_id++) {
-				  Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.valor(i, objetivos[objetivo_id], actor) + factor_descuento * Value_Policy[actor][objetivo_id][i.id];
+				  Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.getValor(i, objetivos[objetivo_id], actor) + factor_descuento * Value_Policy[actor][objetivo_id][i.id];
 			   }
 			}
 		 }
@@ -180,7 +194,7 @@ public class MDP<S, A, O, T, R>
 					 //   // Estaba calculando la utilidad para solo un jugador de la accion:
 					 //   value += transicion.valor(a, i, j) * Utilidad_Aux[actor][objetivo_id][j.id];
 					 //}
-					 float value = transicion.valor(a, i, (S)i.hijoAccion(a)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(a).id];
+					 float value = transicion.getValor(a, i, (S)i.hijoAccion(a)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(a).id];
 					 if (value > value_max[actor][objetivo_id]) {
 						value_max[actor][objetivo_id] = value;
 						action_max[actor][objetivo_id] = a;
@@ -203,7 +217,7 @@ public class MDP<S, A, O, T, R>
 				  //   value_policy[actor][objetivo_id] += transicion.valor(Politica_Aux[actor][objetivo_id][i.id], i, j) * Utilidad_Aux[actor][objetivo_id][j.id];
 				  //}
 				  A accion_politica = Politica_Aux[actor][objetivo_id][i.id];
-				  value_policy[actor][objetivo_id] = transicion.valor(accion_politica, i, (S)i.hijoAccion(accion_politica)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(accion_politica).id];
+				  value_policy[actor][objetivo_id] = transicion.getValor(accion_politica, i, (S)i.hijoAccion(accion_politica)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(accion_politica).id];
 
 				  float diferencia = Mathf.Abs(value_max[actor][objetivo_id] - value_policy[actor][objetivo_id]);
 				  if (diferencia != 0) {
@@ -249,7 +263,7 @@ public class MDP<S, A, O, T, R>
 	  for (int actor = 0; actor < numero_actores; actor++) {
 		 for (int objetivo_id = 0; objetivo_id < objetivos.Count; objetivo_id++) {
 			foreach (S i in estados) {
-			   Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.valor(i, objetivos[objetivo_id], actor);
+			   Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.getValor(i, objetivos[objetivo_id], actor);
 			}
 		 }
 	  }
@@ -279,7 +293,7 @@ public class MDP<S, A, O, T, R>
 					 //foreach (S j in i.proximosEstados(a.actor_id)) {
 					 //   value += transicion.valor(a, i, j) * Utilidad_Aux[a.actor_id][objetivo_id][j.id];
 					 //}
-					 float value = transicion.valor(a, i, (S)i.hijoAccion(a)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(a).id];
+					 float value = transicion.getValor(a, i, (S)i.hijoAccion(a)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(a).id];
 					 if (value > value_max[actor][objetivo_id]) {
 						value_max[actor][objetivo_id] = value;
 						Politica_Aux[actor][objetivo_id][i.id] = a;
@@ -293,7 +307,7 @@ public class MDP<S, A, O, T, R>
 					 }
 				  }
 
-				  Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.valor(i, objetivos[objetivo_id], actor) + factor_descuento * value_max[actor][objetivo_id];
+				  Utilidad_Aux[actor][objetivo_id][i.id] = recompensa.getValor(i, objetivos[objetivo_id], actor) + factor_descuento * value_max[actor][objetivo_id];
 			   }
 			}
 		 }
@@ -328,6 +342,9 @@ public class MDP<S, A, O, T, R>
 	  transicion = info.GetValue("Transicion", typeof(T)) as T;
 	  recompensa = info.GetValue("Recompensa", typeof(R)) as R;
 	  factor_descuento = (float)info.GetDouble("Factor_Descuento");
+
+	  Utilidad = info.GetValue("Utilidad", typeof(float[][][])) as float[][][];
+	  Politica = info.GetValue("Politica", typeof(A[][][])) as A[][][];
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
@@ -338,5 +355,8 @@ public class MDP<S, A, O, T, R>
 	  info.AddValue("Transicion", transicion);
 	  info.AddValue("Recompensa", recompensa);
 	  info.AddValue("Factor_Descuento", factor_descuento);
+
+	  info.AddValue("Utilidad", Utilidad);
+	  info.AddValue("Politica", Politica);
    }
 }
