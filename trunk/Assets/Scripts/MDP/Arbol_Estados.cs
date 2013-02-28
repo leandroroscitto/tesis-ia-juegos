@@ -6,8 +6,8 @@ using UnityEngine;
 [Serializable]
 public class Arbol_Estados : MonoBehaviour, ISerializable {
    public Mapa escenario_base;
-   public Objetivo[] objetivos;
-   public Jugador[] jugadores;
+   public List<Objetivo> objetivos;
+   public List<Jugador> jugadores;
    public List<Accion> acciones_individuales;
    // <numero_objetivos_cumplidos, <posicion_playes, nodo_estado>>
    public Dictionary<int, Dictionary<Vector3[], List<Estado>>> estados_dict;
@@ -19,7 +19,7 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
    private Estado nodo_estado_actual;
    private int cant_estados;
 
-   public Arbol_Estados(ref Mapa eb, ref Jugador[] jugs, ref List<Accion> accs, ref Objetivo[] objs) {
+   public Arbol_Estados(Mapa eb, List<Jugador> jugs, List<Accion> accs, List<Objetivo> objs) {
 	  escenario_base = eb;
 	  acciones_individuales = accs;
 	  objetivos = objs;
@@ -263,7 +263,7 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
    }
 
    public List<int> VerificarCumplimientoObjetivos(Estado_Juego estado) {
-	  bool[] objetivos_cumplidos = new bool[objetivos.Length];
+	  bool[] objetivos_cumplidos = new bool[objetivos.Count];
 	  foreach (Vector3 posicion_jugador in estado.posicion_jugadores.Values) {
 		 foreach (int objetivo_id in estado.objetivos_no_cumplidos) {
 			Objetivo objetivo = objetivos[objetivo_id];
@@ -293,8 +293,8 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
    // Serializacion
    public Arbol_Estados(SerializationInfo info, StreamingContext ctxt) {
 	  escenario_base = info.GetValue("Escenario_Base", typeof(Mapa)) as Mapa;
-	  objetivos = info.GetValue("Objectivos", typeof(Objetivo[])) as Objetivo[];
-	  jugadores = info.GetValue("Jugadores", typeof(Jugador[])) as Jugador[];
+	  objetivos = info.GetValue("Objectivos", typeof(List<Objetivo>)) as List<Objetivo>;
+	  jugadores = info.GetValue("Jugadores", typeof(List<Jugador>)) as List<Jugador>;
 	  acciones_individuales = info.GetValue("Acciones_Individuales", typeof(List<Accion>)) as List<Accion>;
 	  estados_dict = info.GetValue("Estados_Dict", typeof(Dictionary<int, Dictionary<Vector3[], List<Estado>>>)) as Dictionary<int, Dictionary<Vector3[], List<Estado>>>;
 	  estados = info.GetValue("Estados", typeof(List<Estado>)) as List<Estado>;

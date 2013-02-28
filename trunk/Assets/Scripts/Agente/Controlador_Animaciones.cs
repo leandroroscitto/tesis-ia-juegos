@@ -14,7 +14,7 @@ public class Controlador_Animaciones : MonoBehaviour {
 	  agente_audio_source = gameObject.AddComponent<AudioSource>();
 	  agente_audio_source.playOnAwake = false;
 	  agente_audio_source.loop = true;
-	  agente_audio_source.volume = 0.005f;
+	  agente_audio_source.volume = 0.05f;
 	  agente_audio_source.pitch = 0.48f;
 	  agente_audio_source.spread = 10f;
    }

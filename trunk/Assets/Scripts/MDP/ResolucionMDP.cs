@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using UnityEngine;
 
@@ -26,9 +27,9 @@ public class ResolucionMDP : MonoBehaviour, ISerializable {
 
    [Serializable]
    public class RecompensaJuego : Recompensa_MDP<Estado, Objetivo>, ISerializable {
-	  Objetivo[] objetivos;
+	  List<Objetivo> objetivos;
 
-	  public RecompensaJuego(ref Objetivo[] objs)
+	  public RecompensaJuego(ref List<Objetivo> objs)
 		 : base() {
 		 objetivos = objs;
 	  }
@@ -67,7 +68,7 @@ public class ResolucionMDP : MonoBehaviour, ISerializable {
 
 	  // Serializacion
 	  public RecompensaJuego(SerializationInfo info, StreamingContext ctxt) {
-		 objetivos = info.GetValue("Objetivos", typeof(Objetivo[])) as Objetivo[];
+		 objetivos = info.GetValue("Objetivos", typeof(List<Objetivo>)) as List<Objetivo>;
 	  }
 	  public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 		 info.AddValue("Objetivos", objetivos);
@@ -78,17 +79,15 @@ public class ResolucionMDP : MonoBehaviour, ISerializable {
    public Arbol_Estados arbol_estados;
    public MDP<Estado, Accion, Objetivo, TransicionJuego, RecompensaJuego> mdp;
 
-   public ResolucionMDP() {
-
+   public ResolucionMDP(Arbol_Estados ae) {
+	  arbol_estados = ae;
    }
 
    public void resolverMDP() {
 	  TransicionJuego transicion = new TransicionJuego();
 	  RecompensaJuego recompensa = new RecompensaJuego(ref arbol_estados.objetivos);
 
-	  Estado[] estados = arbol_estados.estados.ToArray();
-	  Accion[] acciones = arbol_estados.acciones_individuales.ToArray();
-	  mdp = new MDP<Estado, Accion, Objetivo, TransicionJuego, RecompensaJuego>(estados, acciones, arbol_estados.objetivos, arbol_estados.jugadores.Length, transicion, recompensa, 0.85f);
+	  mdp = new MDP<Estado, Accion, Objetivo, TransicionJuego, RecompensaJuego>(arbol_estados.estados, arbol_estados.acciones_individuales, arbol_estados.objetivos, arbol_estados.jugadores.Count, transicion, recompensa, 0.85f);
    }
 
    // Serializacion

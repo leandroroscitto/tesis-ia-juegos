@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 
 [Serializable]
-public class Jugador : MonoBehaviour, ISerializable {
+public class Jugador : ISerializable {
    public enum TControl {
 	  DIRECTO, IA
    }
