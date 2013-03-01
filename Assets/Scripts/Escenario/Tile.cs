@@ -1,9 +1,10 @@
 ﻿using UnityEngine;
 using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization;
 
 [Serializable]
-public class Tile {
+public class Tile : ISerializable {
    public enum TTile {
 	  PISO = 0,
 	  PARED = 1,
@@ -22,5 +23,18 @@ public class Tile {
 	  tipo = tipo_in;
 	  transitable = transitable_in;
 	  representacion2D = rep2d_in;
+   }
+
+   // Serializacion
+   public Tile(SerializationInfo info, StreamingContext ctxt) {
+	  tipo = (TTile)info.GetInt32("Tipo");
+	  transitable = info.GetBoolean("Transitable");
+	  representacion2D = info.GetString("Representacion2D");
+   }
+
+   public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
+	  info.AddValue("Tipo", tipo);
+	  info.AddValue("Transitable", transitable);
+	  info.AddValue("Representacion2D", representacion2D);
    }
 }

@@ -1,14 +1,14 @@
 using UnityEngine;
+using Habitacion = Generador_Mapa.Habitacion;
+using Conexion = Generador_Mapa.Conexion;
 using System.Collections.Generic;
 
 public class VisitadorConexion : BSPTree.Visitador {
-   private Mapa mapa;
    private Generador_Mapa generador;
    private int conexiones_extras;
    private VisitadorHabitacion visitador_hab;
 
-   public VisitadorConexion(Mapa map, Generador_Mapa gen_map, int con_extras, VisitadorHabitacion vhab) {
-	  mapa = map;
+   public VisitadorConexion(Generador_Mapa gen_map, int con_extras, VisitadorHabitacion vhab) {
 	  generador = gen_map;
 	  conexiones_extras = con_extras;
 	  visitador_hab = vhab;
@@ -33,8 +33,8 @@ public class VisitadorConexion : BSPTree.Visitador {
    }
 
    public void setConexion(BSPTree nodo1, BSPTree nodo2) {
-	  Mapa.Habitacion habitacion1, habitacion2;
-	  Mapa.Conexion conexion1, conexion2;
+	  Habitacion habitacion1, habitacion2;
+	  Conexion conexion1, conexion2;
 
 	  habitacion1 = null;
 	  habitacion2 = null;
@@ -47,8 +47,8 @@ public class VisitadorConexion : BSPTree.Visitador {
 			int conexion_x2 = habitacion2.x1 + habitacion2.ancho / 2;
 			int conexion_y2 = habitacion2.y1 + habitacion2.largo / 2;
 
-			conexion1 = (Mapa.Conexion)mapa.crearConexion(conexion_x2, conexion_y2, conexion_x1, conexion_y2, generador.tile_piso, true);
-			conexion2 = (Mapa.Conexion)mapa.crearConexion(conexion_x1, conexion_y2, conexion_x1, conexion_y1, generador.tile_piso, true);
+			conexion1 = (Conexion)generador.crearConexion(conexion_x2, conexion_y2, conexion_x1, conexion_y2, generador.tile_piso, true);
+			conexion2 = (Conexion)generador.crearConexion(conexion_x1, conexion_y2, conexion_x1, conexion_y1, generador.tile_piso, true);
 
 			if (conexion2 != null) {
 			   habitacion1.conexiones.Add(conexion2);
