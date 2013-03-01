@@ -4,7 +4,7 @@ using System.Runtime.Serialization;
 using UnityEngine;
 
 [Serializable]
-public class ResolucionMDP : MonoBehaviour, ISerializable {
+public class ResolucionMDP : ISerializable {
    [Serializable]
    public class TransicionJuego : Transicion_MDP<Estado, Accion>, ISerializable {
 	  public override float getValor(Accion a, Estado s, Estado sp) {
@@ -40,7 +40,7 @@ public class ResolucionMDP : MonoBehaviour, ISerializable {
 
 	  public override float getValor(Estado s, Objetivo o, int actor_id) {
 		 float resultado;
-		 resultado = (s.estado_actual.escenario_base.mapa.Length) * 2;
+		 resultado = (s.estado_actual.escenario_base.tiles.Length) * 2;
 		 resultado += (s.estado_actual.objetivos_cumplidos.Count - s.estado_actual.objetivos_no_cumplidos.Count);
 		 // TODO: Verificar la validez de usar distancia directa en vez de la distancia real,
 		 // TODO: ver si se puede usar distancia real (no creo, por cuestiones de tiempo de pathfinding),

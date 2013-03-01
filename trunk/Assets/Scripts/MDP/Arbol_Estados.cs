@@ -28,10 +28,10 @@ public class Comparador_Arreglo_Vector3 : IEqualityComparer<Vector3[]> {
 }
 
 [Serializable]
-public class Arbol_Estados : MonoBehaviour, ISerializable {
+public class Arbol_Estados : ISerializable {
    public static Comparador_Arreglo_Vector3 comparador = new Comparador_Arreglo_Vector3();
 
-   public Mapa escenario_base;
+   public Mapa mapa_base;
 
    public List<Objetivo> objetivos;
    public List<Jugador> jugadores;
@@ -50,12 +50,10 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
    private int cant_estados;
 
    public Arbol_Estados(Mapa eb, List<Jugador> jugs, List<Accion> accs, List<Objetivo> objs) {
-	  escenario_base = eb;
+	  mapa_base = eb;
 	  acciones = accs;
 	  objetivos = objs;
 	  jugadores = jugs;
-
-	  prepararEstados();
    }
 
    public void prepararEstados() {
@@ -65,7 +63,7 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
 	  frontera = new Queue<Estado>();
 
 	  cant_estados = 0;
-	  Estado_Juego estado_inicial = new Estado_Juego(cant_estados, escenario_base);
+	  Estado_Juego estado_inicial = new Estado_Juego(cant_estados, mapa_base);
 	  foreach (Objetivo objetivo in objetivos) {
 		 estado_inicial.objetivos_no_cumplidos.Add(objetivo.id);
 	  }
@@ -101,7 +99,7 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
 			   // Si no existe el proximo estado en niguna lista, lo crea.
 			   if (proximo_estado_nodo == null) {
 				  cant_estados++;
-				  Estado_Juego proximo_estado = new Estado_Juego(cant_estados, escenario_base);
+				  Estado_Juego proximo_estado = new Estado_Juego(cant_estados, mapa_base);
 				  foreach (int objetivo_id in nodo_estado_actual.estado_actual.objetivos_cumplidos) {
 					 proximo_estado.objetivos_cumplidos.Add(objetivo_id);
 				  }
@@ -288,7 +286,7 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
 
    // Serializacion
    public Arbol_Estados(SerializationInfo info, StreamingContext ctxt) {
-	  escenario_base = info.GetValue("Escenario_Base", typeof(Mapa)) as Mapa;
+	  mapa_base = info.GetValue("Escenario_Base", typeof(Mapa)) as Mapa;
 	  objetivos = info.GetValue("Objectivos", typeof(List<Objetivo>)) as List<Objetivo>;
 	  jugadores = info.GetValue("Jugadores", typeof(List<Jugador>)) as List<Jugador>;
 	  acciones = info.GetValue("Acciones_Individuales", typeof(List<Accion>)) as List<Accion>;
@@ -300,7 +298,7 @@ public class Arbol_Estados : MonoBehaviour, ISerializable {
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
-	  info.AddValue("Escenario_Base", escenario_base);
+	  info.AddValue("Escenario_Base", mapa_base);
 	  info.AddValue("Objectivos", objetivos);
 	  info.AddValue("Jugadores", jugadores);
 	  info.AddValue("Acciones_Individuales", acciones);

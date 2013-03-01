@@ -4,6 +4,10 @@ using System.Runtime.Serialization;
 using PathRuntime;
 using System.Collections.Generic;
 
+public class ObjetivoMB : MonoBehaviour {
+   public Objetivo objetivo;
+}
+
 [Serializable]
 public class Objetivo : Objetivo_MDP {
    public bool cumplido;
@@ -14,16 +18,13 @@ public class Objetivo : Objetivo_MDP {
 
    public Radar radar;
 
-   public Objetivo(int i, ObjetoMB<Objetivo> objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in)
+   public Objetivo(int i, ObjetivoMB objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in)
 	  : base(i) {
-	  inicializar(objetivo_mb, nombre_in, p, wayp_asociado_in);
-   }
-
-   public void inicializar(ObjetoMB<Objetivo> objetivo_mb, string nombre_in, Vector2 p, Waypoint wayp_asociado_in) {
 	  nombre = nombre_in;
 	  posicion = p;
 	  waypoint_asociado = wayp_asociado_in;
 
+	  objetivo_mb.objetivo = this;
 	  radar = objetivo_mb.gameObject.AddComponent<Radar>();
 	  radar.DetectionRadius = 2.5f;
 	  radar.DetectDisabledVehicles = true;

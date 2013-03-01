@@ -2,7 +2,7 @@
 using UnityEditor;
 using System.Collections;
 
-[CustomEditor(typeof(Generador_Mapa))]
+[CustomEditor(typeof(Generador_Escenario))]
 public class Generador_MapaEditor : Editor {
    public override void OnInspectorGUI() {
 	  serializedObject.Update();
@@ -12,19 +12,15 @@ public class Generador_MapaEditor : Editor {
 	  EditorGUIUtility.LookLikeInspector();
 	  if (GUILayout.Button("Generar")) {
 		 EditorUtility.SetDirty(target);
-		 ((Generador_Mapa)target).generarEscenario();
+		 ((Generador_Escenario)target).generarEscenario();
 	  }
 	  if (GUILayout.Button("Resetear")) {
 		 EditorUtility.SetDirty(target);
-		 ((Generador_Mapa)target).reiniciarEscenario();
+		 ((Generador_Escenario)target).reiniciarEscenario();
 	  }
 	  if (GUILayout.Button("Borrar Todo")) {
 		 EditorUtility.SetDirty(target);
-		 ((Generador_Mapa)target).borrarEscenario();
-	  }
-	  if (GUILayout.Button("Borrar Waypoints")) {
-		 EditorUtility.SetDirty(target);
-		 ((Generador_Mapa)target).borrarWaypoints();
+		 ((Generador_Escenario)target).borrarEscenario();
 	  }
    }
 }

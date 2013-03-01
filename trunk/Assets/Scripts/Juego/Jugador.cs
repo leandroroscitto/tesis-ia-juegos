@@ -3,6 +3,10 @@ using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 
+public class JugadorMB : MonoBehaviour {
+   public Jugador jugador;
+}
+
 [Serializable]
 public class Jugador : ISerializable {
    public enum TControl {
@@ -17,13 +21,15 @@ public class Jugador : ISerializable {
    // <turno, accion>
    public Dictionary<int, Accion> acciones;
 
-   public Jugador(int i, string n, char r, Vector2 p, TControl c) {
+   public Jugador(int i, JugadorMB jugador_mb, string n, char r, Vector2 p, TControl c) {
 	  id = i;
 	  nombre = n;
 	  representacion = r;
 	  posicion = p;
 	  control = c;
 	  acciones = new Dictionary<int, Accion>();
+
+	  jugador_mb.jugador = this;
    }
 
    public Accion RegistrarAccion(int turno, Accion accion) {
