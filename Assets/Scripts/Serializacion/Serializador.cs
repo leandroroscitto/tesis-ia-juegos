@@ -1,7 +1,9 @@
 using System.IO;
+using System.Collections.Generic;
 using System.Runtime.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
 using UnityEngine;
+using PathRuntime;
 
 public sealed class Vector3Surrogate : ISerializationSurrogate {
    public void GetObjectData(object obj, SerializationInfo info, StreamingContext ctxt) {
@@ -27,7 +29,7 @@ public sealed class Vector2Surrogate : ISerializationSurrogate {
 	  info.AddValue("Vector2Y", vector2.y);
    }
 
-   public object SetObjectData(object obj, SerializationInfo info, StreamingContext context, ISurrogateSelector selector) {
+   public object SetObjectData(object obj, SerializationInfo info, StreamingContext ctxt, ISurrogateSelector selector) {
 	  Vector2 vector2 = (Vector2)obj;
 	  vector2.x = (float)info.GetValue("Vector2X", typeof(float));
 	  vector2.y = (float)info.GetValue("Vector2Y", typeof(float));
@@ -40,7 +42,7 @@ public class Serializador {
 
    }
 
-   public void SerializarResolucion(string nombre_archivo, Objeto_Serializable objeto) {
+   public void Serializar(string nombre_archivo, Objeto_Serializable objeto) {
 	  Stream stream = File.Open(nombre_archivo, FileMode.Create);
 	  BinaryFormatter bFormatter = new BinaryFormatter();
 
@@ -50,7 +52,7 @@ public class Serializador {
 	  stream.Close();
    }
 
-   public Objeto_Serializable DeserializarResolucion(string nombre_archivo) {
+   public Objeto_Serializable Deserializar(string nombre_archivo) {
 	  Objeto_Serializable objeto;
 	  Stream stream = File.Open(nombre_archivo, FileMode.Open);
 	  BinaryFormatter bFormatter = new BinaryFormatter();
@@ -62,7 +64,7 @@ public class Serializador {
 	  return objeto;
    }
 
-   public SurrogateSelector cargarSurrogates() {
+   private SurrogateSelector cargarSurrogates() {
 	  SurrogateSelector surrogate_sel = new SurrogateSelector();
 	  surrogate_sel.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), new Vector3Surrogate());
 	  surrogate_sel.AddSurrogate(typeof(Vector2), new StreamingContext(StreamingContextStates.All), new Vector2Surrogate());

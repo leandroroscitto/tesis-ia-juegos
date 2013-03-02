@@ -3,10 +3,6 @@ using System;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 
-public class JugadorMB : MonoBehaviour {
-   public Jugador jugador;
-}
-
 [Serializable]
 public class Jugador : ISerializable {
    public enum TControl {
@@ -20,6 +16,24 @@ public class Jugador : ISerializable {
    public TControl control;
    // <turno, accion>
    public Dictionary<int, Accion> acciones;
+
+   private JugadorMB _jugadormb;
+   public JugadorMB jugador_mb {
+	  get {
+		 if (_jugadormb == null) {
+			GameObject jugador_objeto = GameObject.Find(nombre);
+			if (jugador_objeto != null) {
+			   _jugadormb = jugador_objeto.GetComponent<JugadorMB>();
+			}
+		 }
+
+		 return _jugadormb;
+	  }
+
+	  set {
+		 _jugadormb = value;
+	  }
+   }
 
    public Jugador(int i, JugadorMB jugador_mb, string n, char r, Vector2 p, TControl c) {
 	  id = i;
@@ -49,6 +63,8 @@ public class Jugador : ISerializable {
 	  posicion = (Vector2)info.GetValue("Posicion", typeof(Vector2));
 	  control = (TControl)info.GetInt16("Control");
 	  acciones = info.GetValue("Acciones", typeof(Dictionary<int, Accion>)) as Dictionary<int, Accion>;
+
+	  jugador_mb.jugador = this;
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {

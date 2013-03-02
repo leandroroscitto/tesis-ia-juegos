@@ -89,11 +89,13 @@ public class Generador_Mapa : MonoBehaviour {
 		 conexiones = info.GetValue("Conexiones", typeof(List<Conexion>)) as List<Conexion>;
 	  }
 
-	  public new void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
+#pragma warning disable 0114
+	  public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 		 base.GetObjectData(info, ctxt);
 
 		 info.AddValue("Conexiones", conexiones);
 	  }
+#pragma warning restore 0114
    }
    [Serializable]
    public class Conexion : Seccion {
@@ -223,13 +225,13 @@ public class Generador_Mapa : MonoBehaviour {
    public void inicializar(int cx, int cy, Vector3 tam_tile, LayerMask masc, Material mesh_m, Material piso_m) {
 	  mapa = new Mapa(cx, cy, tam_tile);
 
-	  inicializarListas();
-	  inicializarRepresentacion();
-	  inicializarTiles();
-
 	  mascara = masc;
 	  mesh_material = mesh_m;
 	  piso_material = piso_m;
+
+	  inicializarListas();
+	  inicializarRepresentacion();
+	  inicializarTiles();
    }
 
    // Construccion

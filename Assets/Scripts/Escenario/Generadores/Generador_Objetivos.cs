@@ -82,7 +82,8 @@ public class Generador_Objetivos : MonoBehaviour {
 		 zona_objetivo.renderer.sharedMaterial = fuente_material;
 
 		 ObjetivoMB objetivo_mb = texto_objetivo.gameObject.AddComponent<ObjetivoMB>();
-		 Objetivo objetivo = new Objetivo(i, objetivo_mb, nombre_objetivo, generador_mapa.mapa.posicionRealARepresentacion(posicion), waypoint);
+		 Objetivo objetivo = new Objetivo(i, nombre_objetivo, generador_mapa.mapa.posicionRealARepresentacion(posicion), waypoint);
+		 objetivo_mb.inicializar(objetivo,2.5f, "Jugador");
 		 if (i % 2 == 1) {
 			objetivo.agregarComplementario(objetivos[i - 1]);
 			objetivos[i - 1].agregarComplementario(objetivo);

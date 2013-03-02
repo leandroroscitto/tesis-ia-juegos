@@ -125,7 +125,8 @@ public class Estado : Estado_MDP, ISerializable {
 	  acciones_hijos_actor = info.GetValue("Acciones_Hijos_Actor", typeof(Dictionary<int, List<Accion>>)) as Dictionary<int, List<Accion>>;
    }
 
-   public new void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
+#pragma warning disable 0114
+   public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  base.GetObjectData(info, ctxt);
 
 	  info.AddValue("Estado_Actual", estado_actual);
@@ -141,4 +142,5 @@ public class Estado : Estado_MDP, ISerializable {
 	  info.AddValue("Acciones_Hijos", acciones_hijos);
 	  info.AddValue("Acciones_Hijos_Actor", acciones_hijos_actor);
    }
+#pragma warning restore 0114
 }
