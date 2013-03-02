@@ -75,6 +75,7 @@ public class Generador_Escenario : MonoBehaviour {
 
    // Representacion
    public GameObject escenario_objeto;
+   public GameObject generacion_prefab;
 
    // Generacion
    private void determinarSeed() {
@@ -90,6 +91,7 @@ public class Generador_Escenario : MonoBehaviour {
    public void reiniciarEscenario() {
 	  if (escenario_objeto == null) {
 		 escenario_objeto = new GameObject("Escenario");
+		 escenario_objeto.transform.parent = transform.parent;
 	  }
 
 	  determinarSeed();
@@ -153,5 +155,42 @@ public class Generador_Escenario : MonoBehaviour {
 	  generador_mdp.borrar();
 
 	  DestroyImmediate(escenario_objeto);
+   }
+
+   // Serializacion
+   public void guardarDatos() {
+	  if (escenario_objeto != null) {
+		 Serializador serializador = new Serializador();
+		 Objeto_Serializable datos = new Objeto_Serializable();
+		 datos.Resolucion_MDP = generador_mdp.resolucion_mdp;
+
+		 serializador.Serializar("./Assets/Data/datos.bin", datos);
+
+		 generacion_prefab = UnityEditor.PrefabUtility.CreatePrefab("Assets/Data/generacion.prefab", transform.parent.gameObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
+	  }
+   }
+
+   public GameObject datos_objeto;
+   public void cargarDatos() {
+	  UnityEditor.PrefabUtility.ReconnectToLastPrefab(transform.parent.gameObject);
+	  UnityEditor.PrefabUtility.RevertPrefabInstance(transform.parent.gameObject);
+	  transform.parent.name = "Generacion";
+
+	  Serializador serializador = new Serializador();
+	  Objeto_Serializable datos = serializador.Deserializar("./Assets/Data/datos.bin");
+
+	  if (datos_objeto == null) {
+		 datos_objeto = new GameObject("Display datos");
+		 datos_objeto.AddComponent<DisplayDatos>();
+	  }
+	  DisplayDatos display = datos_objeto.GetComponent<DisplayDatos>();
+	  display.transform.parent = transform.parent;
+
+	  display.Arbol_Estados = datos.Arbol_Estados;
+	  display.Mapa = datos.Mapa;
+	  display.MDP = datos.MDP;
+	  display.Acciones = datos.Acciones;
+	  display.Jugadores = datos.Jugadores;
+	  display.Objetivos = datos.Objetivos;
    }
 }

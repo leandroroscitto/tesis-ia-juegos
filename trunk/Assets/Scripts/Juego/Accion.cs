@@ -40,11 +40,13 @@ public class Accion : Accion_MDP, ISerializable {
 	  distancia = Vector3.Distance(origen.Position, destino.Position);
    }
 
-   public new void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
+#pragma warning disable 0114
+   public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  base.GetObjectData(info, ctxt);
 
 	  info.AddValue("Jugador", jugador);
 	  info.AddValue("Origen", origen);
 	  info.AddValue("Destino", destino);
    }
+#pragma warning restore 0114
 }
