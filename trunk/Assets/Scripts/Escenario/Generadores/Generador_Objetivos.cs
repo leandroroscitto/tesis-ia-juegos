@@ -12,6 +12,7 @@ public class Generador_Objetivos : MonoBehaviour {
    public Font fuente;
 
    // Objetivos
+   [NonSerialized]
    public List<Objetivo> objetivos;
    public List<ObjetivoMB> objetivos_mb;
 

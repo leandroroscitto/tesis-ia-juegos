@@ -59,6 +59,11 @@ public class Objetivo : Objetivo_MDP, ISerializable {
 	  }
    }
 
+   public Objetivo()
+	  : base(0) {
+
+   }
+
    public Objetivo(int i, string nombre_in, Vector2 p, Waypoint wayp_asociado_in)
 	  : base(i) {
 	  nombre = nombre_in;

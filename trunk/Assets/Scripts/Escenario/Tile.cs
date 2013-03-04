@@ -15,6 +15,10 @@ public class Tile : ISerializable {
    public bool transitable;
    public string representacion2D;
 
+   public Tile() {
+
+   }
+
    public Tile(TTile tipo_in, bool transitable_in, string rep2d_in) {
 	  inicializar(tipo_in, transitable_in, rep2d_in);
    }

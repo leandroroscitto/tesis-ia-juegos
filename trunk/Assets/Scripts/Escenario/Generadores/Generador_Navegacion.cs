@@ -13,6 +13,11 @@ public class Generador_Navegacion : MonoBehaviour {
    // Representacion
    public GameObject navigation_objeto;
 
+   // Listas
+   public List<Waypoint> habitaciones_waypoints;
+   public List<Waypoint> objetivo_waypoints;
+   public List<Waypoint> conexiones_waypoints;
+
    // Operaciones
    public void inicializar() {
 	  if (navigation_objeto == null) {
@@ -25,6 +30,19 @@ public class Generador_Navegacion : MonoBehaviour {
 	  while (navigation_objeto.transform.childCount > 0) {
 		 DestroyImmediate(navigation_objeto.transform.GetChild(0).gameObject);
 	  }
+
+	  if (habitaciones_waypoints == null) {
+		 habitaciones_waypoints = new List<Waypoint>();
+	  }
+	  habitaciones_waypoints.Clear();
+	  if (objetivo_waypoints == null) {
+		 objetivo_waypoints = new List<Waypoint>();
+	  }
+	  objetivo_waypoints.Clear();
+	  if (conexiones_waypoints == null) {
+		 conexiones_waypoints = new List<Waypoint>();
+	  }
+	  conexiones_waypoints.Clear();
    }
 
    // Generacion
@@ -115,7 +133,34 @@ public class Generador_Navegacion : MonoBehaviour {
 	  waypoint.Position = posicion;
 	  waypoint.transform.parent = navigation_objeto.transform;
 
+	  switch (tag) {
+		 case "Habitacion":
+			habitaciones_waypoints.Add(waypoint);
+			break;
+		 case "Objetivo":
+			objetivo_waypoints.Add(waypoint);
+			break;
+		 case "Conexion":
+			conexiones_waypoints.Add(waypoint);
+			break;
+	  }
+
 	  return waypoint;
+   }
+
+   public void removerWaypoint(Waypoint waypoint) {
+	  switch (waypoint.Tag) {
+		 case "Habitacion":
+			habitaciones_waypoints.Remove(waypoint);
+			break;
+		 case "Objetivo":
+			objetivo_waypoints.Remove(waypoint);
+			break;
+		 case "Conexion":
+			conexiones_waypoints.Remove(waypoint);
+			break;
+	  }
+	  DestroyImmediate(waypoint.gameObject);
    }
 
    public void optimizarMallaNavegacion() {
@@ -144,7 +189,7 @@ public class Generador_Navegacion : MonoBehaviour {
 	  while (a_destruir.Count > 0) {
 		 Waypoint waypoint = a_destruir[0];
 		 a_destruir.RemoveAt(0);
-		 DestroyImmediate(waypoint.gameObject);
+		 removerWaypoint(waypoint);
 	  }
    }
 
@@ -159,7 +204,6 @@ public class Generador_Navegacion : MonoBehaviour {
 		 conexiones_w2.Add(conexion.To);
 	  }
 
-	  //if (conexiones_w1.Count == conexiones_w2.Count) {
 	  if (conexiones_w1.Contains(w2)) {
 		 conexiones_w1.Remove(w2);
 	  }
@@ -174,10 +218,6 @@ public class Generador_Navegacion : MonoBehaviour {
 		 return false;
 	  }
 
-	  //return (conexiones_w1.SetEquals (conexiones_w2));
 	  return (conexiones_w1.IsSupersetOf(conexiones_w2));
-	  //} else {
-	  //	return false;
-	  //}
    }
 }

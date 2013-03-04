@@ -37,6 +37,28 @@ public sealed class Vector2Surrogate : ISerializationSurrogate {
    }
 }
 
+public sealed class HashSetSurrogate<T> : ISerializationSurrogate {
+   public void GetObjectData(object obj, SerializationInfo info, StreamingContext ctxt) {
+	  HashSet<T> hashset = (HashSet<T>)obj;
+
+	  T[] obj_aux = new T[hashset.Count];
+	  int i = 0;
+	  foreach (T objeto in hashset) {
+		 obj_aux[i] = objeto;
+	  }
+	  info.AddValue("Elementos", obj_aux);
+   }
+
+   public object SetObjectData(object obj, SerializationInfo info, StreamingContext ctxt, ISurrogateSelector selector) {
+	  //HashSet<T> hashset = (HashSet<T>)obj;
+	  HashSet<T> hashset = new HashSet<T>();
+
+	  T[] obj_aux = (T[])info.GetValue("Elementos", typeof(T[]));
+	  hashset.UnionWith(obj_aux);
+	  return hashset;
+   }
+}
+
 public class Serializador {
    public Serializador() {
 
@@ -47,19 +69,31 @@ public class Serializador {
 	  BinaryFormatter bFormatter = new BinaryFormatter();
 
 	  bFormatter.SurrogateSelector = cargarSurrogates();
-
-	  bFormatter.Serialize(stream, objeto);
+	  try {
+		 bFormatter.Serialize(stream, objeto);
+	  }
+	  catch (System.Exception excp) {
+		 stream.Close();
+		 throw excp;
+	  }
 	  stream.Close();
    }
 
    public Objeto_Serializable Deserializar(string nombre_archivo) {
-	  Objeto_Serializable objeto;
+	  Objeto_Serializable objeto = new Objeto_Serializable();
 	  Stream stream = File.Open(nombre_archivo, FileMode.Open);
 	  BinaryFormatter bFormatter = new BinaryFormatter();
 
 	  bFormatter.SurrogateSelector = cargarSurrogates();
 
-	  objeto = bFormatter.Deserialize(stream) as Objeto_Serializable;
+	  try {
+		 objeto = bFormatter.Deserialize(stream) as Objeto_Serializable;
+	  }
+	  catch (System.Exception excp) {
+		 stream.Close();
+		 throw excp;
+	  }
+
 	  stream.Close();
 	  return objeto;
    }
@@ -68,6 +102,7 @@ public class Serializador {
 	  SurrogateSelector surrogate_sel = new SurrogateSelector();
 	  surrogate_sel.AddSurrogate(typeof(Vector3), new StreamingContext(StreamingContextStates.All), new Vector3Surrogate());
 	  surrogate_sel.AddSurrogate(typeof(Vector2), new StreamingContext(StreamingContextStates.All), new Vector2Surrogate());
+	  surrogate_sel.AddSurrogate(typeof(HashSet<int>), new StreamingContext(StreamingContextStates.All), new HashSetSurrogate<int>());
 	  return surrogate_sel;
    }
 }

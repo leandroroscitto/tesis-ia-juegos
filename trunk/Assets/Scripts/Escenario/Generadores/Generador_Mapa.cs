@@ -111,6 +111,7 @@ public class Generador_Mapa : MonoBehaviour {
    }
 
    // Atributos
+   [NonSerialized]
    public Mapa mapa;
    public LayerMask mascara;
 

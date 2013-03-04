@@ -9,7 +9,9 @@ public class Generador_MDP : MonoBehaviour {
    public GameObject mdp_objeto;
 
    // Resolucion
+   [NonSerialized]
    public ResolucionMDP resolucion_mdp;
+   [NonSerialized]
    public Arbol_Estados arbol_estados;
 
    // Operaciones
@@ -25,7 +27,8 @@ public class Generador_MDP : MonoBehaviour {
 
    // Generacion
    public void generar() {
-
+	  arbol_estados.prepararEstados();
+	  //resolucion_mdp.resolverMDP();
    }
 
    public void borrar() {
