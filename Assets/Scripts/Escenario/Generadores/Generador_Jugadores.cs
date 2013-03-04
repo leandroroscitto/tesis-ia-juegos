@@ -8,6 +8,7 @@ using Habitacion = Generador_Mapa.Habitacion;
 
 public class Generador_Jugadores : MonoBehaviour {
    // Jugadores
+   [NonSerialized]
    public List<Jugador> jugadores;
    public List<JugadorMB> jugadores_mb;
 
@@ -37,17 +38,18 @@ public class Generador_Jugadores : MonoBehaviour {
 
    // Generacion
    public void generar(int cant_jugadores, GameObject jugador_prefab, GameObject companero_prefab, Camara_3Persona camara) {
+	  Generador_Navegacion generador_navegacion = GetComponent<Generador_Navegacion>();
 	  Generador_Mapa generador_mapa = GetComponent<Generador_Mapa>();
 	  HashSet<int> habitaciones_usadas = new HashSet<int>();
 	  int indice;
-	  Habitacion habitacion;
+	  Waypoint habitacion;
 
 	  if (cant_jugadores > 0) {
-		 indice = Random.Range(0, generador_mapa.habitaciones.Count);
-		 habitacion = generador_mapa.habitaciones[indice];
+		 indice = Random.Range(0, generador_navegacion.habitaciones_waypoints.Count);
+		 habitacion = generador_navegacion.habitaciones_waypoints[indice];
 		 habitaciones_usadas.Add(indice);
 
-		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * Random.Range(habitacion.x1 + 1, habitacion.x2 - 1) + Vector2.up * Random.Range(habitacion.y1 + 1, habitacion.y2 - 1), 1.25f);
+		 Vector3 posicion = habitacion.Position;
 		 GameObject jugador_objeto = UnityEditor.PrefabUtility.InstantiatePrefab(jugador_prefab) as GameObject;
 		 jugador_objeto.transform.position = posicion;
 		 jugador_objeto.transform.parent = jugadores_objeto.transform;
@@ -62,12 +64,12 @@ public class Generador_Jugadores : MonoBehaviour {
 
 	  for (int i = 1; i < cant_jugadores; i++) {
 		 do {
-			indice = Random.Range(0, generador_mapa.habitaciones.Count);
-			habitacion = generador_mapa.habitaciones[indice];
+			indice = Random.Range(0, generador_navegacion.habitaciones_waypoints.Count);
+			habitacion = generador_navegacion.habitaciones_waypoints[indice];
 		 } while (habitaciones_usadas.Contains(indice));
 		 habitaciones_usadas.Add(indice);
 
-		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * Random.Range(habitacion.x1 + 1, habitacion.x2 - 1) + Vector2.up * Random.Range(habitacion.y1 + 1, habitacion.y2 - 1), 1.25f);
+		 Vector3 posicion = habitacion.Position;
 		 GameObject jugador_objeto = UnityEditor.PrefabUtility.InstantiatePrefab(companero_prefab) as GameObject;
 		 jugador_objeto.transform.position = posicion;
 		 jugador_objeto.transform.parent = jugadores_objeto.transform;

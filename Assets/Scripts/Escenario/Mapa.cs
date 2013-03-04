@@ -18,6 +18,10 @@ public class Mapa {
    public float offsetx, offsety;
 
    // Operaciones
+   public Mapa() {
+
+   }
+
    public Mapa(int cx, int cy, Vector3 tam_tile) {
 	  cant_x = cx;
 	  cant_y = cy;

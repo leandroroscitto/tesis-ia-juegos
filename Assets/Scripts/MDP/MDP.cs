@@ -19,7 +19,7 @@ public abstract class Estado_MDP : ISerializable {
 
    // Serializacion
    public Estado_MDP(SerializationInfo info, StreamingContext ctxt) {
-	  id = info.GetInt16("Id");
+	  id = info.GetInt32("Id");
    }
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  info.AddValue("Id", id);
@@ -37,8 +37,8 @@ public abstract class Accion_MDP : ISerializable {
 
    // Serializacion
    public Accion_MDP(SerializationInfo info, StreamingContext ctxt) {
-	  id = info.GetInt16("Id");
-	  actor_id = info.GetInt16("Actor_Id");
+	  id = info.GetInt32("Id");
+	  actor_id = info.GetInt32("Actor_Id");
    }
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  info.AddValue("Id", id);
@@ -55,7 +55,7 @@ public abstract class Objetivo_MDP : ISerializable {
 
    // Serializacion
    public Objetivo_MDP(SerializationInfo info, StreamingContext ctxt) {
-	  id = info.GetInt16("Id");
+	  id = info.GetInt32("Id");
    }
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  info.AddValue("Id", id);
@@ -89,6 +89,10 @@ public class MDP<S, A, O, T, R>
    // <jugador_id, objetivo_id, estado_id>
    public float[][][] Utilidad;
    public A[][][] Politica;
+
+   public MDP() {
+
+   }
 
    public MDP(List<S> est, List<A> acs, List<O> objs, int na, T trn, R rep, float fac) {
 	  estados = est;

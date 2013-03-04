@@ -28,5 +28,8 @@ public class Generador_EscenarioEditor : Editor {
 	  if (GUILayout.Button("Cargar Datos")) {
 		 ((Generador_Escenario)target).cargarDatos();
 	  }
+	  if (GUILayout.Button("Cargar Display")) {
+		 ((Generador_Escenario)target).cargarDisplay();
+	  }
    }
 }

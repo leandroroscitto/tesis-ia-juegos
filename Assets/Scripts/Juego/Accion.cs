@@ -10,6 +10,11 @@ public class Accion : Accion_MDP, ISerializable {
    public Waypoint destino;
    public float distancia;
 
+   public Accion()
+	  : base(0, 0) {
+
+   }
+
    public Accion(int i, Jugador j, Waypoint o, Waypoint d)
 	  : base(i, j.id) {
 	  jugador = j;
@@ -18,9 +23,13 @@ public class Accion : Accion_MDP, ISerializable {
 	  distancia = Vector3.Distance(o.Position, d.Position);
    }
 
-   public override bool Equals(object obj) {
-	  Accion accion = (Accion)obj;
-	  return ((accion.jugador.id == jugador.id) && (accion.origen == origen) && (accion.destino == destino));
+   public bool mismaAccion(Accion accion) {
+	  if (accion != null) {
+		 return ((accion.jugador.id == jugador.id) && (accion.origen == origen) && (accion.destino == destino));
+	  }
+	  else {
+		 return false;
+	  }
    }
 
    public override int GetHashCode() {
@@ -35,8 +44,24 @@ public class Accion : Accion_MDP, ISerializable {
    public Accion(SerializationInfo info, StreamingContext ctxt)
 	  : base(info, ctxt) {
 	  jugador = info.GetValue("Jugador", typeof(Jugador)) as Jugador;
-	  origen = info.GetValue("Origen", typeof(Waypoint)) as Waypoint;
-	  destino = info.GetValue("Destino", typeof(Waypoint)) as Waypoint;
+
+	  Vector3 origenp, destinop;
+	  origenp = (Vector3)info.GetValue("Origen", typeof(Vector3));
+	  destinop = (Vector3)info.GetValue("Destino", typeof(Vector3));
+
+	  origen = destino = null;
+	  foreach (Waypoint waypoint in Navigation.Waypoints) {
+		 if (origen != null && destino != null) {
+			break;
+		 }
+		 if (waypoint.Position == origenp) {
+			origen = waypoint;
+		 }
+		 if (waypoint.Position == destinop) {
+			destino = waypoint;
+		 }
+	  }
+
 	  distancia = Vector3.Distance(origen.Position, destino.Position);
    }
 
@@ -45,8 +70,8 @@ public class Accion : Accion_MDP, ISerializable {
 	  base.GetObjectData(info, ctxt);
 
 	  info.AddValue("Jugador", jugador);
-	  info.AddValue("Origen", origen);
-	  info.AddValue("Destino", destino);
+	  info.AddValue("Origen", origen.Position);
+	  info.AddValue("Destino", destino.Position);
    }
 #pragma warning restore 0114
 }

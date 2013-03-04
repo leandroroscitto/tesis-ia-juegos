@@ -6,6 +6,8 @@ using Random = UnityEngine.Random;
 using PathRuntime;
 
 public class Generador_Escenario : MonoBehaviour {
+   public static float radio_cercania_waypoint = 2.5f;
+
    [Serializable]
    public class Parametros_Mapa {
 	  public int min_hab_tam = 3;
@@ -76,6 +78,7 @@ public class Generador_Escenario : MonoBehaviour {
    // Representacion
    public GameObject escenario_objeto;
    public GameObject generacion_prefab;
+   public GameObject datos_objeto;
 
    // Generacion
    private void determinarSeed() {
@@ -158,19 +161,48 @@ public class Generador_Escenario : MonoBehaviour {
    }
 
    // Serializacion
+   public void cargarDisplay() {
+	  if (datos_objeto == null) {
+		 datos_objeto = new GameObject("Display datos");
+		 datos_objeto.AddComponent<DisplayDatos>();
+	  }
+	  DisplayDatos display = datos_objeto.GetComponent<DisplayDatos>();
+	  display.transform.parent = transform.parent;
+
+	  display.Mapa = generador_mapa.mapa;
+	  display.Acciones = generador_acciones.acciones;
+	  display.Jugadores = generador_jugadores.jugadores;
+	  display.Objetivos = generador_objetivos.objetivos;
+   }
+
    public void guardarDatos() {
 	  if (escenario_objeto != null) {
 		 Serializador serializador = new Serializador();
 		 Objeto_Serializable datos = new Objeto_Serializable();
 		 datos.Resolucion_MDP = generador_mdp.resolucion_mdp;
 
+		 datos.estado = new Estado(4, generador_mapa.mapa);
+		 datos.nodo_estado = new Nodo_Estado(5, datos.estado);
+		 datos.mapa = generador_mapa.mapa;
+
 		 serializador.Serializar("./Assets/Data/datos.bin", datos);
 
 		 generacion_prefab = UnityEditor.PrefabUtility.CreatePrefab("Assets/Data/generacion.prefab", transform.parent.gameObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
 	  }
+
+	  if (datos_objeto == null) {
+		 datos_objeto = new GameObject("Display datos");
+		 datos_objeto.AddComponent<DisplayDatos>();
+	  }
+	  DisplayDatos display = datos_objeto.GetComponent<DisplayDatos>();
+	  display.transform.parent = transform.parent;
+
+	  display.Mapa = null;
+	  display.Acciones = null;
+	  display.Jugadores = null;
+	  display.Objetivos = null;
    }
 
-   public GameObject datos_objeto;
    public void cargarDatos() {
 	  UnityEditor.PrefabUtility.ReconnectToLastPrefab(transform.parent.gameObject);
 	  UnityEditor.PrefabUtility.RevertPrefabInstance(transform.parent.gameObject);
@@ -186,11 +218,16 @@ public class Generador_Escenario : MonoBehaviour {
 	  DisplayDatos display = datos_objeto.GetComponent<DisplayDatos>();
 	  display.transform.parent = transform.parent;
 
-	  display.Arbol_Estados = datos.Arbol_Estados;
 	  display.Mapa = datos.Mapa;
-	  display.MDP = datos.MDP;
 	  display.Acciones = datos.Acciones;
 	  display.Jugadores = datos.Jugadores;
 	  display.Objetivos = datos.Objetivos;
+
+	  generador_mapa.mapa = datos.Mapa;
+	  generador_objetivos.objetivos = datos.Objetivos;
+	  generador_jugadores.jugadores = datos.Jugadores;
+	  generador_acciones.acciones = datos.Acciones;
+	  generador_mdp.resolucion_mdp = datos.Resolucion_MDP;
+	  generador_mdp.arbol_estados = datos.Arbol_Estados;
    }
 }

@@ -3,14 +3,14 @@ using System.Runtime.Serialization;
 using System.Collections.Generic;
 
 [Serializable]
-public class Estado : Estado_MDP, ISerializable {
-   public Estado_Juego estado_actual;
-   public List<Estado> estados_padres;
+public class Nodo_Estado : Estado_MDP, ISerializable {
+   public Estado estado_actual;
+   public List<Nodo_Estado> estados_padres;
    // <id_jugador, estados>
-   public Dictionary<int, List<Estado>> estados_padres_actor;
-   public List<Estado> estados_hijos;
+   public Dictionary<int, List<Nodo_Estado>> estados_padres_actor;
+   public List<Nodo_Estado> estados_hijos;
    // <id_jugador, estados>
-   public Dictionary<int, List<Estado>> estados_hijos_actor;
+   public Dictionary<int, List<Nodo_Estado>> estados_hijos_actor;
    public List<float> estados_hijos_probabilidad;
    public List<Accion> acciones_padres;
    // <id_jugador, acciones>
@@ -19,13 +19,18 @@ public class Estado : Estado_MDP, ISerializable {
    // <id_jugador, acciones>
    public Dictionary<int, List<Accion>> acciones_hijos_actor;
 
-   public Estado(int i, Estado_Juego e)
+   public Nodo_Estado()
+	  : base(0) {
+
+   }
+
+   public Nodo_Estado(int i, Estado e)
 	  : base(i) {
 	  estado_actual = e;
-	  estados_padres = new List<Estado>();
-	  estados_padres_actor = new Dictionary<int, List<Estado>>();
-	  estados_hijos = new List<Estado>();
-	  estados_hijos_actor = new Dictionary<int, List<Estado>>();
+	  estados_padres = new List<Nodo_Estado>();
+	  estados_padres_actor = new Dictionary<int, List<Nodo_Estado>>();
+	  estados_hijos = new List<Nodo_Estado>();
+	  estados_hijos_actor = new Dictionary<int, List<Nodo_Estado>>();
 	  estados_hijos_probabilidad = new List<float>();
 	  acciones_padres = new List<Accion>();
 	  acciones_padres_actor = new Dictionary<int, List<Accion>>();
@@ -35,12 +40,12 @@ public class Estado : Estado_MDP, ISerializable {
 	  foreach (int jugador_id in e.posicion_jugadores.Keys) {
 		 acciones_padres_actor.Add(jugador_id, new List<Accion>());
 		 acciones_hijos_actor.Add(jugador_id, new List<Accion>());
-		 estados_padres_actor.Add(jugador_id, new List<Estado>());
-		 estados_hijos_actor.Add(jugador_id, new List<Estado>());
+		 estados_padres_actor.Add(jugador_id, new List<Nodo_Estado>());
+		 estados_hijos_actor.Add(jugador_id, new List<Nodo_Estado>());
 	  }
    }
 
-   public int AgregarHijo(Estado h, Accion ja, float probabilidad) {
+   public int AgregarHijo(Nodo_Estado h, Accion ja, float probabilidad) {
 	  estados_hijos.Add(h);
 	  estados_hijos_actor[ja.actor_id].Add(h);
 	  estados_hijos_probabilidad.Add(probabilidad);
@@ -51,7 +56,7 @@ public class Estado : Estado_MDP, ISerializable {
 	  return estados_hijos.Count - 1;
    }
 
-   public int AgregarPadre(Estado p, Accion ja) {
+   public int AgregarPadre(Nodo_Estado p, Accion ja) {
 	  estados_padres.Add(p);
 	  estados_padres_actor[ja.actor_id].Add(p);
 	  acciones_padres.Add(ja);
@@ -60,7 +65,7 @@ public class Estado : Estado_MDP, ISerializable {
 	  return estados_padres.Count - 1;
    }
 
-   public float probabilidadHijoAccion(Estado s, Accion a) {
+   public float probabilidadHijoAccion(Nodo_Estado s, Accion a) {
 	  int indice = estados_hijos.IndexOf(s);
 	  if (indice >= 0 && acciones_hijos[indice] == a) {
 		 return estados_hijos_probabilidad[indice];
@@ -109,14 +114,14 @@ public class Estado : Estado_MDP, ISerializable {
    }
 
    // Serializacion
-   public Estado(SerializationInfo info, StreamingContext ctxt)
+   public Nodo_Estado(SerializationInfo info, StreamingContext ctxt)
 	  : base(info, ctxt) {
-	  estado_actual = info.GetValue("Estado_Actual", typeof(Estado_Juego)) as Estado_Juego;
+	  estado_actual = info.GetValue("Estado_Actual", typeof(Estado)) as Estado;
 
-	  estados_padres = info.GetValue("Estados_Padres", typeof(List<Estado>)) as List<Estado>;
-	  estados_padres_actor = info.GetValue("Estados_Padres_Actor", typeof(Dictionary<int, List<Estado>>)) as Dictionary<int, List<Estado>>;
-	  estados_hijos = info.GetValue("Estados_Hijos", typeof(List<Estado>)) as List<Estado>;
-	  estados_hijos_actor = info.GetValue("Estados_Hijos_Actor", typeof(Dictionary<int, List<Estado>>)) as Dictionary<int, List<Estado>>;
+	  estados_padres = info.GetValue("Estados_Padres", typeof(List<Nodo_Estado>)) as List<Nodo_Estado>;
+	  estados_padres_actor = info.GetValue("Estados_Padres_Actor", typeof(Dictionary<int, List<Nodo_Estado>>)) as Dictionary<int, List<Nodo_Estado>>;
+	  estados_hijos = info.GetValue("Estados_Hijos", typeof(List<Nodo_Estado>)) as List<Nodo_Estado>;
+	  estados_hijos_actor = info.GetValue("Estados_Hijos_Actor", typeof(Dictionary<int, List<Nodo_Estado>>)) as Dictionary<int, List<Nodo_Estado>>;
 	  estados_hijos_probabilidad = info.GetValue("Estados_Hijos_Probabilidad", typeof(List<float>)) as List<float>;
 
 	  acciones_padres = info.GetValue("Acciones_Padres", typeof(List<Accion>)) as List<Accion>;

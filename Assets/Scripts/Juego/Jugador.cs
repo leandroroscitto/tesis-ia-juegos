@@ -35,6 +35,10 @@ public class Jugador : ISerializable {
 	  }
    }
 
+   public Jugador() {
+
+   }
+
    public Jugador(int i, JugadorMB jugador_mb, string n, char r, Vector2 p, TControl c) {
 	  id = i;
 	  nombre = n;
