@@ -65,36 +65,49 @@ public class Serializador {
    }
 
    public void Serializar(string nombre_archivo, Objeto_Serializable objeto) {
-	  Stream stream = File.Open(nombre_archivo, FileMode.Create);
+	  //Stream stream = File.Open(nombre_archivo + ".zip", FileMode.Create);
 	  BinaryFormatter bFormatter = new BinaryFormatter();
+
+	  Ionic.Zip.ZipOutputStream zipstream = new Ionic.Zip.ZipOutputStream(nombre_archivo + ".zip");
+	  zipstream.CompressionLevel = Ionic.Zlib.CompressionLevel.BestCompression;
+	  zipstream.CompressionMethod = Ionic.Zip.CompressionMethod.BZip2;
+	  zipstream.PutNextEntry("data_comprimida");
 
 	  bFormatter.SurrogateSelector = cargarSurrogates();
 	  try {
-		 bFormatter.Serialize(stream, objeto);
+		 bFormatter.Serialize(zipstream, objeto);
 	  }
 	  catch (System.Exception excp) {
-		 stream.Close();
+		 zipstream.Close();
+		 //stream.Close();
 		 throw excp;
 	  }
-	  stream.Close();
+
+	  zipstream.Close();
+	  //stream.Close();
    }
 
    public Objeto_Serializable Deserializar(string nombre_archivo) {
 	  Objeto_Serializable objeto = new Objeto_Serializable();
-	  Stream stream = File.Open(nombre_archivo, FileMode.Open);
+	  //Stream stream = File.Open(nombre_archivo+".zip", FileMode.Open);
+
+	  Ionic.Zip.ZipInputStream zipstream = new Ionic.Zip.ZipInputStream(nombre_archivo + ".zip");
+	  zipstream.GetNextEntry();
+
 	  BinaryFormatter bFormatter = new BinaryFormatter();
 
 	  bFormatter.SurrogateSelector = cargarSurrogates();
-
 	  try {
-		 objeto = bFormatter.Deserialize(stream) as Objeto_Serializable;
+		 objeto = bFormatter.Deserialize(zipstream) as Objeto_Serializable;
 	  }
 	  catch (System.Exception excp) {
-		 stream.Close();
+		 zipstream.Close();
+		 //stream.Close();
 		 throw excp;
 	  }
 
-	  stream.Close();
+	  zipstream.Close();
+	  //stream.Close();
 	  return objeto;
    }
 
