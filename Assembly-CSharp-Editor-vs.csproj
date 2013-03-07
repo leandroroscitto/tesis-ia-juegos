@@ -44,6 +44,7 @@
 	</Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\Assets\Editor\DisplayDatosEditor.cs" />
      <Compile Include="Assets\Assets\Editor\Generador_EscenarioEditor.cs" />
      <Compile Include="Assets\Behave\Editor\BehaveAbout.cs" />
      <Compile Include="Assets\Behave\Editor\BehaveAssetEditor.cs" />
@@ -103,11 +104,11 @@
  <Reference Include="TickedPriorityQueue">
  <HintPath>Assets\UnitySteer\TickedPriorityQueue\TickedPriorityQueue.dll</HintPath>
  </Reference>
- <Reference Include="UnityEditor.Graphs">
- <HintPath>C:\Program Files\Unity\Editor4\Data\Managed\UnityEditor.Graphs.dll</HintPath>
- </Reference>
  <Reference Include="Ionic.Zip">
  <HintPath>Assets\ZipLib\Release\Ionic.Zip.dll</HintPath>
+ </Reference>
+ <Reference Include="UnityEditor.Graphs">
+ <HintPath>C:\Program Files\Unity\Editor4\Data\Managed\UnityEditor.Graphs.dll</HintPath>
  </Reference>
   </ItemGroup>
   <ItemGroup>

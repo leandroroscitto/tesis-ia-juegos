@@ -173,6 +173,8 @@ public class Generador_Escenario : MonoBehaviour {
 	  display.Acciones = generador_acciones.acciones;
 	  display.Jugadores = generador_jugadores.jugadores;
 	  display.Objetivos = generador_objetivos.objetivos;
+	  display.Arbol_Estados = generador_mdp.arbol_estados;
+	  display.Resolucion_MDP = generador_mdp.resolucion_mdp;
    }
 
    public void guardarDatos() {
@@ -180,10 +182,6 @@ public class Generador_Escenario : MonoBehaviour {
 		 Serializador serializador = new Serializador();
 		 Objeto_Serializable datos = new Objeto_Serializable();
 		 datos.Resolucion_MDP = generador_mdp.resolucion_mdp;
-
-		 datos.estado = new Estado(4, generador_mapa.mapa);
-		 datos.nodo_estado = new Nodo_Estado(5, datos.estado);
-		 datos.mapa = generador_mapa.mapa;
 
 		 serializador.Serializar("./Assets/Data/datos.bin", datos);
 
@@ -201,6 +199,8 @@ public class Generador_Escenario : MonoBehaviour {
 	  display.Acciones = null;
 	  display.Jugadores = null;
 	  display.Objetivos = null;
+	  display.Arbol_Estados = null;
+	  display.Resolucion_MDP = null;
    }
 
    public void cargarDatos() {
@@ -222,6 +222,8 @@ public class Generador_Escenario : MonoBehaviour {
 	  display.Acciones = datos.Acciones;
 	  display.Jugadores = datos.Jugadores;
 	  display.Objetivos = datos.Objetivos;
+	  display.Arbol_Estados = generador_mdp.arbol_estados;
+	  display.Resolucion_MDP = generador_mdp.resolucion_mdp;
 
 	  generador_mapa.mapa = datos.Mapa;
 	  generador_objetivos.objetivos = datos.Objetivos;
