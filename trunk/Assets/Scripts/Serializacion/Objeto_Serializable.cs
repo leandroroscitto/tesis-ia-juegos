@@ -6,9 +6,6 @@ using System.Runtime.Serialization.Formatters.Binary;
 [Serializable]
 public class Objeto_Serializable : ISerializable {
    private ResolucionMDP _resolucionmdp;
-   public Nodo_Estado nodo_estado;
-   public Estado estado;
-   public Mapa mapa;
 
    public ResolucionMDP Resolucion_MDP {
 	  get {
@@ -55,17 +52,9 @@ public class Objeto_Serializable : ISerializable {
 
    public Objeto_Serializable(SerializationInfo info, StreamingContext ctxt) {
 	  _resolucionmdp = info.GetValue("Resolucion_MDP", typeof(ResolucionMDP)) as ResolucionMDP;
-
-	  nodo_estado = (Nodo_Estado)info.GetValue("Nodo_Estado", typeof(Nodo_Estado));
-	  estado = (Estado)info.GetValue("Estado", typeof(Estado));
-	  mapa = (Mapa)info.GetValue("Mapa", typeof(Mapa));
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  info.AddValue("Resolucion_MDP", _resolucionmdp);
-
-	  info.AddValue("Nodo_Estado", nodo_estado);
-	  info.AddValue("Estado", estado);
-	  info.AddValue("Mapa", mapa);
    }
 }

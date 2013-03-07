@@ -59,7 +59,7 @@ public class Generador_Objetivos : MonoBehaviour {
 		 } while (habitaciones_usadas.Contains(indice));
 		 habitaciones_usadas.Add(indice);
 
-		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * Random.Range(habitacion.x1 + 1, habitacion.x2 - 1) + Vector2.up * Random.Range(habitacion.y1 + 1, habitacion.y2 - 1), 1f);
+		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * Random.Range(habitacion.x1 + 1, habitacion.x2 - 1) + Vector2.up * Random.Range(habitacion.y1 + 1, habitacion.y2 - 1), 1.25f);
 		 Waypoint waypoint = generador_navegacion.agregarWaypoint(i, "Objetivo", posicion);
 
 		 string nombre_objetivo = ((char)(i / 2 + 65)).ToString();
