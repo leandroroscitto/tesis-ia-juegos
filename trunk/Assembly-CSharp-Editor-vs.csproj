@@ -1,119 +1,123 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-	<ProductVersion>10.0.20506</ProductVersion>
-	<SchemaVersion>2.0</SchemaVersion>
-	<ProjectGuid>{B9326135-0FC2-7A54-1101-8CDB2D880CD2}</ProjectGuid>
-	<OutputType>Library</OutputType>
-	<AppDesignerFolder>Properties</AppDesignerFolder>
-	<RootNamespace></RootNamespace>
-	<AssemblyName>Assembly-CSharp-Editor</AssemblyName>
-	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-	<FileAlignment>512</FileAlignment>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{B9326135-0FC2-7A54-1101-8CDB2D880CD2}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>
+    </RootNamespace>
+    <AssemblyName>Assembly-CSharp-Editor</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DebugSymbols>true</DebugSymbols>
-	<DebugType>full</DebugType>
-	<Optimize>false</Optimize>
-	<OutputPath>Temp\bin\Debug\</OutputPath>
-	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_0_1;UNITY_4_0;UNITY_STANDALONE_WIN;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<NoWarn>0169</NoWarn>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Temp\bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;UNITY_STANDALONE;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_0_1;UNITY_4_0;UNITY_STANDALONE_WIN;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-	<DebugType>pdbonly</DebugType>
-	<Optimize>true</Optimize>
-	<OutputPath>Temp\bin\Release\</OutputPath>
-	<DefineConstants>TRACE</DefineConstants>
-	<ErrorReport>prompt</ErrorReport>
-	<WarningLevel>4</WarningLevel>
-	<NoWarn>0169</NoWarn>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Temp\bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>0169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-	<Reference Include="System" />
+    <Reference Include="System" />
     <Reference Include="System.XML" />
-	<Reference Include="System.Core" />
-	<Reference Include="UnityEngine">
-	  <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEngine.dll</HintPath>
-	</Reference>
-	<Reference Include="UnityEditor">
-	  <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEditor.dll</HintPath>
-	</Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="UnityEngine">
+      <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor">
+      <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEditor.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\Assets\Editor\Generador_EscenarioEditor.cs" />
-     <Compile Include="Assets\Assets\Editor\VentanaArbolEstado.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveAbout.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveAssetEditor.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveBrowser.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveComponentEditor.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveDebugWindow.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveEditor.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveMenu.cs" />
-     <Compile Include="Assets\Behave\Editor\BehaveTreeEditor.cs" />
-     <Compile Include="Assets\Path\Editor\NavigationInspector.cs" />
-     <Compile Include="Assets\Path\Editor\PathAboutWindow.cs" />
-     <Compile Include="Assets\Path\Editor\WaypointInspector.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\AutonomousVehicleEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\BipedEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\DegreeEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\DetectableObjectEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\SteerForAlignmentEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\SteerForCohesionEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\SteerForNeighborsEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\SteerForSeparationEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\Vector3FoldoutEditor.cs" />
-     <Compile Include="Assets\UnitySteer\Editor\VehicleEditor.cs" />
-     <None Include="Assets\Shaders\WorldUV.shader" />
-     <None Include="Assets\Path\License.txt" />
-     <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
-     <None Include="Assets\Behave\Changelog.txt" />
-     <None Include="Assets\Behave\Readme.txt" />
-     <None Include="Assets\Behave\License.txt" />
-     <None Include="Assets\ZipLib\Readme.txt" />
-     <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
-     <None Include="Assets\Shaders\No_Fog.shader" />
-     <None Include="Assets\ZipLib\Debug\Ionic.Zip.xml" />
-     <None Include="Assets\UnitySteer\License.txt" />
-     <None Include="Assets\Shaders\3D Text.shader" />
-     <None Include="Assets\Comportamiento\ComportamientoInfo.txt" />
- <Reference Include="Behave.Unity.Assets">
- <HintPath>Assets\Behave\Behave.Unity.Assets.dll</HintPath>
- </Reference>
- <Reference Include="Behave.Unity.Runtime">
- <HintPath>Assets\Behave\Behave.Unity.Runtime.dll</HintPath>
- </Reference>
- <Reference Include="Behave">
- <HintPath>Assets\Behave\Compatibility\Behave.dll</HintPath>
- </Reference>
- <Reference Include="Behave.Unity.Editor">
- <HintPath>Assets\Behave\Editor\Behave.Unity.Editor.dll</HintPath>
- </Reference>
- <Reference Include="ComportamientoBuild">
- <HintPath>Assets\Comportamiento\ComportamientoBuild.dll</HintPath>
- </Reference>
- <Reference Include="PathRuntime">
- <HintPath>Assets\Path\PathRuntime.dll</HintPath>
- </Reference>
- <Reference Include="PathEditor">
- <HintPath>Assets\Path\Editor\PathEditor.dll</HintPath>
- </Reference>
- <Reference Include="TickedPriorityQueue">
- <HintPath>Assets\UnitySteer\TickedPriorityQueue\TickedPriorityQueue.dll</HintPath>
- </Reference>
- <Reference Include="Ionic.Zip">
- <HintPath>Assets\ZipLib\Release\Ionic.Zip.dll</HintPath>
- </Reference>
- <Reference Include="UnityEditor.Graphs">
- <HintPath>C:\Program Files\Unity\Editor4\Data\Managed\UnityEditor.Graphs.dll</HintPath>
- </Reference>
+    <Compile Include="Assets\Assets\Editor\Generador_EscenarioEditor.cs" />
+    <Compile Include="Assets\Assets\Editor\VentanaArbolEstado.cs" />
+    <Compile Include="Assets\Assets\Editor\VentanaMDP.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveAbout.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveAssetEditor.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveBrowser.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveComponentEditor.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveDebugWindow.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveEditor.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveMenu.cs" />
+    <Compile Include="Assets\Behave\Editor\BehaveTreeEditor.cs" />
+    <Compile Include="Assets\Path\Editor\NavigationInspector.cs" />
+    <Compile Include="Assets\Path\Editor\PathAboutWindow.cs" />
+    <Compile Include="Assets\Path\Editor\WaypointInspector.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\AutonomousVehicleEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\BipedEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\DegreeEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\DetectableObjectEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\SteerForAlignmentEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\SteerForCohesionEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\SteerForNeighborsEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\SteerForSeparationEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\Vector3FoldoutEditor.cs" />
+    <Compile Include="Assets\UnitySteer\Editor\VehicleEditor.cs" />
+    <None Include="Assets\Shaders\WorldUV.shader" />
+    <None Include="Assets\Path\License.txt" />
+    <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
+    <None Include="Assets\Behave\Changelog.txt" />
+    <None Include="Assets\Behave\Readme.txt" />
+    <None Include="Assets\Behave\License.txt" />
+    <None Include="Assets\ZipLib\Readme.txt" />
+    <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
+    <None Include="Assets\Shaders\No_Fog.shader" />
+    <None Include="Assets\ZipLib\Debug\Ionic.Zip.xml" />
+    <None Include="Assets\UnitySteer\License.txt" />
+    <None Include="Assets\Shaders\3D Text.shader" />
+    <None Include="Assets\Comportamiento\ComportamientoInfo.txt" />
+    <Reference Include="Behave.Unity.Assets">
+      <HintPath>Assets\Behave\Behave.Unity.Assets.dll</HintPath>
+    </Reference>
+    <Reference Include="Behave.Unity.Runtime">
+      <HintPath>Assets\Behave\Behave.Unity.Runtime.dll</HintPath>
+    </Reference>
+    <Reference Include="Behave">
+      <HintPath>Assets\Behave\Compatibility\Behave.dll</HintPath>
+    </Reference>
+    <Reference Include="Behave.Unity.Editor">
+      <HintPath>Assets\Behave\Editor\Behave.Unity.Editor.dll</HintPath>
+    </Reference>
+    <Reference Include="ComportamientoBuild">
+      <HintPath>Assets\Comportamiento\ComportamientoBuild.dll</HintPath>
+    </Reference>
+    <Reference Include="PathRuntime">
+      <HintPath>Assets\Path\PathRuntime.dll</HintPath>
+    </Reference>
+    <Reference Include="PathEditor">
+      <HintPath>Assets\Path\Editor\PathEditor.dll</HintPath>
+    </Reference>
+    <Reference Include="TickedPriorityQueue">
+      <HintPath>Assets\UnitySteer\TickedPriorityQueue\TickedPriorityQueue.dll</HintPath>
+    </Reference>
+    <Reference Include="Ionic.Zip">
+      <HintPath>Assets\ZipLib\Release\Ionic.Zip.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEditor.Graphs">
+      <HintPath>C:\Program Files\Unity\Editor4\Data\Managed\UnityEditor.Graphs.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="Assembly-CSharp-vs.csproj">
-      <Project>{1E246FA7-7ADA-6380-0122-E7550E5BE9EF}</Project>      <Name>Assembly-CSharp-vs</Name>    </ProjectReference>
+      <Project>{1E246FA7-7ADA-6380-0122-E7550E5BE9EF}</Project>
+      <Name>Assembly-CSharp-vs</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -123,5 +127,4 @@
   <Target Name="AfterBuild">
   </Target>
   -->
-  
 </Project>

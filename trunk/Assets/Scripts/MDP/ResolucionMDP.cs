@@ -75,8 +75,9 @@ public class ResolucionMDP : ISerializable {
 	  }
    }
 
-   [HideInInspector]
+   [NonSerialized]
    public Arbol_Estados arbol_estados;
+   [NonSerialized]
    public MDP<Nodo_Estado, Accion, Objetivo, TransicionJuego, RecompensaJuego> mdp;
 
    public ResolucionMDP() {
