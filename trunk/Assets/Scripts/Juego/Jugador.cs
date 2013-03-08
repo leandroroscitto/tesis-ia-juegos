@@ -12,7 +12,7 @@ public class Jugador : ISerializable {
    public int id;
    public string nombre;
    public char representacion;
-   public Vector2 posicion;
+   //public Vector2 posicion;
    public TControl control;
    // <turno, accion>
    public Dictionary<int, Accion> acciones;
@@ -35,19 +35,28 @@ public class Jugador : ISerializable {
 	  }
    }
 
+   public Vector3 posicion {
+	  get {
+		 return jugador_mb.transform.position;
+	  }
+	  set {
+		 jugador_mb.transform.position = value;
+	  }
+   }
+
    public Jugador() {
 
    }
 
-   public Jugador(int i, JugadorMB jugador_mb, string n, char r, Vector2 p, TControl c) {
+   public Jugador(int i, string n, char r, Vector3 p, TControl c) {
 	  id = i;
 	  nombre = n;
 	  representacion = r;
-	  posicion = p;
 	  control = c;
 	  acciones = new Dictionary<int, Accion>();
 
 	  jugador_mb.jugador = this;
+	  posicion = p;
    }
 
    public Accion RegistrarAccion(int turno, Accion accion) {
@@ -64,7 +73,7 @@ public class Jugador : ISerializable {
 	  id = info.GetInt16("Id");
 	  nombre = info.GetString("Nombre");
 	  representacion = info.GetChar("Representacion");
-	  posicion = (Vector2)info.GetValue("Posicion", typeof(Vector2));
+	  posicion = (Vector3)info.GetValue("Posicion", typeof(Vector3));
 	  control = (TControl)info.GetInt16("Control");
 	  acciones = info.GetValue("Acciones", typeof(Dictionary<int, Accion>)) as Dictionary<int, Accion>;
 

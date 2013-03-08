@@ -5,16 +5,21 @@ using System.Collections.Generic;
 [Serializable]
 public class Nodo_Estado : Estado_MDP, ISerializable {
    public Estado estado_actual;
+
    public List<Nodo_Estado> estados_padres;
    // <id_jugador, estados>
    public Dictionary<int, List<Nodo_Estado>> estados_padres_actor;
+
    public List<Nodo_Estado> estados_hijos;
    // <id_jugador, estados>
    public Dictionary<int, List<Nodo_Estado>> estados_hijos_actor;
+
    public List<float> estados_hijos_probabilidad;
+
    public List<Accion> acciones_padres;
    // <id_jugador, acciones>
    public Dictionary<int, List<Accion>> acciones_padres_actor;
+
    public List<Accion> acciones_hijos;
    // <id_jugador, acciones>
    public Dictionary<int, List<Accion>> acciones_hijos_actor;

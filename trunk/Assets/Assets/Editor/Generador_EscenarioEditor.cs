@@ -5,21 +5,16 @@ using System.Collections;
 [CustomEditor(typeof(Generador_Escenario))]
 public class Generador_EscenarioEditor : Editor {
    public override void OnInspectorGUI() {
-	  serializedObject.Update();
-
 	  base.OnInspectorGUI();
 
 	  EditorGUIUtility.LookLikeInspector();
 	  if (GUILayout.Button("Generar")) {
-		 EditorUtility.SetDirty(target);
 		 ((Generador_Escenario)target).generarEscenario();
 	  }
 	  if (GUILayout.Button("Resetear")) {
-		 EditorUtility.SetDirty(target);
 		 ((Generador_Escenario)target).reiniciarEscenario();
 	  }
 	  if (GUILayout.Button("Borrar Todo")) {
-		 EditorUtility.SetDirty(target);
 		 ((Generador_Escenario)target).borrarEscenario();
 	  }
 	  if (GUILayout.Button("Guardar Datos")) {
@@ -28,8 +23,11 @@ public class Generador_EscenarioEditor : Editor {
 	  if (GUILayout.Button("Cargar Datos")) {
 		 ((Generador_Escenario)target).cargarDatos();
 	  }
-	  if (GUILayout.Button("Cargar Display")) {
-		 ((Generador_Escenario)target).cargarDisplay();
+
+	  EditorUtility.SetDirty(target);
+	  if (VentanaArbolEstado.ventana != null) {
+		 EditorUtility.SetDirty(VentanaArbolEstado.ventana);
+		 VentanaArbolEstado.ventana.Repaint();
 	  }
    }
 }

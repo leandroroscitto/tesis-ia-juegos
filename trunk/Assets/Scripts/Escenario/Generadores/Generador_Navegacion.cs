@@ -54,7 +54,7 @@ public class Generador_Navegacion : MonoBehaviour {
 		 foreach (Conexion conexion_h in generador_mapa.conexiones_horizontales) {
 			int x = conexion_v.x1;
 			int y = conexion_h.y1;
-			if (generador_mapa.mapa.tiles[x + y * Mapa.cant_x].transitable) {
+			if (generador_mapa.mapa.tiles[x + y * Mapa.Mapa_Instancia.cant_x].transitable) {
 			   if ((x >= conexion_h.x1 && x <= conexion_h.x2) && (y >= conexion_v.y1 && y <= conexion_v.y2)) {
 				  generador_mapa.intersecciones.Add(new Vector2(x, y));
 			   }
@@ -74,7 +74,7 @@ public class Generador_Navegacion : MonoBehaviour {
 			foreach (Conexion conexion_h in habitacion_horizontal) {
 			   int x = conexion_v.x1;
 			   int y = conexion_h.y1;
-			   if (generador_mapa.mapa.tiles[x + y * Mapa.cant_x].transitable) {
+			   if (generador_mapa.mapa.tiles[x + y * Mapa.Mapa_Instancia.cant_x].transitable) {
 				  if ((x >= conexion_h.x1 && x <= conexion_h.x2) && (y >= conexion_v.y1 && y <= conexion_v.y2)) {
 					 generador_mapa.intersecciones.Add(new Vector2(x, y));
 				  }
@@ -86,7 +86,7 @@ public class Generador_Navegacion : MonoBehaviour {
 			foreach (Conexion conexion_h in generador_mapa.conexiones_horizontales) {
 			   int x = conexion_v.x1;
 			   int y = conexion_h.y1;
-			   if (generador_mapa.mapa.tiles[x + y * Mapa.cant_x].transitable) {
+			   if (generador_mapa.mapa.tiles[x + y * Mapa.Mapa_Instancia.cant_x].transitable) {
 				  if ((x >= conexion_h.x1 && x <= conexion_h.x2) && (y >= conexion_v.y1 && y <= conexion_v.y2)) {
 					 generador_mapa.intersecciones.Add(new Vector2(x, y));
 				  }

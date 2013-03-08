@@ -7,7 +7,7 @@ using System.Collections.Generic;
 [Serializable]
 public class Objetivo : Objetivo_MDP, ISerializable {
    public bool cumplido;
-   public Vector2 posicion;
+   //public Vector2 posicion;
    public string nombre;
    public Objetivo complementario;
 
@@ -50,6 +50,15 @@ public class Objetivo : Objetivo_MDP, ISerializable {
 	  }
    }
 
+   public Vector3 posicion {
+	  get {
+		 return objetivo_mb.transform.position;
+	  }
+	  set {
+		 objetivo_mb.transform.position = value;
+	  }
+   }
+
    public float radio {
 	  get {
 		 return objetivo_mb.radar.DetectionRadius;
@@ -64,11 +73,12 @@ public class Objetivo : Objetivo_MDP, ISerializable {
 
    }
 
-   public Objetivo(int i, string nombre_in, Vector2 p, Waypoint wayp_asociado_in)
+   public Objetivo(int i, string nombre_in, Vector3 p, Waypoint wayp_asociado_in)
 	  : base(i) {
 	  nombre = nombre_in;
-	  posicion = p;
 	  waypoint_asociado = wayp_asociado_in;
+
+	  posicion = p;
    }
 
    public void agregarComplementario(Objetivo obj) {
@@ -83,8 +93,8 @@ public class Objetivo : Objetivo_MDP, ISerializable {
    public Objetivo(SerializationInfo info, StreamingContext ctxt)
 	  : base(info, ctxt) {
 	  cumplido = info.GetBoolean("Cumplido");
-	  posicion = (Vector2)info.GetValue("Posicion", typeof(Vector2));
 	  nombre = info.GetString("Nombre");
+	  posicion = (Vector3)info.GetValue("Posicion", typeof(Vector3));
 	  complementario = info.GetValue("Complementario", typeof(Objetivo)) as Objetivo;
 	  waypoint_posicion = (Vector3)info.GetValue("Waypoint_Asociado", typeof(Vector3));
 

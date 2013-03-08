@@ -148,35 +148,36 @@ public class Generador_Escenario : MonoBehaviour {
    }
 
    public void borrarEscenario() {
-	  reiniciarEscenario();
+	  if (generador_mapa != null) {
+		 generador_mapa.borrar();
+	  }
+	  if (generador_navegacion != null) {
+		 generador_navegacion.borrar();
+	  }
+	  if (generador_objetivos != null) {
+		 generador_objetivos.borrar();
+	  }
+	  if (generador_jugadores != null) {
+		 generador_jugadores.borrar();
+	  }
+	  if (generador_acciones != null) {
+		 generador_acciones.borrar();
+	  }
+	  if (generador_mdp != null) {
+		 generador_mdp.borrar();
+	  }
 
-	  generador_mapa.borrar();
-	  generador_navegacion.borrar();
-	  generador_objetivos.borrar();
-	  generador_jugadores.borrar();
-	  generador_acciones.borrar();
-	  generador_mdp.borrar();
+	  DestroyImmediate(generador_mapa);
+	  DestroyImmediate(generador_navegacion);
+	  DestroyImmediate(generador_objetivos);
+	  DestroyImmediate(generador_jugadores);
+	  DestroyImmediate(generador_acciones);
+	  DestroyImmediate(generador_mdp);
 
 	  DestroyImmediate(escenario_objeto);
    }
 
    // Serializacion
-   public void cargarDisplay() {
-	  if (datos_objeto == null) {
-		 datos_objeto = new GameObject("Display datos");
-		 datos_objeto.AddComponent<DisplayDatos>();
-	  }
-	  DisplayDatos display = datos_objeto.GetComponent<DisplayDatos>();
-	  display.transform.parent = transform.parent;
-
-	  display.Mapa = generador_mapa.mapa;
-	  display.Acciones = generador_acciones.acciones;
-	  display.Jugadores = generador_jugadores.jugadores;
-	  display.Objetivos = generador_objetivos.objetivos;
-	  display.Arbol_Estados = generador_mdp.arbol_estados;
-	  display.Resolucion_MDP = generador_mdp.resolucion_mdp;
-   }
-
    public void guardarDatos() {
 	  if (escenario_objeto != null) {
 		 Serializador serializador = new Serializador();
@@ -187,20 +188,6 @@ public class Generador_Escenario : MonoBehaviour {
 
 		 generacion_prefab = UnityEditor.PrefabUtility.CreatePrefab("Assets/Data/generacion.prefab", transform.parent.gameObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
 	  }
-
-	  if (datos_objeto == null) {
-		 datos_objeto = new GameObject("Display datos");
-		 datos_objeto.AddComponent<DisplayDatos>();
-	  }
-	  DisplayDatos display = datos_objeto.GetComponent<DisplayDatos>();
-	  display.transform.parent = transform.parent;
-
-	  display.Mapa = null;
-	  display.Acciones = null;
-	  display.Jugadores = null;
-	  display.Objetivos = null;
-	  display.Arbol_Estados = null;
-	  display.Resolucion_MDP = null;
    }
 
    public void cargarDatos() {
@@ -210,20 +197,6 @@ public class Generador_Escenario : MonoBehaviour {
 
 	  Serializador serializador = new Serializador();
 	  Objeto_Serializable datos = serializador.Deserializar("./Assets/Data/datos.bin");
-
-	  if (datos_objeto == null) {
-		 datos_objeto = new GameObject("Display datos");
-		 datos_objeto.AddComponent<DisplayDatos>();
-	  }
-	  DisplayDatos display = datos_objeto.GetComponent<DisplayDatos>();
-	  display.transform.parent = transform.parent;
-
-	  display.Mapa = datos.Mapa;
-	  display.Acciones = datos.Acciones;
-	  display.Jugadores = datos.Jugadores;
-	  display.Objetivos = datos.Objetivos;
-	  display.Arbol_Estados = generador_mdp.arbol_estados;
-	  display.Resolucion_MDP = generador_mdp.resolucion_mdp;
 
 	  generador_mapa.mapa = datos.Mapa;
 	  generador_objetivos.objetivos = datos.Objetivos;

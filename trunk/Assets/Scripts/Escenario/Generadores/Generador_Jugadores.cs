@@ -39,7 +39,6 @@ public class Generador_Jugadores : MonoBehaviour {
    // Generacion
    public void generar(int cant_jugadores, GameObject jugador_prefab, GameObject companero_prefab, Camara_3Persona camara) {
 	  Generador_Navegacion generador_navegacion = GetComponent<Generador_Navegacion>();
-	  Generador_Mapa generador_mapa = GetComponent<Generador_Mapa>();
 	  HashSet<int> habitaciones_usadas = new HashSet<int>();
 	  int indice;
 	  Waypoint habitacion;
@@ -57,7 +56,7 @@ public class Generador_Jugadores : MonoBehaviour {
 		 jugador_objeto.GetComponent<Control_Directo>().camara_3persona = camara;
 
 		 JugadorMB jugador_mb = jugador_objeto.AddComponent<JugadorMB>();
-		 Jugador jugador = new Jugador(0, jugador_mb, jugador_objeto.name = "Jugador", '@', generador_mapa.mapa.posicionRealARepresentacion(posicion), Jugador.TControl.DIRECTO);
+		 Jugador jugador = new Jugador(0, jugador_objeto.name = "Jugador", '@', posicion, Jugador.TControl.DIRECTO);
 		 jugadores.Add(jugador);
 		 jugadores_mb.Add(jugador_mb);
 	  }
@@ -75,7 +74,7 @@ public class Generador_Jugadores : MonoBehaviour {
 		 jugador_objeto.transform.parent = jugadores_objeto.transform;
 
 		 JugadorMB jugador_mb = jugador_objeto.AddComponent<JugadorMB>();
-		 Jugador jugador = new Jugador(i, jugador_mb, jugador_objeto.name = "Companero_" + i, '$', generador_mapa.mapa.posicionRealARepresentacion(posicion), Jugador.TControl.IA);
+		 Jugador jugador = new Jugador(i, jugador_objeto.name = "Companero_" + i, '$', posicion, Jugador.TControl.IA);
 		 jugadores.Add(jugador);
 		 jugadores_mb.Add(jugador_mb);
 	  }
