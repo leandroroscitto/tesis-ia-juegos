@@ -6,7 +6,6 @@ using UnityEngine;
 [Serializable]
 public class Estado : ISerializable {
    public int id;
-   public Mapa escenario_base;
    // <id_jugador,posicion_jugador>
    public Dictionary<int, Vector3> posicion_jugadores;
    // <id_objetivo>
@@ -17,9 +16,8 @@ public class Estado : ISerializable {
    public Estado() {
    }
 
-   public Estado(int i, Mapa eb) {
+   public Estado(int i) {
 	  id = i;
-	  escenario_base = eb;
 	  posicion_jugadores = new Dictionary<int, Vector3>();
 	  objetivos_cumplidos = new HashSet<int>();
 	  objetivos_no_cumplidos = new HashSet<int>();
@@ -88,7 +86,6 @@ public class Estado : ISerializable {
    // Serializacion
    public Estado(SerializationInfo info, StreamingContext ctxt) {
 	  id = info.GetInt32("Id");
-	  escenario_base = info.GetValue("Escenario_Base", typeof(Mapa)) as Mapa;
 	  posicion_jugadores = info.GetValue("Posicion_Jugadores", typeof(Dictionary<int, Vector3>)) as Dictionary<int, Vector3>;
 
 	  objetivos_cumplidos = info.GetValue("Objetivos_Cumplidos", typeof(HashSet<int>)) as HashSet<int>;
@@ -97,9 +94,8 @@ public class Estado : ISerializable {
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  info.AddValue("Id", id);
-	  info.AddValue("Escenario_Base", escenario_base);
 	  info.AddValue("Posicion_Jugadores", posicion_jugadores);
-	  
+
 	  info.AddValue("Objetivos_Cumplidos", objetivos_cumplidos);
 	  info.AddValue("Objetivos_No_Cumplidos", objetivos_no_cumplidos);
    }

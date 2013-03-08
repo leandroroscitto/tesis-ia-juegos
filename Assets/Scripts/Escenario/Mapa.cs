@@ -7,8 +7,10 @@ using Random = UnityEngine.Random;
 
 [Serializable]
 public class Mapa {
+   public static Mapa Mapa_Instancia;
+
    // Atributos
-   public static int cant_x, cant_y;
+   public int cant_x, cant_y;
    [HideInInspector]
    public Tile[] tiles;
    public Vector3 tamano_tile;
@@ -19,7 +21,7 @@ public class Mapa {
 
    // Operaciones
    public Mapa() {
-
+	  Mapa_Instancia = this;
    }
 
    public Mapa(int cx, int cy, Vector3 tam_tile) {
@@ -34,6 +36,8 @@ public class Mapa {
 	  largo = tamano_tile.z * cant_y;
 	  offsetx = (ancho - tamano_tile.x) / 2;
 	  offsety = (largo - tamano_tile.z) / 2;
+
+	  Mapa_Instancia = this;
    }
 
    // Utilidades

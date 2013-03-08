@@ -31,6 +31,8 @@ public class Generador_Acciones : MonoBehaviour {
 	  List<Jugador> jugadores = GetComponent<Generador_Jugadores>().jugadores;
 	  foreach (Jugador jugador in jugadores) {
 		 foreach (Waypoint waypoint in Navigation.Waypoints) {
+			acciones.Add(new Accion(i, jugador, waypoint, waypoint));
+			i++;
 			foreach (Connection connection in waypoint.Connections) {
 			   acciones.Add(new Accion(i, jugador, connection.From, connection.To));
 			   i++;

@@ -66,7 +66,6 @@
      <Compile Include="Assets\Scripts\Escenario\Mapa.cs" />
      <Compile Include="Assets\Scripts\Escenario\Tile.cs" />
      <Compile Include="Assets\Scripts\Escenario\Utilidades\BSPTree.cs" />
-     <Compile Include="Assets\Scripts\Escenario\Utilidades\DisplayDatos.cs" />
      <Compile Include="Assets\Scripts\Escenario\Utilidades\Procedural_Mesh.cs" />
      <Compile Include="Assets\Scripts\Escenario\Utilidades\VisitadorConexion.cs" />
      <Compile Include="Assets\Scripts\Escenario\Utilidades\VisitadorHabitacion.cs" />

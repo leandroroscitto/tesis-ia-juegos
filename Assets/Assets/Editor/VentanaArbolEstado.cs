@@ -2,11 +2,14 @@
 using UnityEditor;
 using System.Collections;
 using System.Collections.Generic;
+using PathRuntime;
 
-public class DisplayDatosEditor : EditorWindow {
-   private static DisplayDatosEditor ventana;
+public class VentanaArbolEstado : EditorWindow {
+   public static VentanaArbolEstado ventana;
 
-   private DisplayDatos display;
+   private Generador_MDP generador_mdp;
+   private Generador_Jugadores generador_jugadores;
+   private Generador_Objetivos generador_objetivos;
 
    private int cantidad_estados_rango = 10;
 
@@ -27,7 +30,7 @@ public class DisplayDatosEditor : EditorWindow {
 
    [MenuItem("Window/Debug Arbol de Estados")]
    static void Init() {
-	  ventana = EditorWindow.GetWindow<DisplayDatosEditor>("A. de Estados");
+	  ventana = EditorWindow.GetWindow<VentanaArbolEstado>("A. de Estados");
    }
 
    void Update() {
@@ -35,14 +38,15 @@ public class DisplayDatosEditor : EditorWindow {
    }
 
    void OnGUI() {
-	  if (GUILayout.Button("Actualizar")) {
-		 Debug.Log("Actualizando");
-	  }
+	  generador_mdp = GameObject.Find("Generadores").GetComponent<Generador_MDP>();
+	  generador_jugadores = GameObject.Find("Generadores").GetComponent<Generador_Jugadores>();
+	  generador_objetivos = GameObject.Find("Generadores").GetComponent<Generador_Objetivos>();
 
-	  display = EditorGUILayout.ObjectField("Display de datos:", display, typeof(DisplayDatos), true) as DisplayDatos;
-
-	  if (display != null) {
-		 Arbol_Estados arbol_estados = display.Arbol_Estados;
+	  if (generador_mdp != null || generador_jugadores != null || generador_objetivos != null) {
+		 Arbol_Estados arbol_estados = generador_mdp.arbol_estados;
+		 EditorGUILayout.IntField("Cantidad de waypoints: ", Navigation.Waypoints.Count);
+		 EditorGUILayout.IntField("Cantidad de estados: ", arbol_estados.estados.Count);
+		 cantidad_estados_rango = EditorGUILayout.IntField("Cantidad por rango: ", cantidad_estados_rango);
 
 		 int cantidad_estados = arbol_estados.estados.Count;
 		 List<Nodo_Estado> estados = arbol_estados.estados;
@@ -51,8 +55,6 @@ public class DisplayDatosEditor : EditorWindow {
 		 mostrar_estados = EditorGUILayout.Foldout(mostrar_estados, "Seleccion de estado");
 		 if (mostrar_estados) {
 			EditorGUILayout.BeginVertical();
-
-			cantidad_estados_rango = EditorGUILayout.IntField("Cantidad por rango: ", cantidad_estados_rango);
 
 			if (cantidad_estados > 0) {
 			   if (cantidad_estados_rango > 0) {
@@ -64,12 +66,47 @@ public class DisplayDatosEditor : EditorWindow {
 						menu_rango_estados[i / cantidad_estados_rango] = new string[Mathf.Min(cantidad_estados_rango, cantidad_estados - i)];
 						menu_rango[i / cantidad_estados_rango] = "Estados " + (i) + " - " + (i + cantidad_estados_rango - 1);
 					 }
-					 menu_rango_estados[i / cantidad_estados_rango][i % cantidad_estados_rango] = estados[i].ToString();
+					 menu_rango_estados[i / cantidad_estados_rango][i % cantidad_estados_rango] = "(" + i + ") " + estados[i].ToString();
 				  }
 
-				  rango_estados_seleccionado = EditorGUILayout.Popup("Rango: ", rango_estados_seleccionado, menu_rango);
-				  estado_enrango_seleccionado = EditorGUILayout.Popup("Estado: ", estado_enrango_seleccionado, menu_rango_estados[rango_estados_seleccionado]);
+				  if (rango_estados_seleccionado < menu_rango.Length) {
+					 rango_estados_seleccionado = EditorGUILayout.Popup("Rango: ", rango_estados_seleccionado, menu_rango);
+				  }
+				  else {
+					 rango_estados_seleccionado = 0;
+				  }
+
+				  if (estado_enrango_seleccionado < menu_rango_estados[rango_estados_seleccionado].Length) {
+					 estado_enrango_seleccionado = EditorGUILayout.Popup("Estado: ", estado_enrango_seleccionado, menu_rango_estados[rango_estados_seleccionado]);
+				  }
+				  else {
+					 estado_enrango_seleccionado = 0;
+				  }
+
 				  estado_id_seleccionado = estados[rango_estados_seleccionado * cantidad_estados_rango + estado_enrango_seleccionado].id;
+
+				  Nodo_Estado estado = estados[estado_id_seleccionado];
+
+				  EditorGUILayout.Space();
+				  EditorGUILayout.LabelField("Informacion:");
+				  foreach (Jugador jugador in generador_jugadores.jugadores) {
+					 EditorGUILayout.LabelField(jugador.nombre + " en la posicion: " + Navigation.GetNearestNode(estado.estado_actual.posicion_jugadores[jugador.id]) + ".");
+				  }
+
+				  EditorGUILayout.Space();
+				  string cumplidos = "";
+				  foreach (int objetivo_id in estado.estado_actual.objetivos_cumplidos) {
+					 cumplidos += generador_objetivos.objetivos[objetivo_id].nombre + ", ";
+				  }
+
+				  EditorGUILayout.LabelField("Objetivos cumplidos: " + cumplidos);
+
+				  string no_cumplidos = "";
+				  foreach (int objetivo_id in estado.estado_actual.objetivos_no_cumplidos) {
+					 no_cumplidos += generador_objetivos.objetivos[objetivo_id].nombre + ", ";
+				  }
+
+				  EditorGUILayout.LabelField("Objetivos no cumplidos: " + no_cumplidos);
 			   }
 			   else {
 				  EditorGUILayout.LabelField("La cantidad de estados por rango debe estar entre 1 y la cantidad de estados.");
@@ -101,13 +138,17 @@ public class DisplayDatosEditor : EditorWindow {
 						menu_rango_estados[i / cantidad_estados_rango] = new string[Mathf.Min(cantidad_estados_rango, cantidad_estados_hijos - i)];
 						menu_rango[i / cantidad_estados_rango] = "Estados " + (i) + " - " + (i + cantidad_estados_rango - 1);
 					 }
-					 menu_rango_estados[i / cantidad_estados_rango][i % cantidad_estados_rango] = estados_hijos[i].ToString();
+					 menu_rango_estados[i / cantidad_estados_rango][i % cantidad_estados_rango] = "(" + i + ") " + estados_hijos[i].ToString();
 				  }
 
 				  rango_hijos_seleccionado = EditorGUILayout.Popup("Rango: ", rango_hijos_seleccionado, menu_rango);
 				  hijo_enrango_seleccionado = EditorGUILayout.Popup("Estado: ", hijo_enrango_seleccionado, menu_rango_estados[rango_hijos_seleccionado]);
 				  if (hijo_enrango_seleccionado != -1) {
 					 hijo_indice_seleccionado = rango_hijos_seleccionado * cantidad_estados_rango + hijo_enrango_seleccionado;
+
+					 Accion accion = estados[estado_id_seleccionado].acciones_hijos[hijo_indice_seleccionado];
+					 EditorGUILayout.LabelField("A traves de la accion " + "(" + accion.id + ")" + " [" + accion.origen + " => " + accion.destino + "]" + " de " + accion.jugador.nombre);
+
 					 if (GUILayout.Button("Seleccionar estado")) {
 						estado_id_seleccionado = estados_hijos[hijo_indice_seleccionado].id;
 						estado_enrango_seleccionado = estado_id_seleccionado % cantidad_estados_rango;
@@ -145,7 +186,7 @@ public class DisplayDatosEditor : EditorWindow {
 						menu_rango_estados[i / cantidad_estados_rango] = new string[Mathf.Min(cantidad_estados_rango, cantidad_estados_padres - i)];
 						menu_rango[i / cantidad_estados_rango] = "Estados " + (i) + " - " + (i + cantidad_estados_rango - 1);
 					 }
-					 menu_rango_estados[i / cantidad_estados_rango][i % cantidad_estados_rango] = estados_padres[i].ToString();
+					 menu_rango_estados[i / cantidad_estados_rango][i % cantidad_estados_rango] = "(" + i + ") " + estados_padres[i].ToString();
 				  }
 
 				  rango_padres_seleccionado = EditorGUILayout.Popup("Rango: ", rango_padres_seleccionado, menu_rango);
@@ -153,6 +194,10 @@ public class DisplayDatosEditor : EditorWindow {
 
 				  if (padre_enrango_seleccionado != -1) {
 					 padre_indice_seleccionado = rango_padres_seleccionado * cantidad_estados_rango + padre_enrango_seleccionado;
+
+					 Accion accion = estados[estado_id_seleccionado].acciones_padres[padre_indice_seleccionado];
+					 EditorGUILayout.LabelField("A traves de la accion " + "(" + accion.id + ")" + " [" + accion.origen + " => " + accion.destino + "]" + " de " + accion.jugador.nombre);
+
 					 if (GUILayout.Button("Seleccionar estado")) {
 						estado_id_seleccionado = estados_padres[padre_indice_seleccionado].id;
 						estado_enrango_seleccionado = estado_id_seleccionado % cantidad_estados_rango;
@@ -171,16 +216,7 @@ public class DisplayDatosEditor : EditorWindow {
 			EditorGUILayout.EndVertical();
 		 }
 
-		 if (estado_id_seleccionado >= 0 && estado_id_seleccionado < arbol_estados.estados.Count && hijo_indice_seleccionado >= 0 && hijo_indice_seleccionado < arbol_estados.estados[estado_id_seleccionado].estados_hijos.Count) {
-			Nodo_Estado estado = arbol_estados.estados[estado_id_seleccionado];
-			Nodo_Estado hijo = arbol_estados.estados[hijo_indice_seleccionado];
-			EditorGUILayout.LabelField(estado.acciones_hijos[hijo_indice_seleccionado].origen.name + " => " + estado.acciones_hijos[hijo_indice_seleccionado].destino.name);
-
-			Handles.color = Color.red;
-			Vector3 origen = estado.acciones_hijos[hijo_indice_seleccionado].origen.Position;
-			Vector3 destino = estado.acciones_hijos[hijo_indice_seleccionado].destino.Position;
-			Handles.ArrowCap(0, origen, Quaternion.LookRotation(destino - origen), Vector3.Distance(origen, destino));
-		 }
+		 EditorGUILayout.Space();
 	  }
    }
 
@@ -196,42 +232,75 @@ public class DisplayDatosEditor : EditorWindow {
    }
 
    void OnSceneGUI(SceneView sceneView) {
-	  if (display != null) {
-		 if (estado_id_seleccionado >= 0 && estado_id_seleccionado < display.Arbol_Estados.estados.Count && hijo_indice_seleccionado >= 0 && hijo_indice_seleccionado < display.Arbol_Estados.estados[estado_id_seleccionado].estados_hijos.Count) {
-			Nodo_Estado estado = display.Arbol_Estados.estados[estado_id_seleccionado];
-			Nodo_Estado hijo = display.Arbol_Estados.estados[hijo_indice_seleccionado];
+	  sceneView.antiAlias = 1;
+	  Vector3 origen, destino, centro;
+	  origen = destino = centro = Vector3.zero;
+
+	  Nodo_Estado estado = null;
+	  Nodo_Estado hijo = null;
+
+	  if (generador_mdp != null) {
+		 if (estado_id_seleccionado >= 0 && estado_id_seleccionado < generador_mdp.arbol_estados.estados.Count) {
+			estado = generador_mdp.arbol_estados.estados[estado_id_seleccionado];
+			if (hijo_indice_seleccionado >= 0 && hijo_indice_seleccionado < generador_mdp.arbol_estados.estados[estado_id_seleccionado].estados_hijos.Count) {
+			   hijo = generador_mdp.arbol_estados.estados[hijo_indice_seleccionado];
+			}
+		 }
+
+		 if (estado != null && hijo != null) {
 			EditorGUILayout.LabelField(estado.acciones_hijos[hijo_indice_seleccionado].origen.name + " => " + estado.acciones_hijos[hijo_indice_seleccionado].destino.name);
 
+			foreach (Jugador jugador in generador_jugadores.jugadores) {
+			   Handles.color = Color.Lerp(Color.blue, Color.green, jugador.id * 1f / generador_jugadores.jugadores.Count);
+			   foreach (Accion accion in estado.acciones_hijos_actor[jugador.id]) {
+				  if (accion != estado.acciones_hijos[hijo_indice_seleccionado]) {
+					 origen = accion.origen.Position;
+					 destino = accion.destino.Position;
+					 centro = (origen + destino) / 2;
+					 Handles.DrawWireArc(centro, Vector3.Cross(destino - origen, Vector3.down).normalized, origen - centro, 180, Vector3.Distance(origen, destino) / 2);
+				  }
+			   }
+			}
+
 			Handles.color = Color.red;
-			Vector3 origen = estado.acciones_hijos[hijo_indice_seleccionado].origen.Position;
-			Vector3 destino = estado.acciones_hijos[hijo_indice_seleccionado].destino.Position;
-			Vector3 centro = (origen + destino) / 2;
+			origen = estado.acciones_hijos[hijo_indice_seleccionado].origen.Position;
+			destino = estado.acciones_hijos[hijo_indice_seleccionado].destino.Position;
+			centro = (origen + destino) / 2;
 			Handles.DrawWireArc(centro, Vector3.Cross(destino - origen, Vector3.down).normalized, origen - centro, 180, Vector3.Distance(origen, destino) / 2);
 
-			Handles.color = Color.blue;
+			Handles.color = Color.red;
 			Handles.SphereCap(0, origen, Quaternion.identity, 1.5f);
-			Handles.color = Color.green;
+			Handles.color = Color.yellow;
 			Handles.SphereCap(0, destino, Quaternion.identity, 1.5f);
+		 }
 
-			Handles.color = Color.Lerp(Color.red, Color.yellow, 0.75f);
-			foreach (Accion accion in estado.acciones_hijos) {
-			   if (accion != estado.acciones_hijos[hijo_indice_seleccionado]) {
-				  origen = accion.origen.Position;
-				  destino = accion.destino.Position;
-				  centro = (origen + destino) / 2;
-				  Handles.DrawWireArc(centro, Vector3.Cross(destino - origen, Vector3.down).normalized, origen - centro, 180, Vector3.Distance(origen, destino) / 2);
-
-				  Handles.color = Color.Lerp(Color.blue, Color.yellow, 0.75f);
-				  Handles.SphereCap(0, origen, Quaternion.identity, 1);
-				  Handles.color = Color.Lerp(Color.green, Color.yellow, 0.75f);
-				  Handles.SphereCap(0, destino, Quaternion.identity, 1);
+		 if (estado != null) {
+			if (estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
+			   int i = 0;
+			   foreach (KeyValuePair<int, Vector3> posicion in estado.estado_actual.posicion_jugadores) {
+				  Handles.color = Color.Lerp(Color.blue, Color.green, i * 1f / estado.estado_actual.posicion_jugadores.Count);
+				  Handles.SphereCap(0, posicion.Value, Quaternion.identity, 0.75f);
+				  i++;
 			   }
 			}
 		 }
+
+		 sceneView.Repaint();
 	  }
 
 	  Handles.BeginGUI();
-
+	  if (generador_mdp != null) {
+		 if (estado != null && estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
+			foreach (KeyValuePair<int, Vector3> posicion in estado.estado_actual.posicion_jugadores) {
+			   imprimirLabel(posicion.Value, generador_jugadores.jugadores[posicion.Key].nombre, sceneView.camera);
+			}
+		 }
+	  }
 	  Handles.EndGUI();
+   }
+
+   public void imprimirLabel(Vector3 posicion_mundo, string label, Camera camara) {
+	  Vector3 posicion_pantalla = camara.WorldToScreenPoint(posicion_mundo);
+	  GUI.Label(new Rect(posicion_pantalla.x, camara.pixelHeight - posicion_pantalla.y, label.Length * 10, 20), label);
    }
 }

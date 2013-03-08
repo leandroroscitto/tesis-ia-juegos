@@ -242,13 +242,13 @@ public class Generador_Mapa : MonoBehaviour {
 	  reordenarValorMayorMenor(ref x1, ref x2);
 	  reordenarValorMayorMenor(ref y1, ref y2);
 
-	  bool limite_ancho = (x1 >= 0) && (x2 < Mapa.cant_x);
-	  bool limite_largo = (y1 >= 0) && (y2 < Mapa.cant_y);
+	  bool limite_ancho = (x1 >= 0) && (x2 < Mapa.Mapa_Instancia.cant_x);
+	  bool limite_largo = (y1 >= 0) && (y2 < Mapa.Mapa_Instancia.cant_y);
 
 	  if (limite_ancho && limite_largo) {
 		 for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
-			   mapa.tiles[i + j * Mapa.cant_x] = zona;
+			   mapa.tiles[i + j * Mapa.Mapa_Instancia.cant_x] = zona;
 			}
 		 }
 	  }
@@ -264,13 +264,13 @@ public class Generador_Mapa : MonoBehaviour {
 	  reordenarValorMayorMenor(ref y1, ref y2);
 
 	  if (dibujar_en_mapa) {
-		 bool limite_ancho = (x1 >= 0) && (x2 < Mapa.cant_x);
-		 bool limite_largo = (y1 >= 0) && (y2 < Mapa.cant_y);
+		 bool limite_ancho = (x1 >= 0) && (x2 < Mapa.Mapa_Instancia.cant_x);
+		 bool limite_largo = (y1 >= 0) && (y2 < Mapa.Mapa_Instancia.cant_y);
 
 		 if (limite_ancho && limite_largo) {
 			for (int i = x1; i <= x2; i++) {
 			   for (int j = y1; j <= y2; j++) {
-				  mapa.tiles[i + j * Mapa.cant_x] = zona;
+				  mapa.tiles[i + j * Mapa.Mapa_Instancia.cant_x] = zona;
 			   }
 			}
 		 }
@@ -304,13 +304,13 @@ public class Generador_Mapa : MonoBehaviour {
 	  reordenarValorMayorMenor(ref x1, ref x2);
 	  reordenarValorMayorMenor(ref y1, ref y2);
 
-	  bool limite_ancho = (x1 >= 0) && (x2 < Mapa.cant_x);
-	  bool limite_largo = (y1 >= 0) && (y2 < Mapa.cant_y);
+	  bool limite_ancho = (x1 >= 0) && (x2 < Mapa.Mapa_Instancia.cant_x);
+	  bool limite_largo = (y1 >= 0) && (y2 < Mapa.Mapa_Instancia.cant_y);
 
 	  if (limite_ancho && limite_largo) {
 		 for (int i = x1; i <= x2; i++) {
 			for (int j = y1; j <= y2; j++) {
-			   mapa.tiles[i + j * Mapa.cant_x] = zona;
+			   mapa.tiles[i + j * Mapa.Mapa_Instancia.cant_x] = zona;
 			}
 		 }
 	  }
@@ -319,10 +319,10 @@ public class Generador_Mapa : MonoBehaviour {
    // Generacion
    public void generarParedes() {
 	  paredes.Clear();
-	  for (int i = 0; i < Mapa.cant_x; i++) {
+	  for (int i = 0; i < Mapa.Mapa_Instancia.cant_x; i++) {
 		 int base_j = -1;
-		 for (int j = 0; j < Mapa.cant_y; j++) {
-			if (mapa.tiles[i + j * Mapa.cant_x].transitable) {
+		 for (int j = 0; j < Mapa.Mapa_Instancia.cant_y; j++) {
+			if (mapa.tiles[i + j * Mapa.Mapa_Instancia.cant_x].transitable) {
 			   if (base_j != -1) {
 				  if ((j - 1) - base_j > 2) {
 					 paredes.Add(new Pared(i, base_j, i, (base_j + (j - 1)) / 2));
@@ -342,12 +342,12 @@ public class Generador_Mapa : MonoBehaviour {
 		 }
 
 		 if (base_j != -1) {
-			if (Mapa.cant_y - 1 - base_j > 2) {
-			   paredes.Add(new Pared(i, base_j, i, (base_j + (Mapa.cant_y - 1)) / 2));
-			   paredes.Add(new Pared(i, (base_j + (Mapa.cant_y - 1)) / 2 + 1, i, Mapa.cant_y - 1));
+			if (Mapa.Mapa_Instancia.cant_y - 1 - base_j > 2) {
+			   paredes.Add(new Pared(i, base_j, i, (base_j + (Mapa.Mapa_Instancia.cant_y - 1)) / 2));
+			   paredes.Add(new Pared(i, (base_j + (Mapa.Mapa_Instancia.cant_y - 1)) / 2 + 1, i, Mapa.Mapa_Instancia.cant_y - 1));
 			}
 			else {
-			   paredes.Add(new Pared(i, base_j, i, Mapa.cant_y - 1));
+			   paredes.Add(new Pared(i, base_j, i, Mapa.Mapa_Instancia.cant_y - 1));
 			}
 		 }
 	  }
@@ -358,7 +358,7 @@ public class Generador_Mapa : MonoBehaviour {
 		 piso_objeto = GameObject.CreatePrimitive(PrimitiveType.Cube);
 	  }
 	  piso_objeto.name = "Piso";
-	  piso_material.mainTextureScale = Vector2.right * mapa.tamano_tile.x * Mapa.cant_x * 1.25f + Vector2.up * mapa.tamano_tile.z * Mapa.cant_y * 1.25f;
+	  piso_material.mainTextureScale = Vector2.right * mapa.tamano_tile.x * Mapa.Mapa_Instancia.cant_x * 1.25f + Vector2.up * mapa.tamano_tile.z * Mapa.Mapa_Instancia.cant_y * 1.25f;
 	  piso_material.mainTextureOffset = Vector2.right * (1.0f - (piso_material.mainTextureScale.x % 10) / 10) + Vector2.up * (1.0f - (piso_material.mainTextureScale.y % 10) / 10);
 	  piso_material.SetTextureScale("_BumpMap", piso_material.mainTextureScale);
 	  piso_material.SetTextureOffset("_BumpMap", piso_material.mainTextureOffset);
@@ -376,7 +376,7 @@ public class Generador_Mapa : MonoBehaviour {
 		 cubo.renderer.sharedMaterial = mesh_material;
 		 float tamano_y = Random.Range(2f, mapa.tamano_tile.y);
 		 cubo.transform.localScale = Vector3.right * pared.ancho * mapa.tamano_tile.x + Vector3.up * tamano_y + Vector3.forward * pared.largo * mapa.tamano_tile.z;
-		 cubo.transform.position = Vector3.up * (tamano_y / 2f + 0.5f) + Vector3.right * mapa.tamano_tile.x * ((pared.x1 + pared.x2) / 2f - (Mapa.cant_x - 1) / 2f) + Vector3.forward * mapa.tamano_tile.z * ((pared.y1 + pared.y2) / 2f - (Mapa.cant_y - 1) / 2f);
+		 cubo.transform.position = Vector3.up * (tamano_y / 2f + 0.5f) + Vector3.right * mapa.tamano_tile.x * ((pared.x1 + pared.x2) / 2f - (Mapa.Mapa_Instancia.cant_x - 1) / 2f) + Vector3.forward * mapa.tamano_tile.z * ((pared.y1 + pared.y2) / 2f - (Mapa.Mapa_Instancia.cant_y - 1) / 2f);
 		 cubo.layer = mascara / 32;
 	  }
 
@@ -391,7 +391,7 @@ public class Generador_Mapa : MonoBehaviour {
 
 	  salida.Write(' ');
 	  salida.Write(' ');
-	  for (int i = 0; i < Mapa.cant_x; i++) {
+	  for (int i = 0; i < Mapa.Mapa_Instancia.cant_x; i++) {
 		 salida.Write(' ');
 		 salida.Write(i % 10);
 	  }
@@ -399,9 +399,9 @@ public class Generador_Mapa : MonoBehaviour {
 	  salida.Write(' ');
 	  salida.Write(0);
 
-	  for (int j = 0; j < Mapa.cant_y; j++) {
-		 for (int i = 0; i < Mapa.cant_x; i++) {
-			salida.Write(" " + mapa.tiles[i + j * Mapa.cant_x].representacion2D);
+	  for (int j = 0; j < Mapa.Mapa_Instancia.cant_y; j++) {
+		 for (int i = 0; i < Mapa.Mapa_Instancia.cant_x; i++) {
+			salida.Write(" " + mapa.tiles[i + j * Mapa.Mapa_Instancia.cant_x].representacion2D);
 		 }
 		 salida.WriteLine();
 		 salida.Write(' ');
@@ -415,10 +415,10 @@ public class Generador_Mapa : MonoBehaviour {
 	  VisitadorHabitacion vhab = new VisitadorHabitacion(this, parametros_mapa);
 	  VisitadorConexion vcon = new VisitadorConexion(this, parametros_mapa.conexiones_extras, vhab);
 
-	  BSPTree arbol = new BSPTree(0, 0, Mapa.cant_x, Mapa.cant_y);
+	  BSPTree arbol = new BSPTree(0, 0, Mapa.Mapa_Instancia.cant_x, Mapa.Mapa_Instancia.cant_y);
 	  arbol.dividirArbolRecursivo(parametros_mapa.recursion, parametros_mapa.max_hab_tam, parametros_mapa.max_hab_tam, parametros_mapa.max_prop_h, parametros_mapa.max_prop_v);
 
-	  rellenarRectangulo(0, 0, Mapa.cant_x - 1, Mapa.cant_y - 1, tile_pared);
+	  rellenarRectangulo(0, 0, Mapa.Mapa_Instancia.cant_x - 1, Mapa.Mapa_Instancia.cant_y - 1, tile_pared);
 
 	  arbol.recorrerOrdenPorNivelInverso(vhab);
 	  arbol.recorrerOrdenPorNivelInverso(vcon);
@@ -428,8 +428,10 @@ public class Generador_Mapa : MonoBehaviour {
    }
 
    public void borrar() {
-	  while (mesh_objeto.transform.childCount > 0) {
-		 DestroyImmediate(mesh_objeto.transform.GetChild(0).gameObject);
+	  if (mesh_objeto != null) {
+		 while (mesh_objeto.transform.childCount > 0) {
+			DestroyImmediate(mesh_objeto.transform.GetChild(0).gameObject);
+		 }
 	  }
 
 	  DestroyImmediate(mesh_objeto);
