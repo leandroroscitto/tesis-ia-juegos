@@ -11,6 +11,8 @@ public class VentanaArbolEstado : EditorWindow {
    private Generador_Jugadores generador_jugadores;
    private Generador_Objetivos generador_objetivos;
 
+   private bool mostrar_gizmos = true;
+
    private int cantidad_estados_rango = 10;
 
    private bool mostrar_estados = true;
@@ -33,10 +35,6 @@ public class VentanaArbolEstado : EditorWindow {
 	  ventana = EditorWindow.GetWindow<VentanaArbolEstado>("A. de Estados");
    }
 
-   void Update() {
-
-   }
-
    void OnGUI() {
 	  generador_mdp = GameObject.Find("Generadores").GetComponent<Generador_MDP>();
 	  generador_jugadores = GameObject.Find("Generadores").GetComponent<Generador_Jugadores>();
@@ -44,6 +42,9 @@ public class VentanaArbolEstado : EditorWindow {
 
 	  if (generador_mdp != null || generador_jugadores != null || generador_objetivos != null) {
 		 Arbol_Estados arbol_estados = generador_mdp.arbol_estados;
+
+		 mostrar_gizmos = EditorGUILayout.Toggle("Mostrar Gizmos: ", mostrar_gizmos);
+
 		 EditorGUILayout.IntField("Cantidad de waypoints: ", Navigation.Waypoints.Count);
 		 EditorGUILayout.IntField("Cantidad de estados: ", arbol_estados.estados.Count);
 		 cantidad_estados_rango = EditorGUILayout.IntField("Cantidad por rango: ", cantidad_estados_rango);
@@ -51,7 +52,7 @@ public class VentanaArbolEstado : EditorWindow {
 		 int cantidad_estados = arbol_estados.estados.Count;
 		 List<Nodo_Estado> estados = arbol_estados.estados;
 
-		 EditorGUILayout.Space();
+		 EditorGUILayout.Separator();
 		 mostrar_estados = EditorGUILayout.Foldout(mostrar_estados, "Seleccion de estado");
 		 if (mostrar_estados) {
 			EditorGUILayout.BeginVertical();
@@ -99,14 +100,14 @@ public class VentanaArbolEstado : EditorWindow {
 					 cumplidos += generador_objetivos.objetivos[objetivo_id].nombre + ", ";
 				  }
 
-				  EditorGUILayout.LabelField("Objetivos cumplidos: " + cumplidos);
+				  EditorGUILayout.LabelField("Objetivos cumplidos: ", cumplidos);
 
 				  string no_cumplidos = "";
 				  foreach (int objetivo_id in estado.estado_actual.objetivos_no_cumplidos) {
 					 no_cumplidos += generador_objetivos.objetivos[objetivo_id].nombre + ", ";
 				  }
 
-				  EditorGUILayout.LabelField("Objetivos no cumplidos: " + no_cumplidos);
+				  EditorGUILayout.LabelField("Objetivos no cumplidos: ", no_cumplidos);
 			   }
 			   else {
 				  EditorGUILayout.LabelField("La cantidad de estados por rango debe estar entre 1 y la cantidad de estados.");
@@ -122,7 +123,7 @@ public class VentanaArbolEstado : EditorWindow {
 		 int cantidad_estados_hijos = estados[estado_id_seleccionado].estados_hijos.Count;
 		 List<Nodo_Estado> estados_hijos = estados[estado_id_seleccionado].estados_hijos;
 
-		 EditorGUILayout.Space();
+		 EditorGUILayout.Separator();
 		 mostrar_hijos = EditorGUILayout.Foldout(mostrar_hijos, "Seleccion de hijo");
 		 if (mostrar_hijos) {
 			EditorGUILayout.BeginVertical();
@@ -170,7 +171,7 @@ public class VentanaArbolEstado : EditorWindow {
 		 int cantidad_estados_padres = estados[estado_id_seleccionado].estados_padres.Count;
 		 List<Nodo_Estado> estados_padres = estados[estado_id_seleccionado].estados_padres;
 
-		 EditorGUILayout.Space();
+		 EditorGUILayout.Separator();
 		 mostrar_padres = EditorGUILayout.Foldout(mostrar_padres, "Seleccion de padre");
 		 if (mostrar_padres) {
 			EditorGUILayout.BeginVertical();
@@ -232,71 +233,72 @@ public class VentanaArbolEstado : EditorWindow {
    }
 
    void OnSceneGUI(SceneView sceneView) {
-	  sceneView.antiAlias = 1;
-	  Vector3 origen, destino, centro;
-	  origen = destino = centro = Vector3.zero;
+	  if (mostrar_gizmos) {
+		 Vector3 origen, destino, centro;
+		 origen = destino = centro = Vector3.zero;
 
-	  Nodo_Estado estado = null;
-	  Nodo_Estado hijo = null;
+		 Nodo_Estado estado = null;
+		 Nodo_Estado hijo = null;
 
-	  if (generador_mdp != null) {
-		 if (estado_id_seleccionado >= 0 && estado_id_seleccionado < generador_mdp.arbol_estados.estados.Count) {
-			estado = generador_mdp.arbol_estados.estados[estado_id_seleccionado];
-			if (hijo_indice_seleccionado >= 0 && hijo_indice_seleccionado < generador_mdp.arbol_estados.estados[estado_id_seleccionado].estados_hijos.Count) {
-			   hijo = generador_mdp.arbol_estados.estados[hijo_indice_seleccionado];
+		 if (generador_mdp != null) {
+			if (estado_id_seleccionado >= 0 && estado_id_seleccionado < generador_mdp.arbol_estados.estados.Count) {
+			   estado = generador_mdp.arbol_estados.estados[estado_id_seleccionado];
+			   if (hijo_indice_seleccionado >= 0 && hijo_indice_seleccionado < generador_mdp.arbol_estados.estados[estado_id_seleccionado].estados_hijos.Count) {
+				  hijo = generador_mdp.arbol_estados.estados[hijo_indice_seleccionado];
+			   }
 			}
-		 }
 
-		 if (estado != null && hijo != null) {
-			EditorGUILayout.LabelField(estado.acciones_hijos[hijo_indice_seleccionado].origen.name + " => " + estado.acciones_hijos[hijo_indice_seleccionado].destino.name);
+			if (estado != null && hijo != null) {
+			   EditorGUILayout.LabelField(estado.acciones_hijos[hijo_indice_seleccionado].origen.name + " => " + estado.acciones_hijos[hijo_indice_seleccionado].destino.name);
 
-			foreach (Jugador jugador in generador_jugadores.jugadores) {
-			   Handles.color = Color.Lerp(Color.blue, Color.green, jugador.id * 1f / generador_jugadores.jugadores.Count);
-			   foreach (Accion accion in estado.acciones_hijos_actor[jugador.id]) {
-				  if (accion != estado.acciones_hijos[hijo_indice_seleccionado]) {
-					 origen = accion.origen.Position;
-					 destino = accion.destino.Position;
-					 centro = (origen + destino) / 2;
-					 Handles.DrawWireArc(centro, Vector3.Cross(destino - origen, Vector3.down).normalized, origen - centro, 180, Vector3.Distance(origen, destino) / 2);
+			   foreach (Jugador jugador in generador_jugadores.jugadores) {
+				  Handles.color = Color.Lerp(Color.blue, Color.green, jugador.id * 1f / generador_jugadores.jugadores.Count);
+				  foreach (Accion accion in estado.acciones_hijos_actor[jugador.id]) {
+					 if (accion != estado.acciones_hijos[hijo_indice_seleccionado]) {
+						origen = accion.origen.Position;
+						destino = accion.destino.Position;
+						centro = (origen + destino) / 2;
+						Handles.DrawWireArc(centro, Vector3.Cross(destino - origen, Vector3.down).normalized, origen - centro, 180, Vector3.Distance(origen, destino) / 2);
+					 }
+				  }
+			   }
+
+			   Handles.color = Color.red;
+			   origen = estado.acciones_hijos[hijo_indice_seleccionado].origen.Position;
+			   destino = estado.acciones_hijos[hijo_indice_seleccionado].destino.Position;
+			   centro = (origen + destino) / 2;
+			   Handles.DrawWireArc(centro, Vector3.Cross(destino - origen, Vector3.down).normalized, origen - centro, 180, Vector3.Distance(origen, destino) / 2);
+
+			   Handles.color = Color.red;
+			   Handles.SphereCap(0, origen, Quaternion.identity, 1.5f);
+			   Handles.color = Color.yellow;
+			   Handles.SphereCap(0, destino, Quaternion.identity, 1.5f);
+			}
+
+			if (estado != null) {
+			   if (estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
+				  int i = 0;
+				  foreach (KeyValuePair<int, Vector3> posicion in estado.estado_actual.posicion_jugadores) {
+					 Handles.color = Color.Lerp(Color.blue, Color.green, i * 1f / estado.estado_actual.posicion_jugadores.Count);
+					 Handles.SphereCap(0, posicion.Value, Quaternion.identity, 0.75f);
+					 i++;
 				  }
 			   }
 			}
 
-			Handles.color = Color.red;
-			origen = estado.acciones_hijos[hijo_indice_seleccionado].origen.Position;
-			destino = estado.acciones_hijos[hijo_indice_seleccionado].destino.Position;
-			centro = (origen + destino) / 2;
-			Handles.DrawWireArc(centro, Vector3.Cross(destino - origen, Vector3.down).normalized, origen - centro, 180, Vector3.Distance(origen, destino) / 2);
-
-			Handles.color = Color.red;
-			Handles.SphereCap(0, origen, Quaternion.identity, 1.5f);
-			Handles.color = Color.yellow;
-			Handles.SphereCap(0, destino, Quaternion.identity, 1.5f);
+			sceneView.Repaint();
 		 }
 
-		 if (estado != null) {
-			if (estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
-			   int i = 0;
+		 Handles.BeginGUI();
+		 if (generador_mdp != null) {
+			if (estado != null && estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
 			   foreach (KeyValuePair<int, Vector3> posicion in estado.estado_actual.posicion_jugadores) {
-				  Handles.color = Color.Lerp(Color.blue, Color.green, i * 1f / estado.estado_actual.posicion_jugadores.Count);
-				  Handles.SphereCap(0, posicion.Value, Quaternion.identity, 0.75f);
-				  i++;
+				  imprimirLabel(posicion.Value, generador_jugadores.jugadores[posicion.Key].nombre, sceneView.camera);
 			   }
 			}
 		 }
-
-		 sceneView.Repaint();
+		 Handles.EndGUI();
 	  }
-
-	  Handles.BeginGUI();
-	  if (generador_mdp != null) {
-		 if (estado != null && estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
-			foreach (KeyValuePair<int, Vector3> posicion in estado.estado_actual.posicion_jugadores) {
-			   imprimirLabel(posicion.Value, generador_jugadores.jugadores[posicion.Key].nombre, sceneView.camera);
-			}
-		 }
-	  }
-	  Handles.EndGUI();
    }
 
    public void imprimirLabel(Vector3 posicion_mundo, string label, Camera camara) {

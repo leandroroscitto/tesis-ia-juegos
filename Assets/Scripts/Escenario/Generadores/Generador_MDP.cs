@@ -30,7 +30,7 @@ public class Generador_MDP : MonoBehaviour {
    // Generacion
    public void generar() {
 	  prepararEstados();
-	  //resolucion_mdp.resolverMDP();
+	  resolucion_mdp.resolverMDP();
    }
 
    public void borrar() {
