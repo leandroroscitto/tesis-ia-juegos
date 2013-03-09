@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using Random = UnityEngine.Random;
 using PathRuntime;
 
+[ExecuteInEditMode]
 public class Generador_Escenario : MonoBehaviour {
    public static float radio_cercania_waypoint = 2.5f;
 
@@ -79,6 +80,36 @@ public class Generador_Escenario : MonoBehaviour {
    public GameObject escenario_objeto;
    public GameObject generacion_prefab;
    public GameObject datos_objeto;
+
+   // Gizmos
+   void OnDrawGizmos() {
+	  if (generador_mapa != null && generador_mapa.mapa != null) {
+		 Mapa mapa = generador_mapa.mapa;
+		 Gizmos.color = Color.black;
+		 Gizmos.DrawCube(Vector3.right * (mapa.offsetx - mapa.ancho / 2 + 1) + Vector3.forward * (mapa.offsety - mapa.largo / 2 + 1) + Vector3.up * -1, Vector3.right * mapa.ancho + Vector3.forward * mapa.largo + Vector3.up * 2);
+
+		 Gizmos.color = Color.Lerp(Color.magenta, Color.black, 0.5f);
+		 foreach (Generador_Mapa.Habitacion habitacion in generador_mapa.habitaciones) {
+			Gizmos.DrawWireCube(Vector3.right * (mapa.offsetx - mapa.tamano_tile.x * (habitacion.x1 + habitacion.x2) / 2) + Vector3.forward * (mapa.offsety - mapa.tamano_tile.z * (habitacion.y1 + habitacion.y2) / 2) + Vector3.up, Vector3.right * habitacion.ancho * mapa.tamano_tile.x + Vector3.forward * habitacion.largo * mapa.tamano_tile.z + Vector3.up * 2);
+		 }
+
+		 Gizmos.color = Color.Lerp(Color.cyan, Color.black, 0.5f);
+		 foreach (Generador_Mapa.Conexion conexion in generador_mapa.conexiones_horizontales) {
+			Gizmos.DrawWireCube(Vector3.right * (mapa.offsetx - mapa.tamano_tile.x * (conexion.x1 + conexion.x2) / 2) + Vector3.forward * (mapa.offsety - mapa.tamano_tile.z * (conexion.y1 + conexion.y2) / 2) + Vector3.up, Vector3.right * conexion.ancho * mapa.tamano_tile.x + Vector3.forward * conexion.largo * mapa.tamano_tile.z + Vector3.up * 2);
+		 }
+
+		 foreach (Generador_Mapa.Conexion conexion in generador_mapa.conexiones_verticales) {
+			Gizmos.DrawWireCube(Vector3.right * (mapa.offsetx - mapa.tamano_tile.x * (conexion.x1 + conexion.x2) / 2) + Vector3.forward * (mapa.offsety - mapa.tamano_tile.z * (conexion.y1 + conexion.y2) / 2) + Vector3.up, Vector3.right * conexion.ancho * mapa.tamano_tile.x + Vector3.forward * conexion.largo * mapa.tamano_tile.z + Vector3.up * 2);
+		 }
+	  }
+
+	  if (generador_objetivos != null && generador_objetivos.objetivos != null) {
+		 foreach (Objetivo objetivo in generador_objetivos.objetivos) {
+			Gizmos.color = Color.white;
+			Gizmos.DrawSphere(objetivo.posicion, 1.25f);
+		 }
+	  }
+   }
 
    // Generacion
    private void determinarSeed() {
