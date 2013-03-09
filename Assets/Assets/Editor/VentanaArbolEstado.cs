@@ -40,7 +40,7 @@ public class VentanaArbolEstado : EditorWindow {
 	  generador_jugadores = GameObject.Find("Generadores").GetComponent<Generador_Jugadores>();
 	  generador_objetivos = GameObject.Find("Generadores").GetComponent<Generador_Objetivos>();
 
-	  if (generador_mdp != null || generador_jugadores != null || generador_objetivos != null) {
+	  if (generador_mdp != null && generador_jugadores != null && generador_objetivos != null && generador_mdp.arbol_estados != null && generador_mdp.arbol_estados.estados != null) {
 		 Arbol_Estados arbol_estados = generador_mdp.arbol_estados;
 
 		 mostrar_gizmos = EditorGUILayout.Toggle("Mostrar Gizmos: ", mostrar_gizmos);
@@ -240,7 +240,7 @@ public class VentanaArbolEstado : EditorWindow {
 		 Nodo_Estado estado = null;
 		 Nodo_Estado hijo = null;
 
-		 if (generador_mdp != null) {
+		 if (generador_mdp != null && generador_mdp.arbol_estados != null && generador_mdp.arbol_estados.estados != null) {
 			if (estado_id_seleccionado >= 0 && estado_id_seleccionado < generador_mdp.arbol_estados.estados.Count) {
 			   estado = generador_mdp.arbol_estados.estados[estado_id_seleccionado];
 			   if (hijo_indice_seleccionado >= 0 && hijo_indice_seleccionado < generador_mdp.arbol_estados.estados[estado_id_seleccionado].estados_hijos.Count) {
@@ -249,8 +249,6 @@ public class VentanaArbolEstado : EditorWindow {
 			}
 
 			if (estado != null && hijo != null) {
-			   EditorGUILayout.LabelField(estado.acciones_hijos[hijo_indice_seleccionado].origen.name + " => " + estado.acciones_hijos[hijo_indice_seleccionado].destino.name);
-
 			   foreach (Jugador jugador in generador_jugadores.jugadores) {
 				  Handles.color = Color.Lerp(Color.blue, Color.green, jugador.id * 1f / generador_jugadores.jugadores.Count);
 				  foreach (Accion accion in estado.acciones_hijos_actor[jugador.id]) {

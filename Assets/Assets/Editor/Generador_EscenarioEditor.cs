@@ -24,10 +24,20 @@ public class Generador_EscenarioEditor : Editor {
 		 ((Generador_Escenario)target).cargarDatos();
 	  }
 
-	  EditorUtility.SetDirty(target);
+	  //EditorUtility.SetDirty(target);
 	  if (VentanaArbolEstado.ventana != null) {
 		 EditorUtility.SetDirty(VentanaArbolEstado.ventana);
 		 VentanaArbolEstado.ventana.Repaint();
+	  }
+
+	  if (VentanaMDP.ventana != null) {
+		 EditorUtility.SetDirty(VentanaMDP.ventana);
+		 VentanaMDP.ventana.Repaint();
+	  }
+
+	  if (VentanaEscenario.ventana != null) {
+		 EditorUtility.SetDirty(VentanaEscenario.ventana);
+		 VentanaEscenario.ventana.Repaint();
 	  }
    }
 }

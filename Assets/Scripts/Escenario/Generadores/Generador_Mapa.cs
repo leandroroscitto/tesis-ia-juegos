@@ -135,22 +135,6 @@ public class Generador_Mapa : MonoBehaviour {
    public List<Vector2> intersecciones;
 
    // Operaciones
-   public void OnDrawGizmosSelected() {
-	  if (mapa != null) {
-		 if (conexiones_horizontales != null) {
-			foreach (Conexion conexion in conexiones_horizontales) {
-			   Gizmos.DrawLine(mapa.posicionRepresentacionAReal(new Vector2(conexion.x1, conexion.y1), 1.25f), mapa.posicionRepresentacionAReal(new Vector2(conexion.x2, conexion.y2), 1.25f));
-			}
-		 }
-
-		 if (conexiones_verticales != null) {
-			foreach (Conexion conexion in conexiones_verticales) {
-			   Gizmos.DrawLine(mapa.posicionRepresentacionAReal(new Vector2(conexion.x1, conexion.y1), 1.25f), mapa.posicionRepresentacionAReal(new Vector2(conexion.x2, conexion.y2), 1.25f));
-			}
-		 }
-	  }
-   }
-
    public void inicializarListas() {
 	  if (habitaciones == null) {
 		 habitaciones = new List<Habitacion>();

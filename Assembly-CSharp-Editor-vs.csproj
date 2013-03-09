@@ -47,6 +47,7 @@
   <ItemGroup>
     <Compile Include="Assets\Assets\Editor\Generador_EscenarioEditor.cs" />
     <Compile Include="Assets\Assets\Editor\VentanaArbolEstado.cs" />
+    <Compile Include="Assets\Assets\Editor\VentanaEscenario.cs" />
     <Compile Include="Assets\Assets\Editor\VentanaMDP.cs" />
     <Compile Include="Assets\Behave\Editor\BehaveAbout.cs" />
     <Compile Include="Assets\Behave\Editor\BehaveAssetEditor.cs" />
