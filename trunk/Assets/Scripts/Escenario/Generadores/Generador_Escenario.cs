@@ -164,7 +164,7 @@ public class Generador_Escenario : MonoBehaviour {
 	  if (generador_mdp == null) {
 		 generador_mdp = gameObject.AddComponent<Generador_MDP>();
 	  }
-	  generador_mdp.inicializar(generador_mapa.mapa, generador_jugadores.jugadores, generador_acciones.acciones, generador_objetivos.objetivos);
+	  generador_mdp.inicializar(generador_jugadores.jugadores, generador_acciones.acciones, generador_objetivos.objetivos);
    }
 
    public void generarEscenario() {
@@ -214,6 +214,7 @@ public class Generador_Escenario : MonoBehaviour {
 		 Serializador serializador = new Serializador();
 		 Objeto_Serializable datos = new Objeto_Serializable();
 		 datos.Resolucion_MDP = generador_mdp.resolucion_mdp;
+		 datos.Mapa = generador_mapa.mapa;
 
 		 serializador.Serializar("./Assets/Data/datos.bin", datos);
 

@@ -1,5 +1,6 @@
 using UnityEngine;
 using System;
+using System.Linq;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
 
@@ -14,8 +15,8 @@ public class Jugador : ISerializable {
    public char representacion;
    //public Vector2 posicion;
    public TControl control;
-   // <turno, accion>
-   public Dictionary<int, Accion> acciones;
+   // <tiempo, accion>
+   public SortedDictionary<float, Accion> acciones;
 
    private JugadorMB _jugadormb;
    public JugadorMB jugador_mb {
@@ -44,6 +45,7 @@ public class Jugador : ISerializable {
 	  }
    }
 
+   // Operaciones
    public Jugador() {
 
    }
@@ -53,16 +55,39 @@ public class Jugador : ISerializable {
 	  nombre = n;
 	  representacion = r;
 	  control = c;
-	  acciones = new Dictionary<int, Accion>();
+	  acciones = new SortedDictionary<float, Accion>();
 
 	  jugador_mb.jugador = this;
 	  posicion = p;
    }
 
-   public Accion RegistrarAccion(int turno, Accion accion) {
-	  acciones.Add(turno, accion);
+   // Acciones
+   public Accion registrarAccion(float tiempo, Accion accion) {
+	  if (acciones.Count == 0) {
+		 acciones.Add(tiempo, accion);
+	  }
+	  else {
+		 float ultimo_tiempo = acciones.Keys.Last<float>();
+		 Accion ultima_accion = acciones[ultimo_tiempo];
+		 Debug.Log(ultimo_tiempo);
+
+		 if (ultima_accion.mismaAccion(accion)) {
+			acciones.Remove(ultimo_tiempo);
+			acciones.Add(tiempo, ultima_accion);
+		 }
+		 else {
+			acciones.Add(tiempo, accion);
+		 }
+	  }
+
 	  return accion;
    }
+
+   public void removerAccion(float tiempo) {
+	  acciones.Remove(tiempo);
+   }
+
+
 
    public override string ToString() {
 	  return "Jugado_id: " + id + ", nombre: " + nombre + ", posicion: " + posicion;
@@ -75,7 +100,7 @@ public class Jugador : ISerializable {
 	  representacion = info.GetChar("Representacion");
 	  posicion = (Vector3)info.GetValue("Posicion", typeof(Vector3));
 	  control = (TControl)info.GetInt16("Control");
-	  acciones = info.GetValue("Acciones", typeof(Dictionary<int, Accion>)) as Dictionary<int, Accion>;
+	  acciones = info.GetValue("Acciones", typeof(SortedDictionary<float, Accion>)) as SortedDictionary<float, Accion>;
 
 	  jugador_mb.jugador = this;
    }
