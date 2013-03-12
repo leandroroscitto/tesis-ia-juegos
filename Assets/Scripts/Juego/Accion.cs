@@ -25,7 +25,7 @@ public class Accion : Accion_MDP, ISerializable {
 
    public bool mismaAccion(Accion accion) {
 	  if (accion != null) {
-		 return ((accion.jugador.id == jugador.id) && (accion.origen == origen) && (accion.destino == destino));
+		 return ((accion.origen == origen) && (accion.destino == destino));
 	  }
 	  else {
 		 return false;

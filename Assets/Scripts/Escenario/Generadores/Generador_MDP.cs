@@ -17,13 +17,13 @@ public class Generador_MDP : MonoBehaviour {
    public Arbol_Estados arbol_estados;
 
    // Operaciones
-   public void inicializar(Mapa mapa, List<Jugador> jugadores, List<Accion> acciones, List<Objetivo> objetivos) {
+   public void inicializar(List<Jugador> jugadores, List<Accion> acciones, List<Objetivo> objetivos) {
 	  if (mdp_objeto == null) {
 		 mdp_objeto = new GameObject("MDP");
 	  }
 	  mdp_objeto.transform.parent = GetComponent<Generador_Escenario>().escenario_objeto.transform;
 
-	  arbol_estados = new Arbol_Estados(mapa, jugadores, acciones, objetivos);
+	  arbol_estados = new Arbol_Estados(jugadores, acciones, objetivos);
 	  resolucion_mdp = new ResolucionMDP(arbol_estados);
    }
 
@@ -41,21 +41,20 @@ public class Generador_MDP : MonoBehaviour {
 	  DestroyImmediate(mdp_objeto);
    }
 
+   // ==========================
    // Generacion Arbol de Estado
    private Comparador_Arreglo_Vector3 comparador = new Comparador_Arreglo_Vector3();
 
    private Nodo_Estado nodo_estado_actual;
    private int cant_estados;
 
-   // <numero_objetivos_cumplidos, <posicion_playes, nodo_estado>>
-   private Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> estados_dict;
-
-   // <numero_objetivos_cumplidos, <posicion_playes, nodo_estado>>
+   // <numero_objetivos_cumplidos, <posicion_jugadores, nodo_estado>>
    private Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> frontera_dict;
    private Queue<Nodo_Estado> frontera;
 
+   // Generacion
    private void prepararEstados() {
-	  estados_dict = new Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>();
+	  arbol_estados.estados_dict = new Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>();
 	  arbol_estados.estados = new List<Nodo_Estado>();
 	  frontera_dict = new Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>();
 	  frontera = new Queue<Nodo_Estado>();
@@ -131,7 +130,7 @@ public class Generador_MDP : MonoBehaviour {
 			mostrarDebuging();
 		 }
 
-		 agregarEstadoDict(nodo_estado_actual, estados_dict);
+		 agregarEstadoDict(nodo_estado_actual, arbol_estados.estados_dict);
 		 arbol_estados.estados.Add(nodo_estado_actual);
 
 		 //yield return true;
@@ -148,6 +147,7 @@ public class Generador_MDP : MonoBehaviour {
 	  }
    }
 
+   // Acciones disponibles desde un estado
    private List<Accion> getAccionesDisponibles(Nodo_Estado estado) {
 	  Dictionary<int, Vector3> posiciones_jugadores = new Dictionary<int, Vector3>(estado.estado_actual.posicion_jugadores.Count);
 	  foreach (KeyValuePair<int, Vector3> posicion_jugador in estado.estado_actual.posicion_jugadores) {
@@ -164,6 +164,7 @@ public class Generador_MDP : MonoBehaviour {
 	  return acciones_disponibles;
    }
 
+   // Operaciones sobre los diccionarios de estados
    private void agregarEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict) {
 	  int cant_obj_cumplidos = estado.estado_actual.objetivos_cumplidos.Count;
 	  Vector3[] posicion_jugadores = new Vector3[estado.estado_actual.posicion_jugadores.Count];
@@ -226,6 +227,7 @@ public class Generador_MDP : MonoBehaviour {
 	  return false;
    }
 
+   // Manipulacion de estados
    private void modificarEstado(Estado estado, Jugador jugador, Vector3 nueva_posicion, out Vector3 antigua_posicion, out List<int> objetivos_modificados) {
 	  antigua_posicion = estado.posicion_jugadores[jugador.id];
 	  estado.posicion_jugadores[jugador.id] = nueva_posicion;
@@ -240,13 +242,14 @@ public class Generador_MDP : MonoBehaviour {
 	  }
    }
 
+   // Utilidades
    private Nodo_Estado buscarProximoEstado(Nodo_Estado estado, Jugador jugador, Vector3 nueva_posicion, out bool en_visitado, out bool en_frontera) {
 	  Vector3 posicion_actual;
 	  List<int> objetivos_modificados;
 	  modificarEstado(estado.estado_actual, jugador, nueva_posicion, out posicion_actual, out objetivos_modificados);
 	  if (!nueva_posicion.Equals(posicion_actual)) {
 		 Nodo_Estado nodo_estado;
-		 if (getEstadoDict(estado, estados_dict, out nodo_estado)) {
+		 if (getEstadoDict(estado, arbol_estados.estados_dict, out nodo_estado)) {
 			restaurarEstado(estado.estado_actual, jugador, posicion_actual, objetivos_modificados);
 			en_visitado = true;
 			en_frontera = false;

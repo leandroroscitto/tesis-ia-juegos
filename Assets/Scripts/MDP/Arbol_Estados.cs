@@ -6,68 +6,88 @@ using UnityEngine;
 using PathRuntime;
 
 [Serializable]
-public class Comparador_Arreglo_Vector3 : IEqualityComparer<Vector3[]> {
-
-   public bool Equals(Vector3[] x, Vector3[] y) {
-	  if (x.Length == y.Length) {
-		 for (int i = 0; i < x.Length; i++) {
-			if (!x[i].Equals(y[i]))
-			   return false;
-		 }
-		 return true;
-	  }
-	  else
-		 return false;
-   }
-
-   public int GetHashCode(Vector3[] obj) {
-	  int dimensiones = Mapa.Mapa_Instancia.cant_x * Mapa.Mapa_Instancia.cant_y;
-	  int valor = 0;
-	  for (int i = 0; i < obj.Length; i++) {
-		 valor += obj[i].GetHashCode() * (int)Math.Pow(Math.Floor(Math.Log10(dimensiones)), i);
-	  }
-	  return valor;
-   }
-}
-
-[Serializable]
 public class Arbol_Estados : ISerializable {
-   public Mapa mapa_base;
-
+   // Listas
    public List<Objetivo> objetivos;
    public List<Jugador> jugadores;
    public List<Accion> acciones;
 
+   // Estados
    public Nodo_Estado nodo_estado_inicial;
-
    public List<Nodo_Estado> estados;
 
+   // <numero_objetivos_cumplidos, <posicion_jugadores, nodo_estado>>
+   public Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> estados_dict;
+
+   // Operaciones
    public Arbol_Estados() {
    }
 
-   public Arbol_Estados(Mapa eb, List<Jugador> jugs, List<Accion> accs, List<Objetivo> objs) {
-	  mapa_base = eb;
+   public Arbol_Estados(List<Jugador> jugs, List<Accion> accs, List<Objetivo> objs) {
 	  acciones = accs;
 	  objetivos = objs;
 	  jugadores = jugs;
    }
 
+   // Utilidades
+   public Nodo_Estado getEstadoActual(Vector3[] posicion_jugadores, HashSet<int> objetivos_cumplidos, HashSet<int> objetivos_no_cumplidos) {
+	  Estado estado_buscado = new Estado();
+	  Dictionary<int, Vector3> posicion_jugadores_waypoints = new Dictionary<int, Vector3>(posicion_jugadores.Length);
+	  for (int i = 0; i < posicion_jugadores.Length; i++) {
+		 posicion_jugadores_waypoints.Add(i, Navigation.GetNearestNode(posicion_jugadores[i]).Position);
+	  }
+
+	  estado_buscado.posicion_jugadores = posicion_jugadores_waypoints;
+	  estado_buscado.objetivos_cumplidos = objetivos_cumplidos;
+	  estado_buscado.objetivos_no_cumplidos = objetivos_no_cumplidos;
+
+	  Nodo_Estado nodo_buscado = null;
+	  if (getEstadoDict(estado_buscado, out nodo_buscado)) {
+		 return nodo_buscado;
+	  }
+	  else {
+		 return null;
+	  }
+   }
+
+   private bool getEstadoDict(Estado estado, out Nodo_Estado nodo_estado_resultado) {
+	  int cant_obj_cumplidos = estado.objetivos_cumplidos.Count;
+	  Vector3[] posicion_jugadores = new Vector3[estado.posicion_jugadores.Count];
+	  estado.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
+
+	  Dictionary<Vector3[], List<Nodo_Estado>> PosJugador_Estados;
+	  if (estados_dict.TryGetValue(cant_obj_cumplidos, out PosJugador_Estados)) {
+		 List<Nodo_Estado> Lista_Estados;
+		 if (PosJugador_Estados.TryGetValue(posicion_jugadores, out Lista_Estados)) {
+			foreach (Nodo_Estado nodo_estado in Lista_Estados) {
+			   if (nodo_estado.estado_actual.mismoEstado(estado)) {
+				  nodo_estado_resultado = nodo_estado;
+				  return true;
+			   }
+			}
+		 }
+	  }
+
+	  nodo_estado_resultado = null;
+	  return false;
+   }
+
    // Serializacion
    public Arbol_Estados(SerializationInfo info, StreamingContext ctxt) {
-		 mapa_base = info.GetValue("Escenario_Base", typeof(Mapa)) as Mapa;
-		 objetivos = info.GetValue("Objectivos", typeof(List<Objetivo>)) as List<Objetivo>;
-		 jugadores = info.GetValue("Jugadores", typeof(List<Jugador>)) as List<Jugador>;
-		 acciones = info.GetValue("Acciones", typeof(List<Accion>)) as List<Accion>;
-		 estados = info.GetValue("Estados", typeof(List<Nodo_Estado>)) as List<Nodo_Estado>;
-		 nodo_estado_inicial = info.GetValue("Nodo_Estado_Inicial", typeof(Nodo_Estado)) as Nodo_Estado;
+	  objetivos = info.GetValue("Objectivos", typeof(List<Objetivo>)) as List<Objetivo>;
+	  jugadores = info.GetValue("Jugadores", typeof(List<Jugador>)) as List<Jugador>;
+	  acciones = info.GetValue("Acciones", typeof(List<Accion>)) as List<Accion>;
+	  estados = info.GetValue("Estados", typeof(List<Nodo_Estado>)) as List<Nodo_Estado>;
+	  nodo_estado_inicial = info.GetValue("Nodo_Estado_Inicial", typeof(Nodo_Estado)) as Nodo_Estado;
+	  estados_dict = info.GetValue("Diccionario_Estados", typeof(Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>)) as Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>;
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
-	  info.AddValue("Escenario_Base", mapa_base);
 	  info.AddValue("Objectivos", objetivos);
 	  info.AddValue("Jugadores", jugadores);
 	  info.AddValue("Acciones", acciones);
 	  info.AddValue("Estados", estados);
 	  info.AddValue("Nodo_Estado_Inicial", nodo_estado_inicial);
+	  info.AddValue("Diccionario_Estados", estados_dict);
    }
 }
