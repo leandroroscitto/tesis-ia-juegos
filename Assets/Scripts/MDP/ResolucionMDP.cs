@@ -7,6 +7,10 @@ using UnityEngine;
 public class ResolucionMDP : ISerializable {
    [Serializable]
    public class TransicionJuego : Transicion_MDP<Nodo_Estado, Accion>, ISerializable {
+	  public TransicionJuego() {
+
+	  }
+
 	  public override float getValor(Accion a, Nodo_Estado s, Nodo_Estado sp) {
 		 if (s.estados_hijos != null) {
 			float probabilidad_base = s.probabilidadHijoAccion(sp, a);
@@ -20,6 +24,10 @@ public class ResolucionMDP : ISerializable {
 	  }
 
 	  // Serializacion
+	  public TransicionJuego(SerializationInfo info, StreamingContext ctxt) {
+
+	  }
+
 	  public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 
 	  }
@@ -28,6 +36,10 @@ public class ResolucionMDP : ISerializable {
    [Serializable]
    public class RecompensaJuego : Recompensa_MDP<Nodo_Estado, Objetivo>, ISerializable {
 	  List<Objetivo> objetivos;
+
+	  public RecompensaJuego() {
+
+	  }
 
 	  public RecompensaJuego(List<Objetivo> objs)
 		 : base() {
@@ -70,6 +82,7 @@ public class ResolucionMDP : ISerializable {
 	  public RecompensaJuego(SerializationInfo info, StreamingContext ctxt) {
 		 objetivos = info.GetValue("Objetivos", typeof(List<Objetivo>)) as List<Objetivo>;
 	  }
+
 	  public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 		 info.AddValue("Objetivos", objetivos);
 	  }

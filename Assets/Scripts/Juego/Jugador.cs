@@ -100,7 +100,7 @@ public class Jugador : ISerializable {
 	  representacion = info.GetChar("Representacion");
 	  posicion = (Vector3)info.GetValue("Posicion", typeof(Vector3));
 	  control = (TControl)info.GetInt16("Control");
-	  acciones = info.GetValue("Acciones", typeof(SortedDictionary<float, Accion>)) as SortedDictionary<float, Accion>;
+	  acciones = new SortedDictionary<float,Accion>();
 
 	  jugador_mb.jugador = this;
    }
@@ -111,6 +111,5 @@ public class Jugador : ISerializable {
 	  info.AddValue("Representacion", representacion);
 	  info.AddValue("Posicion", posicion);
 	  info.AddValue("Control", control);
-	  info.AddValue("Acciones", acciones);
    }
 }

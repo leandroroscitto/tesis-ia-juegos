@@ -43,7 +43,7 @@ public class Generador_MDP : MonoBehaviour {
 
    // ==========================
    // Generacion Arbol de Estado
-   private Comparador_Arreglo_Vector3 comparador = new Comparador_Arreglo_Vector3();
+   private static Comparador_Arreglo_Vector3 comparador = new Comparador_Arreglo_Vector3();
 
    private Nodo_Estado nodo_estado_actual;
    private int cant_estados;
@@ -165,7 +165,7 @@ public class Generador_MDP : MonoBehaviour {
    }
 
    // Operaciones sobre los diccionarios de estados
-   private void agregarEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict) {
+   public static void agregarEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict) {
 	  int cant_obj_cumplidos = estado.estado_actual.objetivos_cumplidos.Count;
 	  Vector3[] posicion_jugadores = new Vector3[estado.estado_actual.posicion_jugadores.Count];
 	  estado.estado_actual.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
@@ -191,7 +191,7 @@ public class Generador_MDP : MonoBehaviour {
 	  }
    }
 
-   private void removerEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict) {
+   public static void removerEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict) {
 	  int cant_obj_cumplidos = estado.estado_actual.objetivos_cumplidos.Count;
 	  Vector3[] posicion_jugadores = new Vector3[estado.estado_actual.posicion_jugadores.Count];
 	  estado.estado_actual.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
@@ -205,7 +205,7 @@ public class Generador_MDP : MonoBehaviour {
 	  }
    }
 
-   private bool getEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict, out Nodo_Estado nodo_estado_resultado) {
+   public static bool getEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict, out Nodo_Estado nodo_estado_resultado) {
 	  int cant_obj_cumplidos = estado.estado_actual.objetivos_cumplidos.Count;
 	  Vector3[] posicion_jugadores = new Vector3[estado.estado_actual.posicion_jugadores.Count];
 	  estado.estado_actual.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);

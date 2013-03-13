@@ -45,16 +45,17 @@ public sealed class HashSetSurrogate<T> : ISerializationSurrogate {
 	  int i = 0;
 	  foreach (T objeto in hashset) {
 		 obj_aux[i] = objeto;
+		 i++;
 	  }
 	  info.AddValue("Elementos", obj_aux);
    }
 
    public object SetObjectData(object obj, SerializationInfo info, StreamingContext ctxt, ISurrogateSelector selector) {
 	  //HashSet<T> hashset = (HashSet<T>)obj;
-	  HashSet<T> hashset = new HashSet<T>();
 
 	  T[] obj_aux = (T[])info.GetValue("Elementos", typeof(T[]));
-	  hashset.UnionWith(obj_aux);
+	  HashSet<T> hashset = new HashSet<T>(obj_aux);
+
 	  return hashset;
    }
 }
@@ -65,7 +66,6 @@ public class Serializador {
    }
 
    public void Serializar(string nombre_archivo, Objeto_Serializable objeto) {
-	  //Stream stream = File.Open(nombre_archivo + ".zip", FileMode.Create);
 	  BinaryFormatter bFormatter = new BinaryFormatter();
 
 	  Ionic.Zip.ZipOutputStream zipstream = new Ionic.Zip.ZipOutputStream(nombre_archivo + ".zip");
@@ -79,17 +79,14 @@ public class Serializador {
 	  }
 	  catch (System.Exception excp) {
 		 zipstream.Close();
-		 //stream.Close();
 		 throw excp;
 	  }
 
 	  zipstream.Close();
-	  //stream.Close();
    }
 
    public Objeto_Serializable Deserializar(string nombre_archivo) {
 	  Objeto_Serializable objeto = new Objeto_Serializable();
-	  //Stream stream = File.Open(nombre_archivo+".zip", FileMode.Open);
 
 	  Ionic.Zip.ZipInputStream zipstream = new Ionic.Zip.ZipInputStream(nombre_archivo + ".zip");
 	  zipstream.GetNextEntry();
@@ -102,12 +99,10 @@ public class Serializador {
 	  }
 	  catch (System.Exception excp) {
 		 zipstream.Close();
-		 //stream.Close();
 		 throw excp;
 	  }
 
 	  zipstream.Close();
-	  //stream.Close();
 	  return objeto;
    }
 

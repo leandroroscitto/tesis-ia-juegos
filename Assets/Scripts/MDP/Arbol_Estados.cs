@@ -30,6 +30,13 @@ public class Arbol_Estados : ISerializable {
    }
 
    // Utilidades
+   public void generarEstadosDiccionario() {
+	  estados_dict = new Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>();
+	  foreach (Nodo_Estado estado in estados) {
+		 Generador_MDP.agregarEstadoDict(estado, estados_dict);
+	  }
+   }
+
    public Nodo_Estado getEstadoActual(Vector3[] posicion_jugadores, HashSet<int> objetivos_cumplidos, HashSet<int> objetivos_no_cumplidos) {
 	  Estado estado_buscado = new Estado();
 	  Dictionary<int, Vector3> posicion_jugadores_waypoints = new Dictionary<int, Vector3>(posicion_jugadores.Length);
@@ -79,7 +86,7 @@ public class Arbol_Estados : ISerializable {
 	  acciones = info.GetValue("Acciones", typeof(List<Accion>)) as List<Accion>;
 	  estados = info.GetValue("Estados", typeof(List<Nodo_Estado>)) as List<Nodo_Estado>;
 	  nodo_estado_inicial = info.GetValue("Nodo_Estado_Inicial", typeof(Nodo_Estado)) as Nodo_Estado;
-	  estados_dict = info.GetValue("Diccionario_Estados", typeof(Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>)) as Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>;
+	  //estados_dict = info.GetValue("Diccionario_Estados", typeof(Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>)) as Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>>;
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
@@ -88,6 +95,6 @@ public class Arbol_Estados : ISerializable {
 	  info.AddValue("Acciones", acciones);
 	  info.AddValue("Estados", estados);
 	  info.AddValue("Nodo_Estado_Inicial", nodo_estado_inicial);
-	  info.AddValue("Diccionario_Estados", estados_dict);
+	  //info.AddValue("Diccionario_Estados", estados_dict);
    }
 }
