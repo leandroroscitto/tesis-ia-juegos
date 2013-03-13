@@ -229,6 +229,7 @@ public class Generador_Escenario : MonoBehaviour {
 
 	  Serializador serializador = new Serializador();
 	  Objeto_Serializable datos = serializador.Deserializar("./Assets/Data/datos.bin");
+	  datos.Arbol_Estados.generarEstadosDiccionario();
 
 	  generador_mapa.mapa = datos.Mapa;
 	  generador_objetivos.objetivos = datos.Objetivos;

@@ -15,7 +15,7 @@ public class ObjetivoMB : MonoBehaviour {
 	  radar.DetectionRadius = r;
 	  radar.DetectDisabledVehicles = true;
 	  radar.LayersChecked = 1 << LayerMask.NameToLayer(layer);
-	  radar.OnDetected = OnDetected();
+	  //radar.OnDetected = OnDetected;
    }
 
    public System.Action<SteeringEvent<Radar>> OnDetected() {

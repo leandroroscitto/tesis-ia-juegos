@@ -6,7 +6,7 @@ using PathRuntime;
 using Random = UnityEngine.Random;
 
 [Serializable]
-public class Mapa {
+public class Mapa : ISerializable{
    public static Mapa Mapa_Instancia;
 
    // Atributos
@@ -60,6 +60,8 @@ public class Mapa {
 	  largo = tamano_tile.z * cant_y;
 	  offsetx = (ancho - tamano_tile.x) / 2;
 	  offsety = (largo - tamano_tile.z) / 2;
+
+	  Mapa_Instancia = this;
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {

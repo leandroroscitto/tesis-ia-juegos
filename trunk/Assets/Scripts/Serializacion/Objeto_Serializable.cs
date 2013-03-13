@@ -56,12 +56,12 @@ public class Objeto_Serializable : ISerializable {
    }
 
    public Objeto_Serializable(SerializationInfo info, StreamingContext ctxt) {
-	  _resolucionmdp = info.GetValue("Resolucion_MDP", typeof(ResolucionMDP)) as ResolucionMDP;
 	  _mapa = info.GetValue("Mapa", typeof(Mapa)) as Mapa;
+	  _resolucionmdp = info.GetValue("Resolucion_MDP", typeof(ResolucionMDP)) as ResolucionMDP;
    }
 
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
-	  info.AddValue("Resolucion_MDP", _resolucionmdp);
 	  info.AddValue("Mapa", _mapa);
+	  info.AddValue("Resolucion_MDP", _resolucionmdp);
    }
 }
