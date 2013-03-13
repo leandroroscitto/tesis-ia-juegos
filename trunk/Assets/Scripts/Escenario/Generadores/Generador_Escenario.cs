@@ -78,8 +78,7 @@ public class Generador_Escenario : MonoBehaviour {
 
    // Representacion
    public GameObject escenario_objeto;
-   public GameObject generacion_prefab;
-   public GameObject datos_objeto;
+   public GameObject juego_objeto;
 
    // Gizmos
    void OnDrawGizmos() {
@@ -176,6 +175,8 @@ public class Generador_Escenario : MonoBehaviour {
 	  generador_jugadores.generar(parametros_jugadores.numero_jugadores, parametros_jugadores.jugador, parametros_jugadores.companero, parametros_jugadores.camara);
 	  generador_acciones.generar();
 	  generador_mdp.generar();
+
+	  cargarJuego();
    }
 
    public void borrarEscenario() {
@@ -218,7 +219,7 @@ public class Generador_Escenario : MonoBehaviour {
 
 		 serializador.Serializar("./Assets/Data/datos.bin", datos);
 
-		 generacion_prefab = UnityEditor.PrefabUtility.CreatePrefab("Assets/Data/generacion.prefab", transform.parent.gameObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
+		 UnityEditor.PrefabUtility.CreatePrefab("Assets/Data/generacion.prefab", transform.parent.gameObject, UnityEditor.ReplacePrefabOptions.ConnectToPrefab);
 	  }
    }
 
@@ -237,5 +238,26 @@ public class Generador_Escenario : MonoBehaviour {
 	  generador_acciones.acciones = datos.Acciones;
 	  generador_mdp.resolucion_mdp = datos.Resolucion_MDP;
 	  generador_mdp.arbol_estados = datos.Arbol_Estados;
+
+	  cargarJuego();
+   }
+
+   // Juego
+   public void cargarJuego() {
+	  List<ObjetivoMB> objetivos = generador_objetivos.objetivos_mb;
+	  List<JugadorMB> jugadores = generador_jugadores.jugadores_mb;
+	  List<Accion> acciones = generador_acciones.acciones;
+	  Arbol_Estados arbol_estado = generador_mdp.arbol_estados;
+
+	  juego_objeto = GameObject.Find("Juego");
+	  if (juego_objeto == null) {
+		 juego_objeto = new GameObject("Juego");
+	  }
+	  else {
+		 if (juego_objeto.GetComponent<JuegoMB>() != null) {
+			DestroyImmediate(juego_objeto.GetComponent<JuegoMB>());
+		 }
+	  }
+	  juego_objeto.AddComponent<JuegoMB>().inicializar(objetivos, jugadores, acciones, arbol_estado);
    }
 }

@@ -3,6 +3,7 @@ using System;
 using System.Linq;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using PathRuntime;
 
 [Serializable]
 public class Jugador : ISerializable {
@@ -61,6 +62,10 @@ public class Jugador : ISerializable {
 	  posicion = p;
    }
 
+   public override string ToString() {
+	  return "Jugado_id: " + id + ", nombre: " + nombre + ", posicion: " + posicion;
+   }
+
    // Acciones
    public Accion registrarAccion(float tiempo, Accion accion) {
 	  if (acciones.Count == 0) {
@@ -69,13 +74,18 @@ public class Jugador : ISerializable {
 	  else {
 		 float ultimo_tiempo = acciones.Keys.Last<float>();
 		 Accion ultima_accion = acciones[ultimo_tiempo];
-		 Debug.Log(ultimo_tiempo);
 
 		 if (ultima_accion.mismaAccion(accion)) {
 			acciones.Remove(ultimo_tiempo);
 			acciones.Add(tiempo, ultima_accion);
 		 }
 		 else {
+			if (acciones.ContainsKey(tiempo)) {
+			   Debug.LogWarning(tiempo);
+			   Debug.LogWarning(tiempo + float.Epsilon);
+			   Debug.LogWarning(accion);
+			   Debug.LogWarning(acciones[tiempo]);
+			}
 			acciones.Add(tiempo, accion);
 		 }
 	  }
@@ -87,10 +97,29 @@ public class Jugador : ISerializable {
 	  acciones.Remove(tiempo);
    }
 
+   // Waypoint mas cercano a la posicion actual.
+   public Waypoint waypointMasCercano() {
+	  return Navigation.GetNearestNode(posicion);
+   }
 
-
-   public override string ToString() {
-	  return "Jugado_id: " + id + ", nombre: " + nombre + ", posicion: " + posicion;
+   // Waypoint mas cercano conectado al waypoint proporcionado.
+   public Waypoint waypointMasCercano(Waypoint waypoint_conectado) {
+	  Waypoint menor_waypoint = null;
+	  menor_waypoint = Navigation.GetNearestNode(posicion);
+	  if (waypoint_conectado.ConnectsTo(menor_waypoint) || waypoint_conectado == menor_waypoint) {
+		 return menor_waypoint;
+	  }
+	  else {
+		 float menor_distancia = float.MaxValue;
+		 foreach (Connection conexion in waypoint_conectado.Connections) {
+			float distancia = Vector3.Distance(posicion, conexion.To.Position);
+			if (distancia < menor_distancia) {
+			   menor_distancia = distancia;
+			   menor_waypoint = conexion.To;
+			}
+		 }
+		 return menor_waypoint;
+	  }
    }
 
    // Serializacion
@@ -100,7 +129,7 @@ public class Jugador : ISerializable {
 	  representacion = info.GetChar("Representacion");
 	  posicion = (Vector3)info.GetValue("Posicion", typeof(Vector3));
 	  control = (TControl)info.GetInt16("Control");
-	  acciones = new SortedDictionary<float,Accion>();
+	  acciones = new SortedDictionary<float, Accion>();
 
 	  jugador_mb.jugador = this;
    }

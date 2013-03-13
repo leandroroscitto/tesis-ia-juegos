@@ -73,6 +73,12 @@ public class Arbol_Estados : ISerializable {
 			   }
 			}
 		 }
+		 else {
+			Debug.LogWarning("No encontro por la posicion de jugadores.");
+		 }
+	  }
+	  else {
+		 Debug.LogWarning("No encontro cantidad de objetivos cumplidos.");
 	  }
 
 	  nodo_estado_resultado = null;
