@@ -37,7 +37,7 @@ public class Accion : Accion_MDP, ISerializable {
    }
 
    public override string ToString() {
-	  return "Accion_id: " + id + ", jugador: " + jugador.nombre + ", origen: " + origen + ", direccion: " + destino;
+	  return "ID: " + id + ", jugador: " + jugador.nombre + ", [" + origen + " => " + destino + "]";
    }
 
    // Serializacion
