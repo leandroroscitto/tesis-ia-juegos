@@ -25,6 +25,7 @@ public class JuegoMB : MonoBehaviour {
    // Estados
    [NonSerialized]
    public Nodo_Estado nodo_estado_actual;
+   public Nodo_Estado nodo_estado_previo;
    [NonSerialized]
    public Arbol_Estados arbol_estados;
 
@@ -89,6 +90,7 @@ public class JuegoMB : MonoBehaviour {
 
 	  arbol_estados = datos.Arbol_Estados;
 	  nodo_estado_actual = arbol_estados.nodo_estado_inicial;
+	  nodo_estado_previo = arbol_estados.nodo_estado_inicial;
    }
 
    void Update() {
@@ -114,24 +116,65 @@ public class JuegoMB : MonoBehaviour {
 		 }
 	  }
 
+	  nodo_estado_previo = nodo_estado_actual;
 	  nodo_estado_actual = arbol_estados.getEstadoActual(posicion_jugadores, objetivos_cumplidos, objetivos_no_cumplidos);
    }
 
    // Acciones
    private void registrarAccionesJugadores() {
-	  foreach (JugadorMB jugadormb in jugadores) {
-		 Waypoint waypoint_previo = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[jugadormb.jugador.id]);
-		 Waypoint waypoint_actual = jugadormb.jugador.waypointMasCercano();
-		 Waypoint waypoint_actual_conectado = jugadormb.jugador.waypointMasCercano(waypoint_previo);
+	  List<Accion> acciones_realizadas = new List<Accion>();
+	  if (nodo_estado_actual.id != nodo_estado_previo.id) {
+		 Queue<KeyValuePair<Nodo_Estado, List<Accion>>> cola_estados = new Queue<KeyValuePair<Nodo_Estado, List<Accion>>>();
+		 cola_estados.Enqueue(new KeyValuePair<Nodo_Estado, List<Accion>>(nodo_estado_previo, new List<Accion>()));
+		 KeyValuePair<Nodo_Estado, List<Accion>> nodo_estado_aux;
+		 do {
+			nodo_estado_aux = cola_estados.Dequeue();
+			for (int i = 0; i < nodo_estado_aux.Key.estados_hijos.Count; i++) {
+			   if (nodo_estado_aux.Key.estados_hijos[i].id == nodo_estado_actual.id) {
+				  Accion accion = nodo_estado_aux.Key.acciones_hijos[i];
+				  nodo_estado_aux = new KeyValuePair<Nodo_Estado, List<Accion>>(nodo_estado_aux.Key.estados_hijos[i], nodo_estado_aux.Value);
+				  nodo_estado_aux.Value.Add(accion);
+				  break;
+			   }
+			   else {
+				  List<Accion> acciones_padre = new List<Accion>(nodo_estado_aux.Value);
+				  acciones_padre.Add(nodo_estado_aux.Key.acciones_hijos[i]);
+				  cola_estados.Enqueue(new KeyValuePair<Nodo_Estado, List<Accion>>(nodo_estado_aux.Key.estados_hijos[i], acciones_padre));
+			   }
+			}
+		 } while (nodo_estado_aux.Key.id != nodo_estado_actual.id);
 
-		 if (waypoint_actual != waypoint_actual_conectado) {
-			jugadormb.jugador.registrarAccion(Time.time - Time.deltaTime / 2, acciones_dict[jugadormb.jugador.id][waypoint_previo][waypoint_actual_conectado]);
-			jugadormb.jugador.registrarAccion(Time.time, acciones_dict[jugadormb.jugador.id][waypoint_actual_conectado][waypoint_actual]);
-		 }
-		 else {
-			jugadormb.jugador.registrarAccion(Time.time, acciones_dict[jugadormb.jugador.id][waypoint_previo][waypoint_actual]);
+		 acciones_realizadas = nodo_estado_aux.Value;
+	  }
+	  else {
+		 // No hubo desplazamiento a otro estado.
+		 foreach (JugadorMB jugadormb in jugadores) {
+			Waypoint waypoint = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[jugadormb.jugador.id]);
+			acciones_realizadas.Add(acciones_dict[jugadormb.jugador.id][waypoint][waypoint]);
 		 }
 	  }
+
+	  int q = 0;
+	  foreach (Accion accion in acciones_realizadas) {
+		 jugadores[accion.actor_id].jugador.registrarAccion(Time.time - (acciones_realizadas.Count - q) * (Time.deltaTime / acciones_realizadas.Count), accion);
+		 q++;
+	  }
+
+	  /*
+		 foreach (JugadorMB jugadormb in jugadores) {
+			Waypoint waypoint_previo = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[jugadormb.jugador.id]);
+			Waypoint waypoint_actual = jugadormb.jugador.waypointMasCercano();
+			Waypoint waypoint_actual_conectado = jugadormb.jugador.waypointMasCercano(waypoint_previo);
+
+			if (waypoint_actual != waypoint_actual_conectado) {
+			   jugadormb.jugador.registrarAccion(Time.time - Time.deltaTime / 2, acciones_dict[jugadormb.jugador.id][waypoint_previo][waypoint_actual_conectado]);
+			   jugadormb.jugador.registrarAccion(Time.time, acciones_dict[jugadormb.jugador.id][waypoint_actual_conectado][waypoint_actual]);
+			}
+			else {
+			   jugadormb.jugador.registrarAccion(Time.time, acciones_dict[jugadormb.jugador.id][waypoint_previo][waypoint_actual]);
+			}
+		 }
+	   */
    }
 
    private void generarDiccionarioAcciones() {
