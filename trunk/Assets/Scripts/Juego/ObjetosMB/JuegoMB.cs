@@ -4,6 +4,8 @@ using System.Linq;
 using System.Linq.Expressions;
 using UnityEngine;
 using PathRuntime;
+using UnitySteer;
+using UnitySteer.Helpers;
 
 public class JuegoMB : MonoBehaviour {
    // Representacion
@@ -47,6 +49,15 @@ public class JuegoMB : MonoBehaviour {
 	  }
 	  GUILayout.Label("Objetivos cumplidos: " + objetivos_cumplidos);
 	  GUILayout.Label("Objetivos no cumplidos: " + objetivos_no_cumplidos);
+
+	  GUILayout.FlexibleSpace();
+
+	  GUILayout.Label("Objetivos en radio:");
+	  foreach (ObjetivoMB objetivomb in objetivos) {
+		 if (objetivomb.radar.Vehicles.Contains(jugadores[0].gameObject.GetComponent<Vehicle>())) {
+			GUILayout.Label("Objetivo " + objetivomb.objetivo.nombre);
+		 }
+	  }
 
 	  GUILayout.Space(100);
 
@@ -94,15 +105,39 @@ public class JuegoMB : MonoBehaviour {
    }
 
    void Update() {
-	  registrarAccionesJugadores();
 	  actualizarEstadoActual();
+	  registrarAccionesJugadores();
    }
 
    // Estados
    private void actualizarEstadoActual() {
-	  Vector3[] posicion_jugadores = new Vector3[jugadores.Count];
+	  Dictionary<int, Vector3> posicion_jugadores_waypoints = new Dictionary<int, Vector3>(jugadores.Count);
 	  for (int i = 0; i < jugadores.Count; i++) {
-		 posicion_jugadores[i] = jugadores[i].jugador.posicion;
+		 Waypoint waypoint = Navigation.GetNearestNode(jugadores[i].jugador.posicion);
+		 if (waypoint.tag == "Objetivo") {
+			//Debug.LogWarning("Encontrado: " + waypoint);
+			ObjetivoMB objetivomb = Objetivo.mapeo_waypoint_objetivo[waypoint];
+			if (objetivomb.radar.Vehicles.Contains(jugadores[i].gameObject.GetComponent<Vehicle>())) {
+			   //Debug.LogWarning("En radio" + waypoint);
+			   posicion_jugadores_waypoints.Add(i, waypoint.Position);
+			}
+			else {
+			   Waypoint waypoint_previo = null;
+			   if (nodo_estado_actual != null) {
+				  waypoint_previo = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[i]);
+			   }
+			   else {
+				  waypoint_previo = jugadores[i].jugador.waypointMasCercanoNoObjetivo();
+				  Debug.LogWarning("Aca");
+			   }
+			   //Debug.LogWarning("Conectado: " + waypoint_previo);
+			   //Debug.LogWarning("Fuera de radio: " + jugadores[i].jugador.waypointMasCercanoNoObjetivo(waypoint_previo));
+			   posicion_jugadores_waypoints.Add(i, jugadores[i].jugador.waypointMasCercanoNoObjetivo(waypoint_previo).Position);
+			}
+		 }
+		 else {
+			posicion_jugadores_waypoints.Add(i, waypoint.Position);
+		 }
 	  }
 
 	  HashSet<int> objetivos_cumplidos = new HashSet<int>();
@@ -117,7 +152,7 @@ public class JuegoMB : MonoBehaviour {
 	  }
 
 	  nodo_estado_previo = nodo_estado_actual;
-	  nodo_estado_actual = arbol_estados.getEstadoActual(posicion_jugadores, objetivos_cumplidos, objetivos_no_cumplidos);
+	  nodo_estado_actual = arbol_estados.getEstadoActual(posicion_jugadores_waypoints, objetivos_cumplidos, objetivos_no_cumplidos);
    }
 
    // Acciones
@@ -154,10 +189,19 @@ public class JuegoMB : MonoBehaviour {
 		 }
 	  }
 
+	  bool[] realizo_accion = new bool[jugadores.Count];
 	  int q = 0;
 	  foreach (Accion accion in acciones_realizadas) {
+		 realizo_accion[accion.actor_id] = true;
 		 jugadores[accion.actor_id].jugador.registrarAccion(Time.time - (acciones_realizadas.Count - q) * (Time.deltaTime / acciones_realizadas.Count), accion);
 		 q++;
+	  }
+
+	  for (int k = 0; k < realizo_accion.Length; k++) {
+		 if (!realizo_accion[k]) {
+			Waypoint waypoint = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[jugadores[k].jugador.id]);
+			jugadores[k].jugador.registrarAccion(Time.time, acciones_dict[jugadores[k].jugador.id][waypoint][waypoint]);
+		 }
 	  }
 
 	  /*
@@ -191,6 +235,23 @@ public class JuegoMB : MonoBehaviour {
 				  dict = new Dictionary<Waypoint, Accion>();
 				  dict.Add(accion.destino, accion);
 				  acciones_dict[jugadormb.jugador.id].Add(accion.origen, dict);
+			   }
+			}
+		 }
+	  }
+   }
+
+   public static void OnRadarDetect(SteeringEvent<Radar> evento) {
+	  ObjetivoMB objetivomb = evento.Parameter.gameObject.GetComponent<ObjetivoMB>();
+	  foreach (Vehicle vehiculo in evento.Parameter.Vehicles) {
+		 JugadorMB jugadormb = vehiculo.gameObject.GetComponent<JugadorMB>();
+		 if (jugadormb != null) {
+			foreach (Vehicle vehiculo_complementario in objetivomb.objetivo.complementario.objetivo_mb.radar.Vehicles) {
+			   JugadorMB jugadormb_complementario = vehiculo_complementario.gameObject.GetComponent<JugadorMB>();
+			   if (jugadormb_complementario != null && jugadormb != jugadormb_complementario) {
+				  objetivomb.objetivo.cumplido = true;
+				  objetivomb.objetivo.complementario.cumplido = true;
+				  break;
 			   }
 			}
 		 }

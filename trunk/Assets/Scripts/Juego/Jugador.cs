@@ -122,6 +122,43 @@ public class Jugador : ISerializable {
 	  }
    }
 
+   // Waypoint mas cercano, que no pertenece a un objetivo
+   public Waypoint waypointMasCercanoNoObjetivo() {
+	  Waypoint menor_waypoint = null;
+	  float menor_distancia = float.MaxValue;
+	  foreach (Waypoint waypoint in Navigation.Waypoints) {
+		 float distancia = Vector3.Distance(posicion, waypoint.Position);
+		 if (waypoint.tag != "Objetivo" && distancia < menor_distancia) {
+			menor_distancia = distancia;
+			menor_waypoint = waypoint;
+		 }
+	  }
+	  return menor_waypoint;
+   }
+
+   // Waypoint mas cercano conectado al waypoint proporcionado, que no pertenece a un objetivo
+   public Waypoint waypointMasCercanoNoObjetivo(Waypoint waypoint_conectado) {
+	  Waypoint menor_waypoint = Navigation.GetNearestNode(posicion);
+	  if (menor_waypoint.tag != "Objetivo" && (waypoint_conectado.ConnectsTo(menor_waypoint) || waypoint_conectado == menor_waypoint)) {
+		 return menor_waypoint;
+	  }
+	  else {
+		 menor_waypoint = waypoint_conectado;
+		 float menor_distancia = float.MaxValue;
+		 if (menor_waypoint.tag != "Objetivo") {
+			menor_distancia = Vector3.Distance(posicion, waypoint_conectado.Position);
+		 }
+		 foreach (Connection conexion in waypoint_conectado.Connections) {
+			float distancia = Vector3.Distance(posicion, conexion.To.Position);
+			if (conexion.To.tag != "Objetivo" && distancia < menor_distancia) {
+			   menor_distancia = distancia;
+			   menor_waypoint = conexion.To;
+			}
+		 }
+		 return menor_waypoint;
+	  }
+   }
+
    // Serializacion
    public Jugador(SerializationInfo info, StreamingContext ctxt) {
 	  id = info.GetInt16("Id");

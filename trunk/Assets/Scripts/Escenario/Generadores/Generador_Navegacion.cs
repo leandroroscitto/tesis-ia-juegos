@@ -94,7 +94,7 @@ public class Generador_Navegacion : MonoBehaviour {
 			}
 		 }
 
-		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * (habitacion.x1 + habitacion.ancho / 2) + Vector2.up * (habitacion.y1 + habitacion.largo / 2), 1.25f);
+		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * (habitacion.centrox) + Vector2.up * (habitacion.centroy), 1.25f);
 
 		 agregarWaypoint(i, "Habitacion", posicion);
 		 i++;

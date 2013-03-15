@@ -37,14 +37,10 @@ public class Arbol_Estados : ISerializable {
 	  }
    }
 
-   public Nodo_Estado getEstadoActual(Vector3[] posicion_jugadores, HashSet<int> objetivos_cumplidos, HashSet<int> objetivos_no_cumplidos) {
+   public Nodo_Estado getEstadoActual(Dictionary<int, Vector3> posicion_jugadores, HashSet<int> objetivos_cumplidos, HashSet<int> objetivos_no_cumplidos) {
 	  Estado estado_buscado = new Estado();
-	  Dictionary<int, Vector3> posicion_jugadores_waypoints = new Dictionary<int, Vector3>(posicion_jugadores.Length);
-	  for (int i = 0; i < posicion_jugadores.Length; i++) {
-		 posicion_jugadores_waypoints.Add(i, Navigation.GetNearestNode(posicion_jugadores[i]).Position);
-	  }
 
-	  estado_buscado.posicion_jugadores = posicion_jugadores_waypoints;
+	  estado_buscado.posicion_jugadores = posicion_jugadores;
 	  estado_buscado.objetivos_cumplidos = objetivos_cumplidos;
 	  estado_buscado.objetivos_no_cumplidos = objetivos_no_cumplidos;
 
@@ -75,10 +71,13 @@ public class Arbol_Estados : ISerializable {
 		 }
 		 else {
 			Debug.LogWarning("No encontro por la posicion de jugadores.");
+			foreach (Vector3 posicion in posicion_jugadores) {
+			   Debug.LogWarning(Navigation.GetNearestNode(posicion).name + "," + Navigation.GetNearestNode(posicion).Position + "; " + posicion);
+			}
 		 }
 	  }
 	  else {
-		 Debug.LogWarning("No encontro cantidad de objetivos cumplidos.");
+		 Debug.LogWarning("No encontro cantidad de objetivos cumplidos: " + cant_obj_cumplidos);
 	  }
 
 	  nodo_estado_resultado = null;

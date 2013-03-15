@@ -6,6 +6,8 @@ using System.Collections.Generic;
 
 [Serializable]
 public class Objetivo : Objetivo_MDP, ISerializable {
+   public static Dictionary<Waypoint, ObjetivoMB> mapeo_waypoint_objetivo = new Dictionary<Waypoint, ObjetivoMB>();
+
    public bool cumplido;
    //public Vector2 posicion;
    public string nombre;
@@ -99,6 +101,7 @@ public class Objetivo : Objetivo_MDP, ISerializable {
 	  waypoint_posicion = (Vector3)info.GetValue("Waypoint_Asociado", typeof(Vector3));
 
 	  objetivo_mb.objetivo = this;
+	  mapeo_waypoint_objetivo.Add(waypoint_asociado, objetivo_mb);
    }
 
 #pragma warning disable 0114
