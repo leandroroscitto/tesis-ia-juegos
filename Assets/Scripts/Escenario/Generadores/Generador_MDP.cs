@@ -281,7 +281,7 @@ public class Generador_MDP : MonoBehaviour {
 	  foreach (Vector3 posicion_jugador in estado.posicion_jugadores.Values) {
 		 foreach (int objetivo_id in estado.objetivos_no_cumplidos) {
 			Objetivo objetivo = arbol_estados.objetivos[objetivo_id];
-			if (Vector3.Distance(posicion_jugador, objetivo.posicion) < objetivo.radio) {
+			if (Vector3.Distance(posicion_jugador - Vector3.up * posicion_jugador.y, objetivo.posicion - Vector3.up * objetivo.posicion.y) < objetivo.radio) {
 			   objetivos_cumplidos[objetivo_id] = true;
 			}
 		 }

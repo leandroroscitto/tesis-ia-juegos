@@ -59,8 +59,11 @@ public class Generador_Objetivos : MonoBehaviour {
 		 } while (habitaciones_usadas.Contains(indice));
 		 habitaciones_usadas.Add(indice);
 
-		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * Random.Range(habitacion.x1 + 1, habitacion.x2 - 1) + Vector2.up * Random.Range(habitacion.y1 + 1, habitacion.y2 - 1), 1.25f);
-		 Waypoint waypoint = generador_navegacion.agregarWaypoint(i, "Objetivo", posicion);
+		 Vector3 posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * Random.Range(habitacion.x1, habitacion.x2) + Vector2.up * Random.Range(habitacion.y1, habitacion.y2), 0.75f);
+		 do {
+			posicion = generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * Random.Range(habitacion.x1, habitacion.x2) + Vector2.up * Random.Range(habitacion.y1, habitacion.y2), 0.75f);
+		 } while (posicion == generador_mapa.mapa.posicionRepresentacionAReal(Vector2.right * habitacion.centrox + Vector2.up * habitacion.centroy, posicion.y));
+		 Waypoint waypoint = generador_navegacion.agregarWaypoint(i, "Objetivo", new Vector3(posicion.x, 1.25f, posicion.z));
 
 		 string nombre_objetivo = ((char)(i / 2 + 65)).ToString();
 		 if (i % 2 == 1) {
@@ -84,7 +87,8 @@ public class Generador_Objetivos : MonoBehaviour {
 
 		 ObjetivoMB objetivo_mb = texto_objetivo.gameObject.AddComponent<ObjetivoMB>();
 		 Objetivo objetivo = new Objetivo(i, nombre_objetivo, posicion, waypoint);
-		 objetivo_mb.inicializar(objetivo, 2.5f, "Jugador");
+		 objetivo_mb.inicializar(objetivo, 0.5f, "Jugador");
+		 Objetivo.mapeo_waypoint_objetivo.Add(waypoint, objetivo_mb);
 		 if (i % 2 == 1) {
 			objetivo.agregarComplementario(objetivos[i - 1]);
 			objetivos[i - 1].agregarComplementario(objetivo);

@@ -5,6 +5,9 @@ using PathRuntime;
 
 [Serializable]
 public class Accion : Accion_MDP, ISerializable {
+   public enum TipoAccion { MOVIMIENTO, OBJETIVO }
+
+   public TipoAccion tipo;
    public Jugador jugador;
    public Waypoint origen;
    public Waypoint destino;
@@ -15,8 +18,9 @@ public class Accion : Accion_MDP, ISerializable {
 
    }
 
-   public Accion(int i, Jugador j, Waypoint o, Waypoint d)
+   public Accion(int i, TipoAccion t, Jugador j, Waypoint o, Waypoint d)
 	  : base(i, j.id) {
+	  tipo = t;
 	  jugador = j;
 	  origen = o;
 	  destino = d;
@@ -25,7 +29,7 @@ public class Accion : Accion_MDP, ISerializable {
 
    public bool mismaAccion(Accion accion) {
 	  if (accion != null) {
-		 return ((accion.origen == origen) && (accion.destino == destino));
+		 return ((accion.tipo == tipo) && (accion.origen == origen) && (accion.destino == destino));
 	  }
 	  else {
 		 return false;
@@ -37,12 +41,13 @@ public class Accion : Accion_MDP, ISerializable {
    }
 
    public override string ToString() {
-	  return "ID: " + id + ", jugador: " + jugador.nombre + ", [" + origen + " => " + destino + "]";
+	  return "ID: " + id + ", jugador: " + jugador.nombre + ", tipo: " + tipo + ", [" + origen + " => " + destino + "]";
    }
 
    // Serializacion
    public Accion(SerializationInfo info, StreamingContext ctxt)
 	  : base(info, ctxt) {
+	  tipo = (TipoAccion)info.GetInt16("Tipo");
 	  jugador = info.GetValue("Jugador", typeof(Jugador)) as Jugador;
 
 	  Vector3 origenp, destinop;
@@ -69,6 +74,7 @@ public class Accion : Accion_MDP, ISerializable {
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  base.GetObjectData(info, ctxt);
 
+	  info.AddValue("Tipo", (int)tipo);
 	  info.AddValue("Jugador", jugador);
 	  info.AddValue("Origen", origen.Position);
 	  info.AddValue("Destino", destino.Position);

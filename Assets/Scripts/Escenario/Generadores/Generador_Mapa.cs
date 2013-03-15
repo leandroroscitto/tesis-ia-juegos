@@ -24,6 +24,18 @@ public class Generador_Mapa : MonoBehaviour {
 		 }
 	  }
 
+	  public int centrox {
+		 get {
+			return x1 + ancho / 2;
+		 }
+	  }
+
+	  public int centroy {
+		 get {
+			return y1 + largo / 2;
+		 }
+	  }
+
 	  public int area {
 		 get {
 			return ancho * largo;
