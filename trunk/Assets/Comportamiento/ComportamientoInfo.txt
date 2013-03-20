@@ -9,7 +9,7 @@ Trees:
 	Agentes_Perseguir_enemigo
 	Agentes_Patrullar
 	Agentes_Perseguir_aliados
-	Agentes_Recuperar_archivos
+	Agentes_Cumplir_objetivos
 	Unknown
 
 Contexts:
@@ -29,10 +29,10 @@ Actions (18: 1 - 19):
 	Calcular_posicion_azar (8)
 	Existe_aliado_cerca (9)
 	Calcular_posicion_aliado (10)
-	Existe_archivo_sin_leer (11)
-	Calcular_posicion_archivo (12)
-	Puede_leer_archivos (13)
-	Leer_archivos (14)
+	Existe_objetivo_sin_cumplir (11)
+	Inferir_objetivo_a_cumplir (12)
+	Puede_cumplir_objetivo (13)
+	Cumplir_objetivo (14)
 	Existe_enemigo_cerca (15)
 	Calcular_posicion_enemigo (16)
 	Existe_enemigo_en_rango (17)

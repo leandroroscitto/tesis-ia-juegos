@@ -3,6 +3,7 @@ using Behave.Runtime;
 using Tree = Behave.Runtime.Tree;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using PathRuntime;
 
 public class ACAliado : ArbolComportamientoBase, ACIr_A {
@@ -24,10 +25,10 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
    private Vehicle target_agente_enemigo;
    public float rango_ataque;
    public float angulo_ataque;
-   private float tiempo_leyendo;
-   private Transform target_archivos;
-   private List<Transform> archivos_leidos;
+   private ObjetivoMB target_objetivo;
    private Vehicle agente;
+
+   private JuegoMB juego;
 
    protected override void inicializacionParticular() {
 	  tipo_arbol = BLComportamiento.TreeType.Agentes_Aliado;
@@ -39,12 +40,13 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  navegador.targetPosition = transform.position;
 
 	  agente = GetComponent<Vehicle>();
-	  archivos_leidos = new List<Transform>();
 
 	  ultima_posicion_verificada = agente.Position;
 	  ultimo_tiempo_verificado = Time.time;
 
 	  target = transform.position;
+
+	  juego = GameObject.Find("Juego").GetComponent<JuegoMB>();
 
 	  // Subarbol Ir_a
 	  handlers.Add((int)BLComportamiento.ActionType.Existe_camino_directo, Existe_camino_directo);
@@ -70,11 +72,11 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  handlers.Add((int)BLComportamiento.ActionType.Existe_enemigo_cerca, Existe_enemigo_cerca);
 	  handlers.Add((int)BLComportamiento.ActionType.Calcular_posicion_enemigo, Calcular_posicion_enemigo);
 
-	  // Recuperar archivos
-	  handlers.Add((int)BLComportamiento.ActionType.Existe_archivo_sin_leer, Existe_archivo_sin_leer);
-	  handlers.Add((int)BLComportamiento.ActionType.Calcular_posicion_archivo, Calcular_posicion_archivo);
-	  handlers.Add((int)BLComportamiento.ActionType.Puede_leer_archivos, Puede_leer_archivos);
-	  handlers.Add((int)BLComportamiento.ActionType.Leer_archivos, Leer_archivos);
+	  // Cumplir objetivos
+	  handlers.Add((int)BLComportamiento.ActionType.Existe_objetivo_sin_cumplir, Existe_objetivo_sin_cumplir);
+	  handlers.Add((int)BLComportamiento.ActionType.Inferir_objetivo_a_cumplir, Inferir_objetivo_a_cumplir);
+	  handlers.Add((int)BLComportamiento.ActionType.Puede_cumplir_objetivo, Puede_cumplir_objetivo);
+	  handlers.Add((int)BLComportamiento.ActionType.Cumplir_objetivo, Cumplir_objetivo);
    }
 
    protected override void AIUpdate() {
@@ -135,30 +137,77 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  return BehaveResult.Success;
    }
 
-   // Determina si existe un archivo sin leer a una distancia detectable.
-   public BehaveResult Existe_archivo_sin_leer(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  foreach (Collider detectable in agente.Radar.Detected) {
-		 if (detectable != null && detectable.tag == "Archivos" && !archivos_leidos.Contains(detectable.transform)) {
-			if (detectable.transform != target_archivos)
-			   tiempo_leyendo = 0;
-			target_archivos = detectable.transform;
-			return BehaveResult.Success;
-		 }
+   // Determina si existe un objetivo sin cumplir.
+   public BehaveResult Existe_objetivo_sin_cumplir(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
+	  target_objetivo = null;
+	  if (juego.nodo_estado_actual.estado_actual.objetivos_no_cumplidos.Count > 0) {
+		 return BehaveResult.Success;
 	  }
-	  target_archivos = null;
 	  return BehaveResult.Failure;
    }
 
-   // Calcula la posicion del target necesario para leer el archivo. Se ubica a unas 4.5 unidades al frente de este.
-   public BehaveResult Calcular_posicion_archivo(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  target = target_archivos.position + target_archivos.rotation * Vector3.forward * 4.5f;
-	  target.y = agente.Position.y;
-	  return BehaveResult.Success;
-   }
+   // Infiere el objetivo a cumplir por el jugador controlado por el humano, y determina el objetivo actual como el complementario de este.
+   public BehaveResult Inferir_objetivo_a_cumplir(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
+	  float[] valor_objetivo = new float[juego.objetivos.Count];
+	  float descuento = 1.0f;
+	  float suma = 0;
 
-   // Determina si esta a una distancia suficiente para leer el archivo.
-   public BehaveResult Puede_leer_archivos(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  if (Vector3.Distance(agente.Position, target) < agente.ArrivalRadius * 1.5) {
+	  Nodo_Estado nodo;
+	  float tiempo;
+
+	  int tope_inferior = juego.profundidad_acciones - Mathf.Min(juego.profundidad_acciones, juego.historial_estados.Count);
+	  int t = juego.historial_estados.Count;
+	  foreach (KeyValuePair<float, Nodo_Estado> tiempo_estado in juego.historial_estados) {
+		 if (t < tope_inferior) {
+			break;
+		 }
+
+		 tiempo = tiempo_estado.Key;
+		 nodo = tiempo_estado.Value;
+		 foreach (ObjetivoMB objetivomb in juego.objetivos) {
+			Accion accion = juego.mdp.Politica[juego.jugadores[0].jugador.id][objetivomb.objetivo.id][nodo.estado_actual.id];
+			Accion accion_jugador;
+			if (juego.jugadores[0].jugador.acciones.TryGetValue(tiempo, out accion_jugador) && accion.id == accion_jugador.id) {
+			   valor_objetivo[objetivomb.objetivo.id] += descuento;
+			   suma += descuento;
+			}
+		 }
+
+		 descuento = descuento * juego.factor_descuento;
+
+		 t--;
+	  }
+
+
+	  if (suma > 0) {
+		 for (int i = 0; i < valor_objetivo.Length; i++) {
+			valor_objetivo[i] = valor_objetivo[i] / suma;
+		 }
+
+		 float max_valor = float.MinValue;
+		 int objetivo_id = -1;
+		 for (int i = 0; i < valor_objetivo.Length; i++) {
+			if (!juego.objetivos[i].objetivo.cumplido && valor_objetivo[i] > max_valor) {
+			   max_valor = valor_objetivo[i];
+			   objetivo_id = i;
+			}
+		 }
+
+		 if (objetivo_id != -1) {
+			target_objetivo = juego.objetivos[objetivo_id].objetivo.complementario.objetivo_mb;
+		 }
+		 else {
+			target_objetivo = null;
+		 }
+
+	  }
+	  else {
+		 target_objetivo = null;
+	  }
+
+	  if (target_objetivo != null) {
+		 target = target_objetivo.transform.position;
+		 target.y = agente.Position.y;
 		 return BehaveResult.Success;
 	  }
 	  else {
@@ -166,11 +215,18 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  }
    }
 
-   // Lee el archivo, accion que le toma 1.5 segundos, luego de los cuales lo agregar a su lista de leidos para no volver a buscarlo.
-   public BehaveResult Leer_archivos(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  tiempo_leyendo += Time.deltaTime;
-	  if (tiempo_leyendo > 1.5f)
-		 archivos_leidos.Add(target_archivos);
+   // Determina si esta a una distancia suficiente para cumplir el objetivo (si el companero esta en el complementario).
+   public BehaveResult Puede_cumplir_objetivo(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
+	  if (target_objetivo.radar.Vehicles.Contains(agente)) {
+		 return BehaveResult.Success;
+	  }
+	  else {
+		 return BehaveResult.Failure;
+	  }
+   }
+
+   // En el caso de estar sobre el objetivo a cumplir, no realiza accion hasta que este se haya cumplido.
+   public BehaveResult Cumplir_objetivo(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
 	  return BehaveResult.Success;
    }
 
