@@ -45,6 +45,7 @@
   </ItemGroup>
   <ItemGroup>
      <Compile Include="Assets\Behave\BehaveAsset.cs" />
+     <Compile Include="Assets\CrearGenerador.cs" />
      <Compile Include="Assets\Scripts\Agente\Comportamiento\ACAliado.cs" />
      <Compile Include="Assets\Scripts\Agente\Comportamiento\ACEnemigo.cs" />
      <Compile Include="Assets\Scripts\Agente\Comportamiento\ACIr_A.cs" />

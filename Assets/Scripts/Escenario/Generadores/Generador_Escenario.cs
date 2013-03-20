@@ -16,18 +16,19 @@ public class Generador_Escenario : MonoBehaviour {
 	  public float max_prop_h = 1.5f;
 	  public float max_prop_v = 1.5f;
 	  public int recursion = 8;
-	  public int conexiones_extras = 0;
+	  public int conexiones_extras = 1;
    }
 
    [Serializable]
    public class Parametros_Tamano {
-	  public int cantidad_zonas_x, cantidad_zonas_y;
-	  public Vector3 tamano_tile;
+	  public int cantidad_zonas_x = 20;
+	  public int cantidad_zonas_y = 20;
+	  public Vector3 tamano_tile = new Vector3(2, 15, 2);
    }
 
    [Serializable]
    public class Parametros_Navegacion {
-	  public LayerMask mascara_obstaculo;
+	  public LayerMask mascara_obstaculo = 1 << LayerMask.NameToLayer("NoPasable");
    }
 
    [Serializable]
@@ -37,7 +38,7 @@ public class Generador_Escenario : MonoBehaviour {
 
    [Serializable]
    public class Parametros_Jugadores {
-	  public int numero_jugadores;
+	  public int numero_jugadores = 2;
 	  public GameObject jugador;
 	  public GameObject companero;
 	  public Camara_3Persona camara;
@@ -248,6 +249,7 @@ public class Generador_Escenario : MonoBehaviour {
 	  List<JugadorMB> jugadores = generador_jugadores.jugadores_mb;
 	  List<Accion> acciones = generador_acciones.acciones;
 	  Arbol_Estados arbol_estado = generador_mdp.arbol_estados;
+	  MDP<Nodo_Estado, Accion, Objetivo, ResolucionMDP.TransicionJuego, ResolucionMDP.RecompensaJuego> mdp = generador_mdp.resolucion_mdp.mdp;
 
 	  juego_objeto = GameObject.Find("Juego");
 	  if (juego_objeto == null) {
@@ -258,6 +260,6 @@ public class Generador_Escenario : MonoBehaviour {
 			DestroyImmediate(juego_objeto.GetComponent<JuegoMB>());
 		 }
 	  }
-	  juego_objeto.AddComponent<JuegoMB>().inicializar(objetivos, jugadores, acciones, arbol_estado);
+	  juego_objeto.AddComponent<JuegoMB>().inicializar(objetivos, jugadores, acciones, arbol_estado, mdp);
    }
 }
