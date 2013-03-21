@@ -123,6 +123,7 @@ public class Generador_Navegacion : MonoBehaviour {
 		 DestroyImmediate(navigation_objeto.transform.GetChild(0).gameObject);
 	  }
 	  DestroyImmediate(navigation_objeto);
+	  caminos = null;
    }
 
    // Utilidades
@@ -163,7 +164,7 @@ public class Generador_Navegacion : MonoBehaviour {
 	  DestroyImmediate(waypoint.gameObject);
    }
 
-   public void optimizarMallaNavegacion() {
+   private void optimizarMallaNavegacion() {
 	  Generador_Mapa generador_mapa = GetComponent<Generador_Mapa>();
 	  List<Waypoint> a_destruir = new List<Waypoint>();
 	  foreach (Waypoint waypoint in Navigation.Waypoints) {
@@ -193,7 +194,7 @@ public class Generador_Navegacion : MonoBehaviour {
 	  }
    }
 
-   public bool mismasConexiones(Waypoint w1, Waypoint w2) {
+   private bool mismasConexiones(Waypoint w1, Waypoint w2) {
 	  HashSet<Waypoint> conexiones_w1 = new HashSet<Waypoint>();
 	  HashSet<Waypoint> conexiones_w2 = new HashSet<Waypoint>();
 
@@ -219,5 +220,121 @@ public class Generador_Navegacion : MonoBehaviour {
 	  }
 
 	  return (conexiones_w1.IsSupersetOf(conexiones_w2));
+   }
+
+   // Pathfinding
+   public static Dictionary<Vector3, Dictionary<Vector3, KeyValuePair<List<Vector3>, float>>> caminos;
+
+   public static Waypoint waypointMasCercano(Vector3 posicion, bool visible, out float distancia_mas_cercana) {
+	  float maxima_distancia = Mathf.Max(Mapa.Mapa_Instancia.ancho, Mapa.Mapa_Instancia.largo);
+
+	  distancia_mas_cercana = float.MaxValue;
+	  Waypoint waypoint_mas_cercano = null;
+	  foreach (Waypoint waypoint in Navigation.Waypoints) {
+		 float distancia = Vector3.Distance(posicion, waypoint.Position);
+		 if (visible && Physics.Raycast(posicion, waypoint.Position, maxima_distancia) && distancia <= distancia_mas_cercana) {
+			distancia_mas_cercana = distancia;
+			waypoint_mas_cercano = waypoint;
+		 }
+		 else if (distancia <= distancia_mas_cercana) {
+			distancia_mas_cercana = distancia;
+			waypoint_mas_cercano = waypoint;
+		 }
+	  }
+
+	  return waypoint_mas_cercano;
+   }
+
+   public static int compararDistancias(KeyValuePair<int, float> e1, KeyValuePair<int, float> e2) {
+	  if (e1.Value == e2.Value) {
+		 return 0;
+	  }
+	  else if (e1.Value > e2.Value) {
+		 return 1;
+	  }
+	  else {
+		 return -1;
+	  }
+   }
+
+   public static int getClave(KeyValuePair<int, float> e1) {
+	  return e1.Key;
+   }
+
+   public static void calcularMinimaDistanciaWaypoints() {
+	  caminos = new Dictionary<Vector3, Dictionary<Vector3, KeyValuePair<List<Vector3>, float>>>();
+
+	  Dictionary<Waypoint, int> indices = new Dictionary<Waypoint, int>(Navigation.Waypoints.Count);
+	  for (int i = 0; i < Navigation.Waypoints.Count; i++) {
+		 indices.Add(Navigation.Waypoints[i], i);
+	  }
+
+	  for (int i = 0; i < Navigation.Waypoints.Count; i++) {
+		 float[] distancia = new float[Navigation.Waypoints.Count];
+		 int[] anterior = new int[Navigation.Waypoints.Count];
+		 for (int j = 0; j < Navigation.Waypoints.Count; j++) {
+			distancia[j] = float.PositiveInfinity;
+			anterior[j] = -1;
+		 }
+
+		 distancia[i] = 0;
+		 HeapBinario<KeyValuePair<int, float>> cola = new HeapBinario<KeyValuePair<int, float>>(Navigation.Waypoints.Count, compararDistancias, getClave);
+		 for (int j = 0; j < Navigation.Waypoints.Count; j++) {
+			cola.insertar(new KeyValuePair<int, float>(j, distancia[j]));
+		 }
+
+		 while (cola.tamano > 0) {
+			KeyValuePair<int, float> u = cola.suprimirMinimo();
+			if (float.IsPositiveInfinity(u.Value)) {
+			   break;
+			}
+
+			foreach (Connection conexion in Navigation.Waypoints[u.Key].Connections) {
+			   float alt = u.Value + Vector3.Distance(conexion.From.Position, conexion.To.Position);
+			   int v_indice = indices[conexion.To];
+			   if (alt < distancia[v_indice]) {
+				  distancia[v_indice] = alt;
+				  anterior[v_indice] = indices[conexion.From];
+				  int indice = cola.getIndice(v_indice);
+				  KeyValuePair<int, float> v = new KeyValuePair<int, float>(v_indice, alt);
+				  cola.modificar(indice, v);
+			   }
+			}
+		 }
+
+		 Dictionary<Vector3, KeyValuePair<List<Vector3>, float>> distancias = new Dictionary<Vector3, KeyValuePair<List<Vector3>, float>>(Navigation.Waypoints.Count);
+		 for (int j = 0; j < Navigation.Waypoints.Count; j++) {
+			List<Vector3> lista = new List<Vector3>();
+			int origen = i;
+			int waypoint = j;
+			while (waypoint != origen) {
+			   lista.Insert(0, Navigation.Waypoints[waypoint].Position);
+			   waypoint = anterior[waypoint];
+			}
+			lista.Insert(0, Navigation.Waypoints[origen].Position);
+			distancias.Add(Navigation.Waypoints[j].Position, new KeyValuePair<List<Vector3>, float>(lista, distancia[j]));
+		 }
+		 caminos.Add(Navigation.Waypoints[i].Position, distancias);
+	  }
+   }
+
+   public static float getMinimaDistancia(Vector3 p1, Vector3 p2) {
+	  Waypoint w1, w2;
+	  float d1, d2;
+
+	  w1 = waypointMasCercano(p1, true, out d1);
+	  w2 = waypointMasCercano(p2, true, out d2);
+
+	  return (d1 + caminos[w1.Position][w2.Position].Value + d2);
+   }
+
+   public static List<Vector3> getMinimoCamino(Vector3 p1, Vector3 p2) {
+	  Waypoint w1, w2;
+	  float d1, d2;
+
+	  w1 = waypointMasCercano(p1, true, out d1);
+	  w2 = waypointMasCercano(p2, true, out d2);
+
+	  return caminos[w1.Position][w2.Position].Key;
    }
 }

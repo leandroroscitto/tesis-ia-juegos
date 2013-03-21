@@ -28,7 +28,7 @@ public class Generador_Escenario : MonoBehaviour {
 
    [Serializable]
    public class Parametros_Navegacion {
-	  public LayerMask mascara_obstaculo = 1 << LayerMask.NameToLayer("NoPasable");
+	  public LayerMask mascara_obstaculo;
    }
 
    [Serializable]

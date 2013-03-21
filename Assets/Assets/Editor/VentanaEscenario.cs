@@ -10,7 +10,8 @@ public class VentanaEscenario : EditorWindow {
    private bool mostrar_gizmos;
 
    private Generador_Objetivos generador_objetivos;
-   private Generador_Mapa generador_mapa;
+
+   private int origen, destino;
 
    [MenuItem("Window/Debug Escenario")]
    static void Init() {
@@ -18,7 +19,23 @@ public class VentanaEscenario : EditorWindow {
    }
 
    void OnGUI() {
-	  mostrar_gizmos = GUILayout.Toggle(mostrar_gizmos, "Mostrar Gizmos:");
+	  generador_objetivos = GameObject.Find("Generadores").GetComponent<Generador_Objetivos>();
+	  if (generador_objetivos != null) {
+		 mostrar_gizmos = GUILayout.Toggle(mostrar_gizmos, "Mostrar Gizmos");
+	  }
+	  if (Generador_Navegacion.caminos != null) {
+		 GUILayout.Space(10);
+		 GUILayout.Label("Pathfinding");
+
+		 string[] waypoints = new string[Navigation.Waypoints.Count];
+		 for (int i = 0; i < Navigation.Waypoints.Count; i++) {
+			waypoints[i] = Navigation.Waypoints[i].name;
+		 }
+		 origen = EditorGUILayout.Popup("Origen: ", origen, waypoints);
+		 destino = EditorGUILayout.Popup("Destino: ", destino, waypoints);
+
+		 GUILayout.Label("Distancia: " + Generador_Navegacion.getMinimaDistancia(Navigation.Waypoints[origen].Position, Navigation.Waypoints[destino].Position));
+	  }
    }
 
 
@@ -33,16 +50,22 @@ public class VentanaEscenario : EditorWindow {
    }
 
    void OnSceneGUI(SceneView sceneView) {
-	  if (mostrar_gizmos) {
+	  if (mostrar_gizmos && Generador_Navegacion.caminos != null) {
+		 Handles.color = Color.red;
+		 List<Vector3> camino = Generador_Navegacion.getMinimoCamino(Navigation.Waypoints[origen].Position, Navigation.Waypoints[destino].Position);
+		 for (int i = 0; i < camino.Count - 1; i++) {
+			Handles.DrawLine(camino[i], camino[i + 1]);
+		 }
+
 		 Handles.BeginGUI();
 		 Color color_actual = GUI.contentColor;
 		 GUI.contentColor = Color.yellow;
-		 generador_objetivos = GameObject.Find("Generadores").GetComponent<Generador_Objetivos>();
 		 if (generador_objetivos != null && generador_objetivos.objetivos != null) {
 			foreach (Objetivo objetivo in generador_objetivos.objetivos) {
 			   imprimirLabel(objetivo.posicion, "Objetivo_" + objetivo.nombre, sceneView.camera);
 			}
 		 }
+
 		 GUI.contentColor = color_actual;
 		 Handles.EndGUI();
 	  }
