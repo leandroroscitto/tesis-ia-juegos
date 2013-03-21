@@ -44,6 +44,7 @@ public class ResolucionMDP : ISerializable {
 	  public RecompensaJuego(List<Objetivo> objs)
 		 : base() {
 		 objetivos = objs;
+		 Generador_Navegacion.calcularMinimaDistanciaWaypoints();
 	  }
 
 	  public override Vector2 getPosicionObjetivo(Objetivo obj) {
@@ -61,10 +62,12 @@ public class ResolucionMDP : ISerializable {
 			float distancia_minima = float.MaxValue;
 			for (int actor = 0; actor < s.estado_actual.posicion_jugadores.Count; actor++) {
 			   if (actor == actor_id) {
-				  resultado -= Vector2.Distance(s.estado_actual.posicion_jugadores[actor], o.posicion);
+				  //resultado -= Vector3.Distance(s.estado_actual.posicion_jugadores[actor], o.posicion);
+				  resultado -= Generador_Navegacion.getMinimaDistancia(s.estado_actual.posicion_jugadores[actor], o.posicion);
 			   }
 			   else {
-				  distancia_minima = Math.Min(distancia_minima, Vector2.Distance(s.estado_actual.posicion_jugadores[actor], o.complementario.posicion));
+				  distancia_minima = Mathf.Min(distancia_minima, Generador_Navegacion.getMinimaDistancia(s.estado_actual.posicion_jugadores[actor], o.complementario.posicion));
+				  //distancia_minima = Mathf.Min(distancia_minima, Vector3.Distance(s.estado_actual.posicion_jugadores[actor], o.complementario.posicion));
 				  //distancia_minima = 0;
 			   }
 			}
