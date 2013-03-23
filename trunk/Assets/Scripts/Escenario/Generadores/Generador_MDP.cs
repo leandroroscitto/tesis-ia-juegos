@@ -143,7 +143,7 @@ public class Generador_MDP : MonoBehaviour {
 
    private void mostrarDebuging() {
 	  if (cant_estados % 100 == 0) {
-		 Debug.Log("Estados procesados: " + cant_estados + ", y en frontera: " + frontera.Count);
+		 //Debug.Log("Estados procesados: " + cant_estados + ", y en frontera: " + frontera.Count);
 	  }
    }
 

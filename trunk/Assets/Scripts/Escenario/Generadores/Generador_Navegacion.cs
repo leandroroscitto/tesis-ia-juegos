@@ -18,8 +18,11 @@ public class Generador_Navegacion : MonoBehaviour {
    public List<Waypoint> objetivo_waypoints;
    public List<Waypoint> conexiones_waypoints;
 
+   // Optimizacion
+   public float maximo_angulo_optimizacion = 45;
+
    // Operaciones
-   public void inicializar() {
+   public void inicializar(float max_ang_opt) {
 	  if (navigation_objeto == null) {
 		 navigation_objeto = new GameObject("Navegacion");
 		 navigation = navigation_objeto.AddComponent<Navigation>();
@@ -43,6 +46,8 @@ public class Generador_Navegacion : MonoBehaviour {
 		 conexiones_waypoints = new List<Waypoint>();
 	  }
 	  conexiones_waypoints.Clear();
+
+	  maximo_angulo_optimizacion = max_ang_opt;
    }
 
    // Generacion
@@ -164,8 +169,10 @@ public class Generador_Navegacion : MonoBehaviour {
 	  DestroyImmediate(waypoint.gameObject);
    }
 
-   private void optimizarMallaNavegacion() {
+   private void optimizarNodos() {
 	  Generador_Mapa generador_mapa = GetComponent<Generador_Mapa>();
+
+	  // Nodos en exceso
 	  List<Waypoint> a_destruir = new List<Waypoint>();
 	  foreach (Waypoint waypoint in Navigation.Waypoints) {
 		 if (!a_destruir.Contains(waypoint)) {
@@ -192,6 +199,46 @@ public class Generador_Navegacion : MonoBehaviour {
 		 a_destruir.RemoveAt(0);
 		 removerWaypoint(waypoint);
 	  }
+   }
+
+   private void optimizarConexiones() {
+	  List<KeyValuePair<Waypoint, Waypoint>> conexiones_a_eliminar = new List<KeyValuePair<Waypoint, Waypoint>>();
+
+	  // Conexiones en exceso
+	  foreach (Waypoint wi in Navigation.Waypoints) {
+		 foreach (Waypoint wj in Navigation.Waypoints) {
+			foreach (Waypoint wk in Navigation.Waypoints) {
+			   //float dik = Vector3.Distance(wi.Position, wk.Position);
+			   //float dij = Vector3.Distance(wi.Position, wj.Position);
+			   //float djk = Vector3.Distance(wj.Position, wk.Position);
+			   //bool rango_distancia = Mathf.Abs(dik - (dij + djk)) <= 0.85f;
+
+			   float angulo = Vector3.Angle(wi.Position - wj.Position, wk.Position - wj.Position);
+			   bool rango_angulo = (180 - angulo) <= maximo_angulo_optimizacion;
+
+			   bool conexion_transitiva = (wi.ConnectsTo(wj) && wj.ConnectsTo(wk) && wi.ConnectsTo(wk));
+
+			   //if (conexion_transitiva && rango_distancia) {
+			   if (conexion_transitiva && rango_angulo) {
+				  conexiones_a_eliminar.Add(new KeyValuePair<Waypoint, Waypoint>(wi, wk));
+			   }
+			}
+		 }
+	  }
+
+	  foreach (KeyValuePair<Waypoint, Waypoint> conexion in conexiones_a_eliminar) {
+		 if (conexion.Key.ConnectsTo(conexion.Value)) {
+			conexion.Key.RemoveConnection(conexion.Value);
+		 }
+		 if (conexion.Key.ConnectsTo(conexion.Key)) {
+			conexion.Value.RemoveConnection(conexion.Key);
+		 }
+	  }
+   }
+
+   private void optimizarMallaNavegacion() {
+	  optimizarNodos();
+	  optimizarConexiones();
    }
 
    private bool mismasConexiones(Waypoint w1, Waypoint w2) {
