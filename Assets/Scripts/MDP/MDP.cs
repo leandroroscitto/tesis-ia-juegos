@@ -239,7 +239,7 @@ public class MDP<S, A, O, T, R>
 			float porcentaje = (i.id * 100f / estados.Count);
 
 			if (porcentaje % 10 <= 0.1 && porcentaje / 10 > (10 - cont_porcentaje)) {
-			   Debug.Log("Progreso: " + (int)porcentaje + ", diferencia: " + diferencia_total);
+			   //Debug.Log("Progreso: " + (int)porcentaje + ", diferencia: " + diferencia_total);
 			   cont_porcentaje--;
 			}
 		 }

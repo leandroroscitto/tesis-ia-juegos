@@ -29,6 +29,7 @@ public class Generador_Escenario : MonoBehaviour {
    [Serializable]
    public class Parametros_Navegacion {
 	  public LayerMask mascara_obstaculo;
+	  public float maximo_angulo_optimizacion = 45;
    }
 
    [Serializable]
@@ -46,6 +47,7 @@ public class Generador_Escenario : MonoBehaviour {
 
    [Serializable]
    public class Parametros_Visuales {
+	  public float tamano_radar = 0.35f;
 	  public Material mesh_material;
 	  public Material piso_material;
 	  public Font fuente_objetivos;
@@ -103,12 +105,13 @@ public class Generador_Escenario : MonoBehaviour {
 		 }
 	  }
 
+	  /*
 	  if (generador_objetivos != null && generador_objetivos.objetivos != null) {
 		 foreach (Objetivo objetivo in generador_objetivos.objetivos) {
 			Gizmos.color = Color.white;
 			Gizmos.DrawSphere(objetivo.posicion, 1.25f);
 		 }
-	  }
+	  }*/
    }
 
    // Generacion
@@ -140,7 +143,7 @@ public class Generador_Escenario : MonoBehaviour {
 	  if (generador_navegacion == null) {
 		 generador_navegacion = gameObject.AddComponent<Generador_Navegacion>();
 	  }
-	  generador_navegacion.inicializar();
+	  generador_navegacion.inicializar(parametros_navegacion.maximo_angulo_optimizacion);
 
 	  // Generador Objetivos
 	  if (generador_objetivos == null) {
@@ -261,5 +264,27 @@ public class Generador_Escenario : MonoBehaviour {
 		 }
 	  }
 	  juego_objeto.AddComponent<JuegoMB>().inicializar(objetivos, jugadores, acciones, arbol_estado, mdp);
+
+	  GameObject camara_top = GameObject.FindGameObjectWithTag("Camara Top");
+	  if (camara_top == null) {
+		 camara_top = new GameObject("Radar");
+		 camara_top.AddComponent<Camera>();
+	  }
+	  camara_top.transform.position = Vector3.up * 25;
+	  camara_top.transform.eulerAngles = Vector3.right * 90;
+	  camara_top.tag = "Camara Top";
+
+	  camara_top.camera.depth = 1;
+	  camara_top.camera.farClipPlane = 50;
+	  camara_top.camera.orthographic = true;
+	  camara_top.camera.orthographicSize = Mapa.Mapa_Instancia.cant_y;
+
+	  float proporcion_mapa = Mapa.Mapa_Instancia.cant_x * 1f / Mapa.Mapa_Instancia.cant_y;
+	  float proporcion_pantalla = 9f / 16f;
+
+	  Debug.Log(proporcion_mapa + ", " + proporcion_pantalla);
+	  float ancho = proporcion_mapa * proporcion_pantalla * parametros_visuales.tamano_radar;
+	  float largo = proporcion_mapa * 1f / proporcion_mapa * parametros_visuales.tamano_radar;
+	  camara_top.camera.rect = new Rect(1 - ancho, 1 - largo, ancho, largo);
    }
 }

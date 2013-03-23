@@ -23,6 +23,11 @@ public class Generador_EscenarioEditor : Editor {
 	  if (GUILayout.Button("Cargar Datos")) {
 		 ((Generador_Escenario)target).cargarDatos();
 	  }
+	  if (GUILayout.Button("Preparar Juego")) {
+		 ((Generador_Escenario)target).guardarDatos();
+		 ((Generador_Escenario)target).borrarEscenario();
+		 ((Generador_Escenario)target).cargarDatos();
+	  }
 
 	  //EditorUtility.SetDirty(target);
 	  if (VentanaArbolEstado.ventana != null) {
