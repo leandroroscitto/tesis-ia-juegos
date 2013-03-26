@@ -29,6 +29,7 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
    private Vehicle agente;
 
    private JuegoMB juego;
+   private JugadorMB jugadormb;
 
    protected override void inicializacionParticular() {
 	  tipo_arbol = BLComportamiento.TreeType.Agentes_Aliado;
@@ -47,6 +48,7 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  target = transform.position;
 
 	  juego = GameObject.Find("Juego").GetComponent<JuegoMB>();
+	  jugadormb = GetComponent<JugadorMB>();
 
 	  // Subarbol Ir_a
 	  handlers.Add((int)BLComportamiento.ActionType.Existe_camino_directo, Existe_camino_directo);
@@ -148,64 +150,22 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 
    // Infiere el objetivo a cumplir por el jugador controlado por el humano, y determina el objetivo actual como el complementario de este.
    public BehaveResult Inferir_objetivo_a_cumplir(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  float[] valor_objetivo = new float[juego.objetivos.Count];
-	  float descuento = 1.0f;
-	  float suma = 0;
+	  float[] valor_objetivo;
+	  List<ObjetivoMB> objetivosmb = juego.inferirObjetivo(juego.jugadores[0], juego.profundidad_acciones, juego.factor_descuento, out valor_objetivo);
 
-	  Nodo_Estado nodo;
-	  float tiempo;
-
-	  int tope_inferior = juego.profundidad_acciones - Mathf.Min(juego.profundidad_acciones, juego.historial_estados.Count);
-	  int t = juego.historial_estados.Count;
-	  foreach (KeyValuePair<float, Nodo_Estado> tiempo_estado in juego.historial_estados) {
-		 if (t < tope_inferior) {
-			break;
-		 }
-
-		 tiempo = tiempo_estado.Key;
-		 nodo = tiempo_estado.Value;
-		 foreach (ObjetivoMB objetivomb in juego.objetivos) {
-			Accion accion = juego.mdp.Politica[juego.jugadores[0].jugador.id][objetivomb.objetivo.id][nodo.estado_actual.id];
-			Accion accion_jugador;
-			if (juego.jugadores[0].jugador.acciones.TryGetValue(tiempo, out accion_jugador) && accion.id == accion_jugador.id) {
-			   valor_objetivo[objetivomb.objetivo.id] += descuento;
-			   suma += descuento;
+	  if (objetivosmb.Count > 0) {
+		 float menor_distancia = float.PositiveInfinity;
+		 ObjetivoMB menor_objetivomb = null;
+		 foreach (ObjetivoMB objetivomb in objetivosmb) {
+			float distancia = Vector3.Distance(juego.jugadores[0].jugador.posicion, objetivomb.objetivo.posicion) + Vector3.Distance(jugadormb.jugador.posicion, objetivomb.objetivo.complementario.posicion);
+			if (distancia < menor_distancia) {
+			   menor_distancia = distancia;
+			   menor_objetivomb = objetivomb;
 			}
 		 }
 
-		 descuento = descuento * juego.factor_descuento;
+		 target_objetivo = menor_objetivomb;
 
-		 t--;
-	  }
-
-
-	  if (suma > 0) {
-		 for (int i = 0; i < valor_objetivo.Length; i++) {
-			valor_objetivo[i] = valor_objetivo[i] / suma;
-		 }
-
-		 float max_valor = float.MinValue;
-		 int objetivo_id = -1;
-		 for (int i = 0; i < valor_objetivo.Length; i++) {
-			if (!juego.objetivos[i].objetivo.cumplido && valor_objetivo[i] > max_valor) {
-			   max_valor = valor_objetivo[i];
-			   objetivo_id = i;
-			}
-		 }
-
-		 if (objetivo_id != -1) {
-			target_objetivo = juego.objetivos[objetivo_id].objetivo.complementario.objetivo_mb;
-		 }
-		 else {
-			target_objetivo = null;
-		 }
-
-	  }
-	  else {
-		 target_objetivo = null;
-	  }
-
-	  if (target_objetivo != null) {
 		 target = target_objetivo.transform.position;
 		 target.y = agente.Position.y;
 		 return BehaveResult.Success;

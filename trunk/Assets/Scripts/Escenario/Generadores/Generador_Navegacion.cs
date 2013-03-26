@@ -208,18 +208,18 @@ public class Generador_Navegacion : MonoBehaviour {
 	  foreach (Waypoint wi in Navigation.Waypoints) {
 		 foreach (Waypoint wj in Navigation.Waypoints) {
 			foreach (Waypoint wk in Navigation.Waypoints) {
-			   //float dik = Vector3.Distance(wi.Position, wk.Position);
-			   //float dij = Vector3.Distance(wi.Position, wj.Position);
-			   //float djk = Vector3.Distance(wj.Position, wk.Position);
-			   //bool rango_distancia = Mathf.Abs(dik - (dij + djk)) <= 0.85f;
+			   float dik = Vector3.Distance(wi.Position, wk.Position);
+			   float dij = Vector3.Distance(wi.Position, wj.Position);
+			   float djk = Vector3.Distance(wj.Position, wk.Position);
+			   bool rango_distancia = Mathf.Abs(dik - (dij + djk)) <= 0.65f;
 
-			   float angulo = Vector3.Angle(wi.Position - wj.Position, wk.Position - wj.Position);
-			   bool rango_angulo = (180 - angulo) <= maximo_angulo_optimizacion;
+			   //float angulo = Vector3.Angle(wi.Position - wj.Position, wk.Position - wj.Position);
+			   //bool rango_angulo = (180 - angulo) <= maximo_angulo_optimizacion;
 
 			   bool conexion_transitiva = (wi.ConnectsTo(wj) && wj.ConnectsTo(wk) && wi.ConnectsTo(wk));
 
-			   //if (conexion_transitiva && rango_distancia) {
-			   if (conexion_transitiva && rango_angulo) {
+			   if (conexion_transitiva && rango_distancia) {
+			   //if (conexion_transitiva && rango_angulo) {
 				  conexiones_a_eliminar.Add(new KeyValuePair<Waypoint, Waypoint>(wi, wk));
 			   }
 			}

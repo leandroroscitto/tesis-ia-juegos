@@ -243,7 +243,7 @@ public class MDP<S, A, O, T, R>
 			   cont_porcentaje--;
 			}
 		 }
-	  } while (!sincambios);// && diferencia_total > 0.0002f);
+	  } while (!sincambios);
 
 	  Utilidad = Utilidad_Aux;
 	  Politica = Politica_Aux;

@@ -13,7 +13,7 @@ public class VentanaArbolEstado : EditorWindow {
 
    private bool mostrar_gizmos = true;
 
-   private int cantidad_estados_rango = 10;
+   private int cantidad_estados_rango = 25;
 
    private bool mostrar_estados = true;
    private int rango_estados_seleccionado = 0;
@@ -40,7 +40,7 @@ public class VentanaArbolEstado : EditorWindow {
 	  generador_jugadores = GameObject.Find("Generadores").GetComponent<Generador_Jugadores>();
 	  generador_objetivos = GameObject.Find("Generadores").GetComponent<Generador_Objetivos>();
 
-	  if (generador_mdp != null && generador_jugadores != null && generador_objetivos != null && generador_mdp.arbol_estados != null && generador_mdp.arbol_estados.estados != null) {
+	  if (generador_mdp != null && generador_jugadores != null && generador_objetivos != null && generador_mdp.arbol_estados != null && generador_mdp.arbol_estados.estados != null && generador_mdp.resolucion_mdp != null && generador_mdp.resolucion_mdp.mdp != null) {
 		 Arbol_Estados arbol_estados = generador_mdp.arbol_estados;
 
 		 mostrar_gizmos = EditorGUILayout.Toggle("Mostrar Gizmos: ", mostrar_gizmos);
@@ -51,6 +51,9 @@ public class VentanaArbolEstado : EditorWindow {
 
 		 int cantidad_estados = arbol_estados.estados.Count;
 		 List<Nodo_Estado> estados = arbol_estados.estados;
+
+		 MDP<Nodo_Estado, Accion, Objetivo, ResolucionMDP.TransicionJuego, ResolucionMDP.RecompensaJuego> mdp = generador_mdp.resolucion_mdp.mdp;
+		 List<Objetivo> objetivos = generador_objetivos.objetivos;
 
 		 EditorGUILayout.Separator();
 		 mostrar_estados = EditorGUILayout.Foldout(mostrar_estados, "Seleccion de estado");
@@ -144,11 +147,20 @@ public class VentanaArbolEstado : EditorWindow {
 
 				  rango_hijos_seleccionado = EditorGUILayout.Popup("Rango: ", rango_hijos_seleccionado, menu_rango);
 				  hijo_enrango_seleccionado = EditorGUILayout.Popup("Estado: ", hijo_enrango_seleccionado, menu_rango_estados[rango_hijos_seleccionado]);
-				  if (hijo_enrango_seleccionado != -1) {
+				  if (hijo_enrango_seleccionado >= 0 && hijo_enrango_seleccionado < menu_rango_estados[rango_hijos_seleccionado].Length) {
 					 hijo_indice_seleccionado = rango_hijos_seleccionado * cantidad_estados_rango + hijo_enrango_seleccionado;
 
 					 Accion accion = estados[estado_id_seleccionado].acciones_hijos[hijo_indice_seleccionado];
-					 EditorGUILayout.LabelField("A traves de la accion " + "(" + accion.id + ")" + " [" + accion.origen + " => " + accion.destino + "]" + " de " + accion.jugador.nombre);
+					 EditorGUILayout.LabelField("A traves de la accion " + "(" + accion.id + ")" + " [" + accion.origen + " => " + accion.destino + "]");
+					 EditorGUILayout.LabelField("de " + accion.jugador.nombre + ", con una probabilidad de " + estados[estado_id_seleccionado].estados_hijos_probabilidad[hijo_indice_seleccionado]);
+
+					 EditorGUILayout.Space();
+
+					 EditorGUILayout.LabelField("Utilidades:");
+					 foreach (Objetivo objetivo in objetivos) {
+						float diferencia = mdp.Utilidad[accion.actor_id][objetivo.id][estados[estado_id_seleccionado].estados_hijos[hijo_indice_seleccionado].id] - mdp.Utilidad[accion.actor_id][objetivo.id][estado_id_seleccionado];
+						EditorGUILayout.LabelField(objetivo.nombre + ": " + mdp.Utilidad[accion.actor_id][objetivo.id][estados[estado_id_seleccionado].estados_hijos[hijo_indice_seleccionado].id] + " [" + diferencia + "]");
+					 }
 
 					 if (GUILayout.Button("Seleccionar estado")) {
 						estado_id_seleccionado = estados_hijos[hijo_indice_seleccionado].id;

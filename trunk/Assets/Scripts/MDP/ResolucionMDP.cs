@@ -13,8 +13,7 @@ public class ResolucionMDP : ISerializable {
 
 	  public override float getValor(Accion a, Nodo_Estado s, Nodo_Estado sp) {
 		 if (s.estados_hijos != null) {
-			float probabilidad_base = s.probabilidadHijoAccion(sp, a);
-			return probabilidad_base;
+			return s.probabilidadHijoAccion(sp, a);
 		 }
 		 else {
 			// Nunca deberia llegar por aca.
@@ -55,9 +54,6 @@ public class ResolucionMDP : ISerializable {
 		 float resultado;
 		 resultado = Mapa.Mapa_Instancia.tiles.Length * 2;
 		 resultado += s.estado_actual.objetivos_cumplidos.Count - s.estado_actual.objetivos_no_cumplidos.Count;
-		 // TODO: Verificar la validez de usar distancia directa en vez de la distancia real,
-		 // TODO: ver si se puede usar distancia real (no creo, por cuestiones de tiempo de pathfinding),
-		 // TODO: en ese caso no usar.
 		 if (s.estado_actual.objetivos_no_cumplidos.Contains(o.id)) {
 			float distancia_minima = float.MaxValue;
 			for (int actor = 0; actor < s.estado_actual.posicion_jugadores.Count; actor++) {

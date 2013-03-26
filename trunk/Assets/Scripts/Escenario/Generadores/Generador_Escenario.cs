@@ -282,7 +282,6 @@ public class Generador_Escenario : MonoBehaviour {
 	  float proporcion_mapa = Mapa.Mapa_Instancia.cant_x * 1f / Mapa.Mapa_Instancia.cant_y;
 	  float proporcion_pantalla = 9f / 16f;
 
-	  Debug.Log(proporcion_mapa + ", " + proporcion_pantalla);
 	  float ancho = proporcion_mapa * proporcion_pantalla * parametros_visuales.tamano_radar;
 	  float largo = proporcion_mapa * 1f / proporcion_mapa * parametros_visuales.tamano_radar;
 	  camara_top.camera.rect = new Rect(1 - ancho, 1 - largo, ancho, largo);
