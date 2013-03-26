@@ -86,13 +86,13 @@ public class Generador_MDP : MonoBehaviour {
 
 		 foreach (Accion accion in acciones_disponibles) {
 			foreach (Jugador jugador in arbol_estados.jugadores) {
-			   jugador.posicion = nodo_estado_actual.estado_actual.posicion_jugadores[jugador.id];
+			   jugador.posicion = nodo_estado_actual.estado_juego.posicion_jugadores[jugador.id];
 			}
 
 			int ja_jugador_id = accion.jugador.id;
 			int ja_accion_id = accion.id;
 			Vector3 nueva_posicion;
-			if (nodo_estado_actual.estado_actual.IntentarAccion(arbol_estados.jugadores[ja_jugador_id], arbol_estados.acciones[ja_accion_id], out nueva_posicion)) {
+			if (nodo_estado_actual.estado_juego.IntentarAccion(arbol_estados.jugadores[ja_jugador_id], arbol_estados.acciones[ja_accion_id], out nueva_posicion)) {
 			   // Obtener el proximo estado a partir del actual y la accion del jugador.
 			   bool en_visitado = false;
 			   bool en_frontera = false;
@@ -102,10 +102,10 @@ public class Generador_MDP : MonoBehaviour {
 			   if (proximo_estado_nodo == null) {
 				  cant_estados++;
 				  Estado proximo_estado = new Estado(cant_estados);
-				  foreach (int objetivo_id in nodo_estado_actual.estado_actual.objetivos_cumplidos) {
+				  foreach (int objetivo_id in nodo_estado_actual.estado_juego.objetivos_cumplidos) {
 					 proximo_estado.objetivos_cumplidos.Add(objetivo_id);
 				  }
-				  foreach (int objetivo_id in nodo_estado_actual.estado_actual.objetivos_no_cumplidos) {
+				  foreach (int objetivo_id in nodo_estado_actual.estado_juego.objetivos_no_cumplidos) {
 					 proximo_estado.objetivos_no_cumplidos.Add(objetivo_id);
 				  }
 				  foreach (Jugador jugador in arbol_estados.jugadores) {
@@ -153,8 +153,8 @@ public class Generador_MDP : MonoBehaviour {
 
    // Acciones disponibles desde un estado
    private List<Accion> getAccionesDisponibles(Nodo_Estado estado) {
-	  Dictionary<int, Vector3> posiciones_jugadores = new Dictionary<int, Vector3>(estado.estado_actual.posicion_jugadores.Count);
-	  foreach (KeyValuePair<int, Vector3> posicion_jugador in estado.estado_actual.posicion_jugadores) {
+	  Dictionary<int, Vector3> posiciones_jugadores = new Dictionary<int, Vector3>(estado.estado_juego.posicion_jugadores.Count);
+	  foreach (KeyValuePair<int, Vector3> posicion_jugador in estado.estado_juego.posicion_jugadores) {
 		 posiciones_jugadores.Add(posicion_jugador.Key, Navigation.GetNearestNode(posicion_jugador.Value).Position);
 	  }
 
@@ -170,9 +170,9 @@ public class Generador_MDP : MonoBehaviour {
 
    // Operaciones sobre los diccionarios de estados
    public static void agregarEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict) {
-	  int cant_obj_cumplidos = estado.estado_actual.objetivos_cumplidos.Count;
-	  Vector3[] posicion_jugadores = new Vector3[estado.estado_actual.posicion_jugadores.Count];
-	  estado.estado_actual.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
+	  int cant_obj_cumplidos = estado.estado_juego.objetivos_cumplidos.Count;
+	  Vector3[] posicion_jugadores = new Vector3[estado.estado_juego.posicion_jugadores.Count];
+	  estado.estado_juego.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
 
 	  Dictionary<Vector3[], List<Nodo_Estado>> PosJugador_Estados;
 	  if (dict.TryGetValue(cant_obj_cumplidos, out PosJugador_Estados)) {
@@ -196,9 +196,9 @@ public class Generador_MDP : MonoBehaviour {
    }
 
    public static void removerEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict) {
-	  int cant_obj_cumplidos = estado.estado_actual.objetivos_cumplidos.Count;
-	  Vector3[] posicion_jugadores = new Vector3[estado.estado_actual.posicion_jugadores.Count];
-	  estado.estado_actual.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
+	  int cant_obj_cumplidos = estado.estado_juego.objetivos_cumplidos.Count;
+	  Vector3[] posicion_jugadores = new Vector3[estado.estado_juego.posicion_jugadores.Count];
+	  estado.estado_juego.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
 
 	  Dictionary<Vector3[], List<Nodo_Estado>> PosJugador_Estados;
 	  if (dict.TryGetValue(cant_obj_cumplidos, out PosJugador_Estados)) {
@@ -210,16 +210,16 @@ public class Generador_MDP : MonoBehaviour {
    }
 
    public static bool getEstadoDict(Nodo_Estado estado, Dictionary<int, Dictionary<Vector3[], List<Nodo_Estado>>> dict, out Nodo_Estado nodo_estado_resultado) {
-	  int cant_obj_cumplidos = estado.estado_actual.objetivos_cumplidos.Count;
-	  Vector3[] posicion_jugadores = new Vector3[estado.estado_actual.posicion_jugadores.Count];
-	  estado.estado_actual.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
+	  int cant_obj_cumplidos = estado.estado_juego.objetivos_cumplidos.Count;
+	  Vector3[] posicion_jugadores = new Vector3[estado.estado_juego.posicion_jugadores.Count];
+	  estado.estado_juego.posicion_jugadores.Values.CopyTo(posicion_jugadores, 0);
 
 	  Dictionary<Vector3[], List<Nodo_Estado>> PosJugador_Estados;
 	  if (dict.TryGetValue(cant_obj_cumplidos, out PosJugador_Estados)) {
 		 List<Nodo_Estado> Lista_Estados;
 		 if (PosJugador_Estados.TryGetValue(posicion_jugadores, out Lista_Estados)) {
 			foreach (Nodo_Estado nodo_estado in Lista_Estados) {
-			   if (nodo_estado.estado_actual.mismoEstado(estado.estado_actual)) {
+			   if (nodo_estado.estado_juego.mismoEstado(estado.estado_juego)) {
 				  nodo_estado_resultado = nodo_estado;
 				  return true;
 			   }
@@ -250,30 +250,30 @@ public class Generador_MDP : MonoBehaviour {
    private Nodo_Estado buscarProximoEstado(Nodo_Estado estado, Jugador jugador, Vector3 nueva_posicion, out bool en_visitado, out bool en_frontera) {
 	  Vector3 posicion_actual;
 	  List<int> objetivos_modificados;
-	  modificarEstado(estado.estado_actual, jugador, nueva_posicion, out posicion_actual, out objetivos_modificados);
+	  modificarEstado(estado.estado_juego, jugador, nueva_posicion, out posicion_actual, out objetivos_modificados);
 	  if (!nueva_posicion.Equals(posicion_actual)) {
 		 Nodo_Estado nodo_estado;
 		 if (getEstadoDict(estado, arbol_estados.estados_dict, out nodo_estado)) {
-			restaurarEstado(estado.estado_actual, jugador, posicion_actual, objetivos_modificados);
+			restaurarEstado(estado.estado_juego, jugador, posicion_actual, objetivos_modificados);
 			en_visitado = true;
 			en_frontera = false;
 			return nodo_estado;
 		 }
 
 		 if (getEstadoDict(estado, frontera_dict, out nodo_estado)) {
-			restaurarEstado(estado.estado_actual, jugador, posicion_actual, objetivos_modificados);
+			restaurarEstado(estado.estado_juego, jugador, posicion_actual, objetivos_modificados);
 			en_visitado = false;
 			en_frontera = true;
 			return nodo_estado;
 		 }
 
-		 restaurarEstado(estado.estado_actual, jugador, posicion_actual, objetivos_modificados);
+		 restaurarEstado(estado.estado_juego, jugador, posicion_actual, objetivos_modificados);
 		 en_visitado = false;
 		 en_frontera = false;
 		 return null;
 	  }
 	  else {
-		 restaurarEstado(estado.estado_actual, jugador, posicion_actual, objetivos_modificados);
+		 restaurarEstado(estado.estado_juego, jugador, posicion_actual, objetivos_modificados);
 		 en_visitado = false;
 		 en_frontera = true;
 		 return nodo_estado_actual;

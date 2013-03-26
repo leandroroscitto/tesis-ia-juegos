@@ -53,21 +53,21 @@ public class ResolucionMDP : ISerializable {
 	  public override float getValor(Nodo_Estado s, Objetivo o, int actor_id) {
 		 float resultado;
 		 resultado = Mapa.Mapa_Instancia.tiles.Length * 2;
-		 resultado += s.estado_actual.objetivos_cumplidos.Count - s.estado_actual.objetivos_no_cumplidos.Count;
-		 if (s.estado_actual.objetivos_no_cumplidos.Contains(o.id)) {
+		 resultado += s.estado_juego.objetivos_cumplidos.Count - s.estado_juego.objetivos_no_cumplidos.Count;
+		 if (s.estado_juego.objetivos_no_cumplidos.Contains(o.id)) {
 			float distancia_minima = float.MaxValue;
-			for (int actor = 0; actor < s.estado_actual.posicion_jugadores.Count; actor++) {
+			for (int actor = 0; actor < s.estado_juego.posicion_jugadores.Count; actor++) {
 			   if (actor == actor_id) {
 				  //resultado -= Vector3.Distance(s.estado_actual.posicion_jugadores[actor], o.posicion);
-				  resultado -= Generador_Navegacion.getMinimaDistancia(s.estado_actual.posicion_jugadores[actor], o.posicion);
+				  resultado -= Generador_Navegacion.getMinimaDistancia(s.estado_juego.posicion_jugadores[actor], o.posicion);
 			   }
 			   else {
-				  distancia_minima = Mathf.Min(distancia_minima, Generador_Navegacion.getMinimaDistancia(s.estado_actual.posicion_jugadores[actor], o.complementario.posicion));
+				  distancia_minima = Mathf.Min(distancia_minima, Generador_Navegacion.getMinimaDistancia(s.estado_juego.posicion_jugadores[actor], o.complementario.posicion));
 				  //distancia_minima = Mathf.Min(distancia_minima, Vector3.Distance(s.estado_actual.posicion_jugadores[actor], o.complementario.posicion));
 				  //distancia_minima = 0;
 			   }
 			}
-			if (s.estado_actual.posicion_jugadores.Count > 1)
+			if (s.estado_juego.posicion_jugadores.Count > 1)
 			   resultado -= distancia_minima;
 		 }
 		 else {

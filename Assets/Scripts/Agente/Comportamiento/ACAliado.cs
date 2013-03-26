@@ -142,7 +142,7 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
    // Determina si existe un objetivo sin cumplir.
    public BehaveResult Existe_objetivo_sin_cumplir(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
 	  target_objetivo = null;
-	  if (juego.nodo_estado_actual.estado_actual.objetivos_no_cumplidos.Count > 0) {
+	  if (juego.nodo_estado_actual.estado_juego.objetivos_no_cumplidos.Count > 0) {
 		 return BehaveResult.Success;
 	  }
 	  return BehaveResult.Failure;
@@ -164,7 +164,7 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 			}
 		 }
 
-		 target_objetivo = menor_objetivomb;
+		 target_objetivo = menor_objetivomb.objetivo.complementario.objetivo_mb;
 
 		 target = target_objetivo.transform.position;
 		 target.y = agente.Position.y;

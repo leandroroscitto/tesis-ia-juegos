@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 [Serializable]
 public class Nodo_Estado : Estado_MDP, ISerializable {
-   public Estado estado_actual;
+   public Estado estado_juego;
 
    public List<Nodo_Estado> estados_padres;
    // <id_jugador, estados>
@@ -31,7 +31,7 @@ public class Nodo_Estado : Estado_MDP, ISerializable {
 
    public Nodo_Estado(int i, Estado e)
 	  : base(i) {
-	  estado_actual = e;
+	  estado_juego = e;
 	  estados_padres = new List<Nodo_Estado>();
 	  estados_padres_actor = new Dictionary<int, List<Nodo_Estado>>();
 	  estados_hijos = new List<Nodo_Estado>();
@@ -115,13 +115,13 @@ public class Nodo_Estado : Estado_MDP, ISerializable {
    }
 
    public override string ToString() {
-	  return "Estado_ID: " + estado_actual.id + ", hijos: " + estados_hijos.Count + ", padres: " + estados_padres.Count;
+	  return "Estado_ID: " + estado_juego.id + ", hijos: " + estados_hijos.Count + ", padres: " + estados_padres.Count;
    }
 
    // Serializacion
    public Nodo_Estado(SerializationInfo info, StreamingContext ctxt)
 	  : base(info, ctxt) {
-	  estado_actual = info.GetValue("Estado_Actual", typeof(Estado)) as Estado;
+	  estado_juego = info.GetValue("Estado_Actual", typeof(Estado)) as Estado;
 
 	  estados_padres = info.GetValue("Estados_Padres", typeof(List<Nodo_Estado>)) as List<Nodo_Estado>;
 	  estados_padres_actor = info.GetValue("Estados_Padres_Actor", typeof(Dictionary<int, List<Nodo_Estado>>)) as Dictionary<int, List<Nodo_Estado>>;
@@ -139,7 +139,7 @@ public class Nodo_Estado : Estado_MDP, ISerializable {
    public void GetObjectData(SerializationInfo info, StreamingContext ctxt) {
 	  base.GetObjectData(info, ctxt);
 
-	  info.AddValue("Estado_Actual", estado_actual);
+	  info.AddValue("Estado_Actual", estado_juego);
 
 	  info.AddValue("Estados_Padres", estados_padres);
 	  info.AddValue("Estados_Padres_Actor", estados_padres_actor);

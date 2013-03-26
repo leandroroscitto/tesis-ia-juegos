@@ -55,14 +55,14 @@ public class JuegoMB : MonoBehaviour {
 
    void OnGUI() {
 	  // Informacion de estado actual
-	  GUILayout.Label("Estado Actual: " + nodo_estado_actual.estado_actual);
+	  GUILayout.Label("Estado Actual: " + nodo_estado_actual.estado_juego);
 	  string objetivos_cumplidos, objetivos_no_cumplidos;
 	  objetivos_cumplidos = objetivos_no_cumplidos = "";
 	  foreach (ObjetivoMB objetivomb in objetivos) {
-		 if (nodo_estado_actual.estado_actual.objetivos_cumplidos.Contains(objetivomb.objetivo.id)) {
+		 if (nodo_estado_actual.estado_juego.objetivos_cumplidos.Contains(objetivomb.objetivo.id)) {
 			objetivos_cumplidos += objetivomb.objetivo.nombre + ", ";
 		 }
-		 else if (nodo_estado_actual.estado_actual.objetivos_no_cumplidos.Contains(objetivomb.objetivo.id)) {
+		 else if (nodo_estado_actual.estado_juego.objetivos_no_cumplidos.Contains(objetivomb.objetivo.id)) {
 			objetivos_no_cumplidos += objetivomb.objetivo.nombre + ", ";
 		 }
 		 else {
@@ -113,7 +113,7 @@ public class JuegoMB : MonoBehaviour {
 	  KeyValuePair<float, Nodo_Estado>[] enumerador_estados = historial_estados.ToArray<KeyValuePair<float, Nodo_Estado>>();
 	  for (int i = historial_estados.Count - cantidad_estados; i < historial_estados.Count; i++) {
 		 KeyValuePair<float, Nodo_Estado> tiempo_estado = enumerador_estados[i];
-		 estados_string = "(" + Mathf.Round(tiempo_estado.Key * 100) / 100f + ") => " + tiempo_estado.Value.estado_actual + "\n" + estados_string;
+		 estados_string = "(" + Mathf.Round(tiempo_estado.Key * 100) / 100f + ") => " + tiempo_estado.Value.estado_juego + "\n" + estados_string;
 	  }
 	  GUILayout.Label("Historial de estados:");
 	  GUILayout.Label(estados_string);
@@ -180,7 +180,7 @@ public class JuegoMB : MonoBehaviour {
 			else {
 			   Waypoint waypoint_previo = null;
 			   if (nodo_estado_actual != null) {
-				  waypoint_previo = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[i]);
+				  waypoint_previo = Navigation.GetNearestNode(nodo_estado_actual.estado_juego.posicion_jugadores[i]);
 			   }
 			   else {
 				  waypoint_previo = jugadores[i].jugador.waypointMasCercanoNoObjetivo();
@@ -248,7 +248,7 @@ public class JuegoMB : MonoBehaviour {
 	  else {
 		 // No hubo desplazamiento a otro estado.
 		 foreach (JugadorMB jugadormb in jugadores) {
-			Waypoint waypoint = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[jugadormb.jugador.id]);
+			Waypoint waypoint = Navigation.GetNearestNode(nodo_estado_actual.estado_juego.posicion_jugadores[jugadormb.jugador.id]);
 			acciones_realizadas.Add(acciones_dict[jugadormb.jugador.id][waypoint][waypoint]);
 		 }
 	  }
@@ -269,7 +269,7 @@ public class JuegoMB : MonoBehaviour {
 
 	  for (int k = 0; k < realizo_accion.Length; k++) {
 		 if (!realizo_accion[k]) {
-			Waypoint waypoint = Navigation.GetNearestNode(nodo_estado_actual.estado_actual.posicion_jugadores[jugadores[k].jugador.id]);
+			Waypoint waypoint = Navigation.GetNearestNode(nodo_estado_actual.estado_juego.posicion_jugadores[jugadores[k].jugador.id]);
 			jugadores[k].jugador.registrarAccion(Time.time, acciones_dict[jugadores[k].jugador.id][waypoint][waypoint]);
 		 }
 	  }
@@ -302,32 +302,36 @@ public class JuegoMB : MonoBehaviour {
 	  float suma = 0;
 	  List<ObjetivoMB> inferidos = new List<ObjetivoMB>();
 
-	  Nodo_Estado nodo;
-	  float tiempo;
+	  float[] tiempos = historial_estados.Keys.ToArray<float>();
+	  int tope_inferior = Mathf.Max(0, tiempos.Length - cant_acciones_inferencia);
+	  int indice = tiempos.Length - 1;
+	  while (indice > tope_inferior) {
+		 float tiempo_anterior = tiempos[indice - 1];
+		 float tiempo = tiempos[indice];
+		 Nodo_Estado nodo_estado = historial_estados[tiempo];
 
-	  int tope_inferior = cant_acciones_inferencia - Mathf.Min(cant_acciones_inferencia, historial_estados.Count);
-	  int t = historial_estados.Count;
-	  foreach (KeyValuePair<float, Nodo_Estado> tiempo_estado in historial_estados) {
-		 if (t < tope_inferior) {
-			break;
-		 }
+		 float duracion = tiempo - tiempo_anterior;
 
-		 tiempo = tiempo_estado.Key;
-		 nodo = tiempo_estado.Value;
 		 foreach (ObjetivoMB objetivomb in objetivos) {
-			Accion accion = mdp.Politica[jugadormb.jugador.id][objetivomb.objetivo.id][nodo.estado_actual.id];
+			float utilidad = mdp.Utilidad[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado.estado_juego.id];
+			Accion accion = mdp.Politica[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado.estado_juego.id];
 			Accion accion_jugador;
 			if (jugadormb.jugador.acciones.TryGetValue(tiempo, out accion_jugador) && accion.id == accion_jugador.id) {
-			   valor_objetivo[objetivomb.objetivo.id] += descuento;
-			   suma += descuento;
+			   // Si se esta quedando en el lugar.
+			   if (accion.distancia == 0) {
+				  valor_objetivo[objetivomb.objetivo.id] += utilidad * descuento + duracion;
+				  suma += utilidad * descuento + duracion;
+			   }
+			   else {
+				  valor_objetivo[objetivomb.objetivo.id] += utilidad * descuento + accion.distancia / duracion;
+				  suma += utilidad * descuento + accion.distancia / duracion;
+			   }
 			}
 		 }
 
 		 descuento = descuento * factor_descuento_inferencia;
-
-		 t--;
+		 indice--;
 	  }
-
 
 	  if (suma > 0) {
 		 for (int i = 0; i < valor_objetivo.Length; i++) {
