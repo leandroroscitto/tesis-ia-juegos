@@ -94,19 +94,19 @@ public class VentanaArbolEstado : EditorWindow {
 				  EditorGUILayout.Space();
 				  EditorGUILayout.LabelField("Informacion:");
 				  foreach (Jugador jugador in generador_jugadores.jugadores) {
-					 EditorGUILayout.LabelField(jugador.nombre + " en la posicion: " + Navigation.GetNearestNode(estado.estado_actual.posicion_jugadores[jugador.id]) + ".");
+					 EditorGUILayout.LabelField(jugador.nombre + " en la posicion: " + Navigation.GetNearestNode(estado.estado_juego.posicion_jugadores[jugador.id]) + ".");
 				  }
 
 				  EditorGUILayout.Space();
 				  string cumplidos = "";
-				  foreach (int objetivo_id in estado.estado_actual.objetivos_cumplidos) {
+				  foreach (int objetivo_id in estado.estado_juego.objetivos_cumplidos) {
 					 cumplidos += generador_objetivos.objetivos[objetivo_id].nombre + ", ";
 				  }
 
 				  EditorGUILayout.LabelField("Objetivos cumplidos: ", cumplidos);
 
 				  string no_cumplidos = "";
-				  foreach (int objetivo_id in estado.estado_actual.objetivos_no_cumplidos) {
+				  foreach (int objetivo_id in estado.estado_juego.objetivos_no_cumplidos) {
 					 no_cumplidos += generador_objetivos.objetivos[objetivo_id].nombre + ", ";
 				  }
 
@@ -286,10 +286,10 @@ public class VentanaArbolEstado : EditorWindow {
 			}
 
 			if (estado != null) {
-			   if (estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
+			   if (estado.estado_juego != null && estado.estado_juego.posicion_jugadores != null) {
 				  int i = 0;
-				  foreach (KeyValuePair<int, Vector3> posicion in estado.estado_actual.posicion_jugadores) {
-					 Handles.color = Color.Lerp(Color.blue, Color.green, i * 1f / estado.estado_actual.posicion_jugadores.Count);
+				  foreach (KeyValuePair<int, Vector3> posicion in estado.estado_juego.posicion_jugadores) {
+					 Handles.color = Color.Lerp(Color.blue, Color.green, i * 1f / estado.estado_juego.posicion_jugadores.Count);
 					 Handles.SphereCap(0, posicion.Value, Quaternion.identity, 0.75f);
 					 i++;
 				  }
@@ -301,8 +301,8 @@ public class VentanaArbolEstado : EditorWindow {
 
 		 Handles.BeginGUI();
 		 if (generador_mdp != null) {
-			if (estado != null && estado.estado_actual != null && estado.estado_actual.posicion_jugadores != null) {
-			   foreach (KeyValuePair<int, Vector3> posicion in estado.estado_actual.posicion_jugadores) {
+			if (estado != null && estado.estado_juego != null && estado.estado_juego.posicion_jugadores != null) {
+			   foreach (KeyValuePair<int, Vector3> posicion in estado.estado_juego.posicion_jugadores) {
 				  imprimirLabel(posicion.Value, generador_jugadores.jugadores[posicion.Key].nombre, sceneView.camera);
 			   }
 			}

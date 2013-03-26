@@ -63,7 +63,7 @@ public class Arbol_Estados : ISerializable {
 		 List<Nodo_Estado> Lista_Estados;
 		 if (PosJugador_Estados.TryGetValue(posicion_jugadores, out Lista_Estados)) {
 			foreach (Nodo_Estado nodo_estado in Lista_Estados) {
-			   if (nodo_estado.estado_actual.mismoEstado(estado)) {
+			   if (nodo_estado.estado_juego.mismoEstado(estado)) {
 				  nodo_estado_resultado = nodo_estado;
 				  return true;
 			   }
