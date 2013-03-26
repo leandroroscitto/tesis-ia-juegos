@@ -20,15 +20,13 @@ public class JuegoMB : MonoBehaviour {
    public List<Accion> acciones;
 
    // Estructuras auxiliares
-
-   // <jugador_id, ...>
    [NonSerialized]
+   // <jugador_id, ...>
    private Dictionary<int, Dictionary<Waypoint, Dictionary<Waypoint, Accion>>> acciones_dict;
 
    // Estados
-
-   // <tiempo, estado>
    [NonSerialized]
+   // <tiempo, estado>
    public SortedDictionary<float, Nodo_Estado> historial_estados;
    [NonSerialized]
    public Nodo_Estado nodo_estado_actual;
@@ -90,9 +88,13 @@ public class JuegoMB : MonoBehaviour {
 
 	  // Inferencia de objetivo para jugador humano
 	  float[] valor_objetivo;
-	  ObjetivoMB objetivomb_inferido = inferirObjetivo(jugadores[0], profundidad_acciones, factor_descuento, out valor_objetivo);
-	  if (objetivomb_inferido != null) {
-		 GUILayout.Label("Objetivo inferido: " + objetivomb_inferido.objetivo.nombre);
+	  List<ObjetivoMB> objetivosmb_inferidos = inferirObjetivo(jugadores[0], profundidad_acciones, factor_descuento, out valor_objetivo);
+	  if (objetivosmb_inferidos.Count > 0) {
+		 string inferidos = "";
+		 foreach (ObjetivoMB objetivomb_inferido in objetivosmb_inferidos) {
+			inferidos += objetivomb_inferido.objetivo.nombre + ", ";
+		 }
+		 GUILayout.Label("Objetivos inferidos: " + inferidos);
 		 string valor_string = "";
 		 foreach (ObjetivoMB objetivomb in objetivos) {
 			valor_string += "[" + objetivomb.objetivo.nombre + "] = " + valor_objetivo[objetivomb.objetivo.id] + ", ";
@@ -293,11 +295,12 @@ public class JuegoMB : MonoBehaviour {
 	  }
    }
 
-   // Inferencia de objetivos debug
-   private ObjetivoMB inferirObjetivo(JugadorMB jugadormb, int cant_acciones_inferencia, float factor_descuento_inferencia, out float[] valor_objetivo) {
+   // Inferencia de objetivos
+   public List<ObjetivoMB> inferirObjetivo(JugadorMB jugadormb, int cant_acciones_inferencia, float factor_descuento_inferencia, out float[] valor_objetivo) {
 	  valor_objetivo = new float[objetivos.Count];
 	  float descuento = 1.0f;
 	  float suma = 0;
+	  List<ObjetivoMB> inferidos = new List<ObjetivoMB>();
 
 	  Nodo_Estado nodo;
 	  float tiempo;
@@ -332,21 +335,21 @@ public class JuegoMB : MonoBehaviour {
 		 }
 
 		 float max_valor = float.MinValue;
-		 int objetivo_id = -1;
 		 for (int i = 0; i < valor_objetivo.Length; i++) {
-			if (!objetivos[i].objetivo.cumplido && valor_objetivo[i] > max_valor) {
-			   max_valor = valor_objetivo[i];
-			   objetivo_id = i;
+			if (!objetivos[i].objetivo.cumplido) {
+			   if (valor_objetivo[i] > max_valor) {
+				  max_valor = valor_objetivo[i];
+				  inferidos.Clear();
+				  inferidos.Add(objetivos[i]);
+			   }
+			   else if (valor_objetivo[i] == max_valor) {
+				  inferidos.Add(objetivos[i]);
+			   }
 			}
 		 }
-
-		 if (objetivo_id != -1) {
-			return objetivos[objetivo_id];
-		 }
-
-		 return null;
 	  }
-	  return null;
+
+	  return inferidos;
    }
 
    // Deteccion de objetivos

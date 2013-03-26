@@ -78,6 +78,12 @@ public class Generador_MDP : MonoBehaviour {
 		 removerEstadoDict(nodo_estado_actual, frontera_dict);
 
 		 List<Accion> acciones_disponibles = getAccionesDisponibles(nodo_estado_actual);
+
+		 float suma_distancias = 0;
+		 foreach (Accion accion in acciones_disponibles) {
+			suma_distancias += accion.distancia;
+		 }
+
 		 foreach (Accion accion in acciones_disponibles) {
 			foreach (Jugador jugador in arbol_estados.jugadores) {
 			   jugador.posicion = nodo_estado_actual.estado_actual.posicion_jugadores[jugador.id];
@@ -111,19 +117,17 @@ public class Generador_MDP : MonoBehaviour {
 				  proximo_estado_nodo = new Nodo_Estado(cant_estados, proximo_estado);
 			   }
 
-			   // Verificar si pertenezca a 'estados' o es igual que el estado actual.
-			   if (!en_visitado) {
-				  // Si no pertenece, establecer la relacion padre-hijo.
-				  nodo_estado_actual.AgregarHijo(proximo_estado_nodo, accion, 1.0f);
+			   //float probabilidad_base = (1 - accion.distancia / suma_distancias);
+			   //probabilidad_base = (accion.distancia == 0) ? 0 : probabilidad_base;
+			   
+			   nodo_estado_actual.AgregarHijo(proximo_estado_nodo, accion, 1f);
 
+			   if (!en_visitado) {
 				  // Verifica si ya se encuentra en la frontera. De no ser asi lo agrega.
 				  if (!en_frontera) {
 					 frontera.Enqueue(proximo_estado_nodo);
 					 agregarEstadoDict(proximo_estado_nodo, frontera_dict);
 				  }
-			   }
-			   else {
-				  nodo_estado_actual.AgregarHijo(proximo_estado_nodo, accion, 1.0f);
 			   }
 			}
 
