@@ -5,22 +5,23 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using PathRuntime;
+using UnitySteer;
 
 public class ACAliado : ArbolComportamientoBase, ACIr_A {
 
    public LayerMask layers_bloqueantes;
    public Vector3 target;
+   public Vector3 target_previo;
    public float delta_verificar_movimiento;
    public float minimo_movimiento_esperado;
    public Vector3 ultima_posicion_verificada;
    public float ultimo_tiempo_verificado;
-   private Navigator navegador;
+
+   public GameObject pointer1, pointer2;
+
    private SteerForPathSimplified steerBPathFollow;
    private SteerForWanderPropio steerWander;
-   private Path camino;
-   private bool nuevo_camino;
-   private bool target_no_alcanzable;
-   private bool camino_disponible;
+   private Vector3Pathway camino;
    private Vehicle target_agente_aliado;
    private ObjetivoMB target_objetivo;
    private Vehicle agente;
@@ -31,11 +32,8 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
    protected override void inicializacionParticular() {
 	  tipo_arbol = BLComportamiento.TreeType.Agentes_Aliado;
 
-	  navegador = GetComponent<Navigator>();
 	  steerBPathFollow = GetComponent<SteerForPathSimplified>();
 	  steerWander = GetComponent<SteerForWanderPropio>();
-
-	  navegador.targetPosition = transform.position;
 
 	  agente = GetComponent<Vehicle>();
 
@@ -43,9 +41,17 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  ultimo_tiempo_verificado = Time.time;
 
 	  target = transform.position;
+	  target_previo = target;
 
 	  juego = GameObject.Find("Juego").GetComponent<JuegoMB>();
 	  jugadormb = GetComponent<JugadorMB>();
+
+	  pointer1 = Instantiate(pointer1, Vector3.up * 1000, Quaternion.LookRotation(Vector3.up)) as GameObject;
+	  pointer1.GetComponent<Pointer>().duracion = 1000;
+	  pointer1.GetComponent<Pointer>().eje = Vector3.up;
+	  pointer2 = Instantiate(pointer2, Vector3.up * 1000, Quaternion.LookRotation(Vector3.up)) as GameObject;
+	  pointer2.GetComponent<Pointer>().duracion = 1000;
+	  pointer2.GetComponent<Pointer>().eje = Vector3.up;
 
 	  // Subarbol Ir_a
 	  handlers.Add((int)BLComportamiento.ActionType.Existe_camino_directo, Existe_camino_directo);
@@ -106,6 +112,9 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 			   menor_objetivomb = objetivomb;
 			}
 		 }
+
+		 pointer1.GetComponent<Pointer>().posicion_base = menor_objetivomb.objetivo.posicion;
+		 pointer2.GetComponent<Pointer>().posicion_base = menor_objetivomb.objetivo.complementario.posicion;
 
 		 target_objetivo = menor_objetivomb.objetivo.complementario.objetivo_mb;
 
@@ -181,27 +190,16 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 
    // Determina si existe un camino al target obtenido por medio de pathfinding. Puede tardar mas de una evaluacion completa del arbol de comportamiento para determinar el camino, por lo tanto se espera.
    public BehaveResult Existe_camino_indirecto(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  if (navegador.targetPosition != target) {
-		 navegador.targetPosition = target;
-		 return BehaveResult.Running;
+	  if (target_previo != target) {
+		 camino = new Vector3Pathway(Generador_Navegacion.getMinimoCamino(agente.Position, target), agente.Radius * 0.75f, false);
+		 target_previo = target;
 	  }
-	  else if (nuevo_camino || camino_disponible) {
-		 nuevo_camino = false;
-		 return BehaveResult.Success;
-	  }
-	  else if (target_no_alcanzable) {
-		 target_no_alcanzable = false;
-		 return BehaveResult.Failure;
-	  }
-	  else {
-		 // Esperando a un nuevo camino.
-		 return BehaveResult.Failure;
-	  }
+	  return BehaveResult.Success;
    }
 
    // El camino directo se compone por el segmento que une al agente con el target.
    public BehaveResult Calcular_camino_directo(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  UnitySteer.Vector3Pathway v3path = new UnitySteer.Vector3Pathway();
+	  Vector3Pathway v3path = new Vector3Pathway();
 	  v3path.AddPoint(agente.Position);
 	  v3path.AddPoint(target + Vector3.up * (agente.Position.y - target.y));
 
@@ -211,14 +209,7 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 
    // El camino indirecto es el obtenido por medio del pathfinding. Se lo transforma a un formato que sea facil de seguir por el steering behavior.
    public BehaveResult Calcular_camino_indirecto(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  UnitySteer.Vector3Pathway v3path = new UnitySteer.Vector3Pathway();
-	  v3path.AddPoint(camino.StartPosition + Vector3.up * (agente.Position.y - camino.StartPosition.y));
-	  foreach (Connection segment in camino.Segments) {
-		 v3path.AddPoint(segment.From.Position + Vector3.up * (agente.Position.y - segment.From.Position.y));
-	  }
-	  v3path.AddPoint(camino.EndPosition + Vector3.up * (agente.Position.y - camino.EndPosition.y));
-
-	  steerBPathFollow.Path = v3path;
+	  steerBPathFollow.Path = camino;
 	  return BehaveResult.Success;
    }
 
@@ -242,7 +233,7 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 		 Vector3 movimiento = agente.Position - ultima_posicion_verificada;
 		 if ((Vector3.Distance(agente.Position, target) > agente.ArrivalRadius) && (movimiento.magnitude < minimo_movimiento_esperado)) {
 			// Vuelve a calcular el path al target, por si ese es el problema.
-			navegador.ReSeek();
+			camino = new Vector3Pathway(Generador_Navegacion.getMinimoCamino(agente.Position, target), agente.Radius * 0.75f, false);
 			// Realiza wander por un instante para tratar de destrabarlo.
 			steerWander.enabled = true;
 			ultimo_tiempo_verificado = Time.time;
@@ -256,36 +247,5 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 		 }
 	  }
 	  return BehaveResult.Success;
-   }
-
-   // El pathfinding encontro un camino hacia el nuevo target.
-   public void OnNewPath(Path path) {
-	  camino = path;
-	  nuevo_camino = true;
-	  camino_disponible = true;
-	  target_no_alcanzable = false;
-	  //Debug.Log("Nuevo camino.");
-   }
-
-   // El pathfinding encontro un nuevo camino hacia el target.
-   public void OnPathAvailable(Path path) {
-	  camino = path;
-	  camino_disponible = true;
-	  target_no_alcanzable = false;
-	  //Debug.Log("Camino disponible.");
-   }
-
-   // No es posible llegar al target determinado.
-   public void OnTargetUnreachable() {
-	  target_no_alcanzable = true;
-	  camino_disponible = false;
-	  //Debug.Log("No se puede alcanzar el objetivo.");
-   }
-
-   // No existe camino disponible para el target.
-   public void OnPathUnavailable() {
-	  target_no_alcanzable = true;
-	  camino_disponible = false;
-	  //Debug.Log("No existe camino.");
    }
 }
