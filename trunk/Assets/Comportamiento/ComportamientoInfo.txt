@@ -33,10 +33,10 @@ Actions (18: 1 - 19):
 	Inferir_objetivo_a_cumplir (12)
 	Puede_cumplir_objetivo (13)
 	Cumplir_objetivo (14)
-	Existe_enemigo_cerca (15)
-	Calcular_posicion_enemigo (16)
-	Existe_enemigo_en_rango (17)
-	Atacar (18)
+	Existe_enemigo_en_rango (15)
+	Atacar (16)
+	Existe_enemigo_cerca (17)
+	Calcular_posicion_enemigo (18)
 	Unknown (19)
 
 Decorators (0: 20 - 20):

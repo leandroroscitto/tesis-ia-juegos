@@ -58,13 +58,10 @@ public class ResolucionMDP : ISerializable {
 			float distancia_minima = float.MaxValue;
 			for (int actor = 0; actor < s.estado_juego.posicion_jugadores.Count; actor++) {
 			   if (actor == actor_id) {
-				  //resultado -= Vector3.Distance(s.estado_actual.posicion_jugadores[actor], o.posicion);
 				  resultado -= Generador_Navegacion.getMinimaDistancia(s.estado_juego.posicion_jugadores[actor], o.posicion);
 			   }
 			   else {
 				  distancia_minima = Mathf.Min(distancia_minima, Generador_Navegacion.getMinimaDistancia(s.estado_juego.posicion_jugadores[actor], o.complementario.posicion));
-				  //distancia_minima = Mathf.Min(distancia_minima, Vector3.Distance(s.estado_actual.posicion_jugadores[actor], o.complementario.posicion));
-				  //distancia_minima = 0;
 			   }
 			}
 			if (s.estado_juego.posicion_jugadores.Count > 1)

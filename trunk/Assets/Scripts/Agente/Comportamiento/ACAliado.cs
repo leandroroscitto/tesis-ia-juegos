@@ -22,9 +22,6 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
    private bool target_no_alcanzable;
    private bool camino_disponible;
    private Vehicle target_agente_aliado;
-   private Vehicle target_agente_enemigo;
-   public float rango_ataque;
-   public float angulo_ataque;
    private ObjetivoMB target_objetivo;
    private Vehicle agente;
 
@@ -66,14 +63,6 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  handlers.Add((int)BLComportamiento.ActionType.Existe_aliado_cerca, Existe_aliado_cerca);
 	  handlers.Add((int)BLComportamiento.ActionType.Calcular_posicion_aliado, Calcular_posicion_aliado);
 
-	  // Atacar enemigos
-	  handlers.Add((int)BLComportamiento.ActionType.Existe_enemigo_en_rango, Existe_enemigo_en_rango);
-	  handlers.Add((int)BLComportamiento.ActionType.Atacar, Atacar);
-
-	  // Seguir enemigos
-	  handlers.Add((int)BLComportamiento.ActionType.Existe_enemigo_cerca, Existe_enemigo_cerca);
-	  handlers.Add((int)BLComportamiento.ActionType.Calcular_posicion_enemigo, Calcular_posicion_enemigo);
-
 	  // Cumplir objetivos
 	  handlers.Add((int)BLComportamiento.ActionType.Existe_objetivo_sin_cumplir, Existe_objetivo_sin_cumplir);
 	  handlers.Add((int)BLComportamiento.ActionType.Inferir_objetivo_a_cumplir, Inferir_objetivo_a_cumplir);
@@ -91,52 +80,6 @@ public class ACAliado : ArbolComportamientoBase, ACIr_A {
 	  if (BLComportamiento.IsDecorator(tree.ActiveID))
 		 Debug.Log("Decorador no manejado: " + ((BLComportamiento.DecoratorType)sender.ActiveID).ToString());
 	  return BehaveResult.Failure;
-   }
-
-   // Determina si existe un enemigo visible y en rango de ataque.
-   public BehaveResult Existe_enemigo_en_rango(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  foreach (Vehicle otro_agente in agente.Radar.Vehicles) {
-		 if ((otro_agente.tag != agente.tag) && (Vector3.Distance(agente.Position, otro_agente.Position) < rango_ataque) && (Vector3.Angle(agente.transform.rotation * Vector3.forward, otro_agente.Position - agente.Position) < angulo_ataque / 2)) {
-			target_agente_enemigo = otro_agente;
-			// Evita que se mueva mientras dispara.
-			agente.CanMove = false;
-			return BehaveResult.Success;
-		 }
-	  }
-	  // Permite moverse.
-	  agente.CanMove = true;
-	  target_agente_enemigo = null;
-	  return BehaveResult.Failure;
-   }
-
-   // Ataca al enemigo con el arma por defecto.
-   public BehaveResult Atacar(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  Debug.Log("Ataco al agente enemigo en la " + target_agente_enemigo.Position + ".");
-	  return BehaveResult.Success;
-   }
-
-   // Determina si existe un enemigo una distancia detectable. El tag determina el equipo al cual pertenece el agente.
-   public BehaveResult Existe_enemigo_cerca(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  foreach (Vehicle otro_agente in agente.Radar.Vehicles) {
-		 if (otro_agente.tag != agente.tag) {
-			target_agente_enemigo = otro_agente;
-			return BehaveResult.Success;
-		 }
-	  }
-	  target_agente_enemigo = null;
-	  return BehaveResult.Failure;
-   }
-
-   // Determina la posicion futura del enemigo para determinar la posicion del target del ir_a.
-   public BehaveResult Calcular_posicion_enemigo(Tree sender, string stringParameter, float floatParameter, IAgent agent, object data) {
-	  Vector3 direccion = target_agente_enemigo.PredictFutureDesiredPosition(0.5f) - agente.Position;
-	  if (direccion.magnitude - target_agente_enemigo.Radius < agente.ArrivalRadius) {
-		 target = agente.Position - direccion.normalized * agente.ArrivalRadius / 2;
-	  }
-	  else {
-		 target = agente.Position + direccion;
-	  }
-	  return BehaveResult.Success;
    }
 
    // Determina si existe un objetivo sin cumplir.
