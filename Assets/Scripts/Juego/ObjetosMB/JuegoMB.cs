@@ -38,6 +38,9 @@ public class JuegoMB : MonoBehaviour {
    // Inferencia de objetivos
    public int profundidad_acciones = 4;
    public float factor_descuento = 0.95f;
+   public float delta_tiempo_accion_actual = 0.25f;
+
+   private float tiempo_accion_actual;
 
    // MDP
    public MDP<Nodo_Estado, Accion, Objetivo, ResolucionMDP.TransicionJuego, ResolucionMDP.RecompensaJuego> mdp;
@@ -53,9 +56,29 @@ public class JuegoMB : MonoBehaviour {
 	  historial_estados = new SortedDictionary<float, Nodo_Estado>();
    }
 
+   // Utilidad GUI
+   public void imprimirLabel(Vector3 posicion_mundo, string label, Camera camara) {
+	  if (Vector3.Angle(posicion_mundo - camara.transform.position, camara.transform.rotation * Vector3.forward) < camara.fov) {
+		 Vector3 posicion_pantalla = camara.WorldToScreenPoint(posicion_mundo);
+		 GUI.Label(new Rect(posicion_pantalla.x, camara.pixelHeight - posicion_pantalla.y, label.Length * 10, 20), label);
+	  }
+   }
+
    void OnGUI() {
+	  // Nombre de waypoints
+	  Color color_previo = GUI.contentColor;
+	  GUI.contentColor = Color.green;
+	  Waypoint waypoint_posicion = Navigation.GetNearestNode(nodo_estado_actual.estado_juego.posicion_jugadores[jugadores[0].jugador.id]);
+	  imprimirLabel(waypoint_posicion.Position, waypoint_posicion.name, Camera.mainCamera);
+	  GUI.contentColor = Color.red;
+	  foreach (Connection conexion in waypoint_posicion.Connections) {
+		 imprimirLabel(conexion.To.Position, conexion.To.name, Camera.mainCamera);
+	  }
+	  GUI.contentColor = color_previo;
+
 	  // Informacion de estado actual
 	  GUILayout.Label("Estado Actual: " + nodo_estado_actual.estado_juego);
+	  GUILayout.Label("Posible Accion Actual: " + "[" + jugadores[0].jugador.posible_accion_actual.origen + " => " + jugadores[0].jugador.posible_accion_actual.destino + "]" + " (" + jugadores[0].jugador.probabilidad_accion_actual + ")");
 	  string objetivos_cumplidos, objetivos_no_cumplidos;
 	  objetivos_cumplidos = objetivos_no_cumplidos = "";
 	  foreach (ObjetivoMB objetivomb in objetivos) {
@@ -122,9 +145,9 @@ public class JuegoMB : MonoBehaviour {
 
 	  // Historial de acciones para jugador humano
 	  string acciones_string = "";
-	  int cantidad = Mathf.Min(10, jugadores[0].jugador.acciones.Count);
-	  KeyValuePair<float, Accion>[] enumerador = jugadores[0].jugador.acciones.ToArray<KeyValuePair<float, Accion>>();
-	  for (int i = jugadores[0].jugador.acciones.Count - cantidad; i < jugadores[0].jugador.acciones.Count; i++) {
+	  int cantidad = Mathf.Min(10, jugadores[0].jugador.historial_acciones.Count);
+	  KeyValuePair<float, Accion>[] enumerador = jugadores[0].jugador.historial_acciones.ToArray<KeyValuePair<float, Accion>>();
+	  for (int i = jugadores[0].jugador.historial_acciones.Count - cantidad; i < jugadores[0].jugador.historial_acciones.Count; i++) {
 		 KeyValuePair<float, Accion> tiempo_accion = enumerador[i];
 		 acciones_string = "(" + Mathf.Round(tiempo_accion.Key * 100) / 100f + ") " + tiempo_accion.Value.origen + " => " + tiempo_accion.Value.destino + "\n" + acciones_string;
 	  }
@@ -148,6 +171,9 @@ public class JuegoMB : MonoBehaviour {
 	  jugadores = new List<JugadorMB>();
 	  foreach (Jugador jugador in datos.Jugadores) {
 		 jugadores.Add(jugador.jugador_mb);
+		 jugador.posible_accion_actual = null;
+		 jugador.probabilidad_accion_actual = 0f;
+		 jugador.posicion_anterior = jugador.posicion;
 	  }
 	  acciones = datos.Acciones;
 	  generarDiccionarioAcciones();
@@ -160,6 +186,8 @@ public class JuegoMB : MonoBehaviour {
 
 	  historial_estados = new SortedDictionary<float, Nodo_Estado>();
 	  registarEstado(0, nodo_estado_actual);
+
+	  tiempo_accion_actual = Time.time;
    }
 
    void Update() {
@@ -184,7 +212,6 @@ public class JuegoMB : MonoBehaviour {
 			   }
 			   else {
 				  waypoint_previo = jugadores[i].jugador.waypointMasCercanoNoObjetivo();
-				  Debug.LogWarning("Aca");
 			   }
 			   posicion_jugadores_waypoints.Add(i, jugadores[i].jugador.waypointMasCercanoNoObjetivo(waypoint_previo).Position);
 			}
@@ -253,6 +280,7 @@ public class JuegoMB : MonoBehaviour {
 		 }
 	  }
 
+	  // Registro de historial de acciones
 	  Nodo_Estado nodo_estado_temp = nodo_estado_previo;
 	  bool[] realizo_accion = new bool[jugadores.Count];
 	  int q = 1;
@@ -272,6 +300,37 @@ public class JuegoMB : MonoBehaviour {
 			Waypoint waypoint = Navigation.GetNearestNode(nodo_estado_actual.estado_juego.posicion_jugadores[jugadores[k].jugador.id]);
 			jugadores[k].jugador.registrarAccion(Time.time, acciones_dict[jugadores[k].jugador.id][waypoint][waypoint]);
 		 }
+	  }
+
+	  // Determinar la posible accion actual
+	  if (Time.time - tiempo_accion_actual >= delta_tiempo_accion_actual) {
+		 foreach (JugadorMB jugadormb in jugadores) {
+			Vector3 direccion_jugador = jugadormb.jugador.posicion - jugadormb.jugador.posicion_anterior;
+			Waypoint waypoint_posicion_anterior = Navigation.GetNearestNode(nodo_estado_actual.estado_juego.posicion_jugadores[jugadormb.jugador.id]);
+
+			float menor_angulo = float.PositiveInfinity;
+			Accion mejor_accion = null;
+			if (direccion_jugador != Vector3.zero) {
+			   foreach (Connection conexion in waypoint_posicion_anterior.Connections) {
+				  Waypoint waypoint_accion_destino = conexion.To;
+				  Vector3 direccion_accion = waypoint_accion_destino.Position - waypoint_posicion_anterior.Position;
+				  float angulo = Vector3.Angle(direccion_accion, direccion_jugador);
+				  if (angulo <= menor_angulo) {
+					 menor_angulo = angulo;
+					 mejor_accion = acciones_dict[jugadormb.jugador.id][conexion.From][conexion.To];
+				  }
+			   }
+			}
+			else {
+			   mejor_accion = acciones_dict[jugadormb.jugador.id][waypoint_posicion_anterior][waypoint_posicion_anterior];
+			   menor_angulo = 0;
+			}
+
+			jugadormb.jugador.posible_accion_actual = mejor_accion;
+			jugadormb.jugador.probabilidad_accion_actual = 1 - menor_angulo / 180f;
+			jugadormb.jugador.posicion_anterior = jugadormb.jugador.posicion;
+		 }
+		 tiempo_accion_actual = Time.time;
 	  }
    }
 
@@ -302,6 +361,17 @@ public class JuegoMB : MonoBehaviour {
 	  float suma = 0;
 	  List<ObjetivoMB> inferidos = new List<ObjetivoMB>();
 
+	  // Primera inferencia (posible accion actual)
+	  foreach (ObjetivoMB objetivomb in objetivos) {
+		 float utilidad = mdp.Utilidad[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado_actual.estado_juego.id];
+		 Accion accion = mdp.Politica[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado_actual.estado_juego.id];
+		 if (jugadormb.jugador.posible_accion_actual.id == accion.id) {
+			valor_objetivo[objetivomb.objetivo.id] += utilidad * jugadormb.jugador.probabilidad_accion_actual;
+			suma += utilidad * jugadormb.jugador.probabilidad_accion_actual;
+		 }
+	  }
+
+	  // Segunda inferencia (historial de acciones)
 	  float[] tiempos = historial_estados.Keys.ToArray<float>();
 	  int tope_inferior = Mathf.Max(0, tiempos.Length - cant_acciones_inferencia);
 	  int indice = tiempos.Length - 1;
@@ -316,7 +386,7 @@ public class JuegoMB : MonoBehaviour {
 			float utilidad = mdp.Utilidad[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado.estado_juego.id];
 			Accion accion = mdp.Politica[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado.estado_juego.id];
 			Accion accion_jugador;
-			if (jugadormb.jugador.acciones.TryGetValue(tiempo, out accion_jugador) && accion.id == accion_jugador.id) {
+			if (jugadormb.jugador.historial_acciones.TryGetValue(tiempo, out accion_jugador) && accion.id == accion_jugador.id) {
 			   // Si se esta quedando en el lugar.
 			   if (accion.distancia == 0) {
 				  valor_objetivo[objetivomb.objetivo.id] += utilidad * descuento + duracion;

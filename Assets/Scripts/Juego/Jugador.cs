@@ -14,10 +14,14 @@ public class Jugador : ISerializable {
    public int id;
    public string nombre;
    public char representacion;
-   //public Vector2 posicion;
    public TControl control;
+
+   public Vector3 posicion_anterior;
+   public Accion posible_accion_actual;
+   public float probabilidad_accion_actual;
+
    // <tiempo, accion>
-   public SortedDictionary<float, Accion> acciones;
+   public SortedDictionary<float, Accion> historial_acciones;
 
    private JugadorMB _jugadormb;
    public JugadorMB jugador_mb {
@@ -56,7 +60,7 @@ public class Jugador : ISerializable {
 	  nombre = n;
 	  representacion = r;
 	  control = c;
-	  acciones = new SortedDictionary<float, Accion>();
+	  historial_acciones = new SortedDictionary<float, Accion>();
 
 	  jugador_mb.jugador = this;
 	  posicion = p;
@@ -68,25 +72,19 @@ public class Jugador : ISerializable {
 
    // Acciones
    public Accion registrarAccion(float tiempo, Accion accion) {
-	  if (acciones.Count == 0) {
-		 acciones.Add(tiempo, accion);
+	  if (historial_acciones.Count == 0) {
+		 historial_acciones.Add(tiempo, accion);
 	  }
 	  else {
-		 float ultimo_tiempo = acciones.Keys.Last<float>();
-		 Accion ultima_accion = acciones[ultimo_tiempo];
+		 float ultimo_tiempo = historial_acciones.Keys.Last<float>();
+		 Accion ultima_accion = historial_acciones[ultimo_tiempo];
 
 		 if (ultima_accion.mismaAccion(accion)) {
-			acciones.Remove(ultimo_tiempo);
-			acciones.Add(tiempo, ultima_accion);
+			historial_acciones.Remove(ultimo_tiempo);
+			historial_acciones.Add(tiempo, ultima_accion);
 		 }
 		 else {
-			if (acciones.ContainsKey(tiempo)) {
-			   Debug.LogWarning(tiempo);
-			   Debug.LogWarning(tiempo + float.Epsilon);
-			   Debug.LogWarning(accion);
-			   Debug.LogWarning(acciones[tiempo]);
-			}
-			acciones.Add(tiempo, accion);
+			historial_acciones.Add(tiempo, accion);
 		 }
 	  }
 
@@ -94,7 +92,7 @@ public class Jugador : ISerializable {
    }
 
    public void removerAccion(float tiempo) {
-	  acciones.Remove(tiempo);
+	  historial_acciones.Remove(tiempo);
    }
 
    // Waypoint mas cercano a la posicion actual.
@@ -166,7 +164,7 @@ public class Jugador : ISerializable {
 	  representacion = info.GetChar("Representacion");
 	  posicion = (Vector3)info.GetValue("Posicion", typeof(Vector3));
 	  control = (TControl)info.GetInt16("Control");
-	  acciones = new SortedDictionary<float, Accion>();
+	  historial_acciones = new SortedDictionary<float, Accion>();
 
 	  jugador_mb.jugador = this;
    }
