@@ -78,7 +78,9 @@ public class JuegoMB : MonoBehaviour {
 
 	  // Informacion de estado actual
 	  GUILayout.Label("Estado Actual: " + nodo_estado_actual.estado_juego);
-	  GUILayout.Label("Posible Accion Actual: " + "[" + jugadores[0].jugador.posible_accion_actual.origen + " => " + jugadores[0].jugador.posible_accion_actual.destino + "]" + " (" + jugadores[0].jugador.probabilidad_accion_actual + ")");
+	  if (jugadores[0].jugador.posible_accion_actual != null) {
+		 GUILayout.Label("Posible Accion Actual: " + "[" + jugadores[0].jugador.posible_accion_actual.origen + " => " + jugadores[0].jugador.posible_accion_actual.destino + "]" + " (" + jugadores[0].jugador.probabilidad_accion_actual + ")");
+	  }
 	  string objetivos_cumplidos, objetivos_no_cumplidos;
 	  objetivos_cumplidos = objetivos_no_cumplidos = "";
 	  foreach (ObjetivoMB objetivomb in objetivos) {
@@ -362,12 +364,14 @@ public class JuegoMB : MonoBehaviour {
 	  List<ObjetivoMB> inferidos = new List<ObjetivoMB>();
 
 	  // Primera inferencia (posible accion actual)
-	  foreach (ObjetivoMB objetivomb in objetivos) {
-		 float utilidad = mdp.Utilidad[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado_actual.estado_juego.id];
-		 Accion accion = mdp.Politica[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado_actual.estado_juego.id];
-		 if (jugadormb.jugador.posible_accion_actual.id == accion.id) {
-			valor_objetivo[objetivomb.objetivo.id] += utilidad * jugadormb.jugador.probabilidad_accion_actual;
-			suma += utilidad * jugadormb.jugador.probabilidad_accion_actual;
+	  if (jugadormb.jugador.posible_accion_actual != null) {
+		 foreach (ObjetivoMB objetivomb in objetivos) {
+			float utilidad = mdp.Utilidad[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado_actual.estado_juego.id];
+			Accion accion = mdp.Politica[jugadormb.jugador.id][objetivomb.objetivo.id][nodo_estado_actual.estado_juego.id];
+			if (jugadormb.jugador.posible_accion_actual.id == accion.id) {
+			   valor_objetivo[objetivomb.objetivo.id] += utilidad * jugadormb.jugador.probabilidad_accion_actual;
+			   suma += utilidad * jugadormb.jugador.probabilidad_accion_actual;
+			}
 		 }
 	  }
 

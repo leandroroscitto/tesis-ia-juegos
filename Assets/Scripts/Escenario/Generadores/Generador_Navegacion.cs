@@ -219,7 +219,7 @@ public class Generador_Navegacion : MonoBehaviour {
 			   bool conexion_transitiva = (wi.ConnectsTo(wj) && wj.ConnectsTo(wk) && wi.ConnectsTo(wk));
 
 			   if (conexion_transitiva && rango_distancia) {
-			   //if (conexion_transitiva && rango_angulo) {
+				  //if (conexion_transitiva && rango_angulo) {
 				  conexiones_a_eliminar.Add(new KeyValuePair<Waypoint, Waypoint>(wi, wk));
 			   }
 			}
@@ -366,6 +366,10 @@ public class Generador_Navegacion : MonoBehaviour {
    }
 
    public static float getMinimaDistancia(Vector3 p1, Vector3 p2) {
+	  if (caminos == null) {
+		 calcularMinimaDistanciaWaypoints();
+	  }
+
 	  Waypoint w1, w2;
 	  float d1, d2;
 
@@ -376,6 +380,10 @@ public class Generador_Navegacion : MonoBehaviour {
    }
 
    public static List<Vector3> getMinimoCamino(Vector3 p1, Vector3 p2) {
+	  if (caminos == null) {
+		 calcularMinimaDistanciaWaypoints();
+	  }
+
 	  Waypoint w1, w2;
 	  float d1, d2;
 
