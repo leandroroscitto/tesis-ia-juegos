@@ -37,7 +37,7 @@ public class Generador_Jugadores : MonoBehaviour {
    }
 
    // Generacion
-   public void generar(int cant_jugadores, GameObject jugador_prefab, GameObject companero_prefab, Camara_3Persona camara) {
+   public void generar(int cant_jugadores, GameObject jugador_prefab, GameObject companero_prefab) {
 	  Generador_Navegacion generador_navegacion = GetComponent<Generador_Navegacion>();
 	  HashSet<int> habitaciones_usadas = new HashSet<int>();
 	  int indice;
@@ -52,8 +52,6 @@ public class Generador_Jugadores : MonoBehaviour {
 		 GameObject jugador_objeto = UnityEditor.PrefabUtility.InstantiatePrefab(jugador_prefab) as GameObject;
 		 jugador_objeto.transform.position = posicion;
 		 jugador_objeto.transform.parent = jugadores_objeto.transform;
-
-		 jugador_objeto.GetComponent<Control_Directo>().camara_3persona = camara;
 
 		 JugadorMB jugador_mb = jugador_objeto.AddComponent<JugadorMB>();
 		 Jugador jugador = new Jugador(0, jugador_objeto.name = "Jugador", '@', posicion, Jugador.TControl.DIRECTO);

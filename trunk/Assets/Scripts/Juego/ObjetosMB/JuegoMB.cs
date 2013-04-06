@@ -446,5 +446,10 @@ public class JuegoMB : MonoBehaviour {
 			}
 		 }
 	  }
+	  if (evento.Parameter.Vehicles.Count > 0) {
+		 objetivomb.efecto.GetComponent<ParticleSystem>().startColor = Color.green;
+	  } else {
+		 objetivomb.efecto.GetComponent<ParticleSystem>().startColor = Color.red;
+	  }
    }
 }
