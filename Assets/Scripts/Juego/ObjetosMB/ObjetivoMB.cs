@@ -6,8 +6,9 @@ using PathRuntime;
 public class ObjetivoMB : MonoBehaviour {
    public Objetivo objetivo;
    public Radar radar;
+   public GameObject efecto;
 
-   public void inicializar(Objetivo obj, float r, string layer) {
+   public void inicializar(Objetivo obj, float r, string layer, GameObject efecto_in) {
 	  objetivo = obj;
 	  radar = GetComponent<Radar>();
 
@@ -18,6 +19,8 @@ public class ObjetivoMB : MonoBehaviour {
 	  radar.DetectDisabledVehicles = true;
 	  radar.LayersChecked = 1 << LayerMask.NameToLayer(layer);
 	  radar.OnDetected = JuegoMB.OnRadarDetect;
+
+	  efecto = efecto_in;
    }
 
    void Start() {

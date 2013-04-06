@@ -1,170 +1,169 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>10.0.20506</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{1E246FA7-7ADA-6380-0122-E7550E5BE9EF}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>
-    </RootNamespace>
-    <AssemblyName>Assembly-CSharp</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+	<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+	<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+	<ProductVersion>10.0.20506</ProductVersion>
+	<SchemaVersion>2.0</SchemaVersion>
+	<ProjectGuid>{1E246FA7-7ADA-6380-0122-E7550E5BE9EF}</ProjectGuid>
+	<OutputType>Library</OutputType>
+	<AppDesignerFolder>Properties</AppDesignerFolder>
+	<RootNamespace></RootNamespace>
+	<AssemblyName>Assembly-CSharp</AssemblyName>
+	<TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+	<FileAlignment>512</FileAlignment>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>Temp\bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;UNITY_STANDALONE;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_0_1;UNITY_4_0;UNITY_STANDALONE_WIN;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugSymbols>true</DebugSymbols>
+	<DebugType>full</DebugType>
+	<Optimize>false</Optimize>
+	<OutputPath>Temp\bin\Debug\</OutputPath>
+	<DefineConstants>DEBUG;TRACE;UNITY_STANDALONE;ENABLE_MICROPHONE;ENABLE_IMAGEEFFECTS;ENABLE_WEBCAM;ENABLE_AUDIO_FMOD;ENABLE_NETWORK;ENABLE_MONO;ENABLE_PHYSICS;ENABLE_TERRAIN;ENABLE_CACHING;ENABLE_SUBSTANCE;ENABLE_GENERICS;ENABLE_CLOTH;ENABLE_MOVIES;ENABLE_AUDIO;ENABLE_WWW;ENABLE_SHADOWS;ENABLE_DUCK_TYPING;UNITY_4_0_1;UNITY_4_0;UNITY_STANDALONE_WIN;ENABLE_PROFILER;UNITY_EDITOR</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>Temp\bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>0169</NoWarn>
+	<DebugType>pdbonly</DebugType>
+	<Optimize>true</Optimize>
+	<OutputPath>Temp\bin\Release\</OutputPath>
+	<DefineConstants>TRACE</DefineConstants>
+	<ErrorReport>prompt</ErrorReport>
+	<WarningLevel>4</WarningLevel>
+	<NoWarn>0169</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="System" />
+	<Reference Include="System" />
     <Reference Include="System.XML" />
-    <Reference Include="System.Core" />
-    <Reference Include="UnityEngine">
-      <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEngine.dll</HintPath>
-    </Reference>
-    <Reference Include="UnityEditor">
-      <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEditor.dll</HintPath>
-    </Reference>
+	<Reference Include="System.Core" />
+	<Reference Include="UnityEngine">
+	  <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEngine.dll</HintPath>
+	</Reference>
+	<Reference Include="UnityEditor">
+	  <HintPath>C:/Program Files/Unity/Editor4/Data/Managed/UnityEditor.dll</HintPath>
+	</Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\Behave\BehaveAsset.cs" />
-    <Compile Include="Assets\Scripts\Agente\Comportamiento\ACAliado.cs" />
-    <Compile Include="Assets\Scripts\Agente\Comportamiento\ACIr_A.cs" />
-    <Compile Include="Assets\Scripts\Agente\Comportamiento\ArbolComportamientoBase.cs" />
-    <Compile Include="Assets\Scripts\Agente\Control\Control_Directo.cs" />
-    <Compile Include="Assets\Scripts\Agente\Control\Control_Mouse_Click.cs" />
-    <Compile Include="Assets\Scripts\Agente\Controlador_Animaciones.cs" />
-    <Compile Include="Assets\Scripts\Camara\Camara_3Persona.cs" />
-    <Compile Include="Assets\Scripts\Camara\Camara_Mouse.cs" />
-    <Compile Include="Assets\Scripts\Efectos\Orbitar.cs" />
-    <Compile Include="Assets\Scripts\Efectos\Strobe.cs" />
-    <Compile Include="Assets\Scripts\Escenario\CrearGenerador.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Acciones.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Escenario.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Jugadores.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_MDP.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Mapa.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Navegacion.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Objetivos.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Mapa.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Tile.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Utilidades\BSPTree.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Utilidades\Comparador_Arreglo_Vector3.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Utilidades\HeapBinario.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Utilidades\VisitadorConexion.cs" />
-    <Compile Include="Assets\Scripts\Escenario\Utilidades\VisitadorHabitacion.cs" />
-    <Compile Include="Assets\Scripts\Juego\Accion.cs" />
-    <Compile Include="Assets\Scripts\Juego\Estado.cs" />
-    <Compile Include="Assets\Scripts\Juego\Jugador.cs" />
-    <Compile Include="Assets\Scripts\Juego\Objetivo.cs" />
-    <Compile Include="Assets\Scripts\Juego\ObjetosMB\JuegoMB.cs" />
-    <Compile Include="Assets\Scripts\Juego\ObjetosMB\JugadorMB.cs" />
-    <Compile Include="Assets\Scripts\Juego\ObjetosMB\ObjetivoMB.cs" />
-    <Compile Include="Assets\Scripts\MDP\Arbol_Estados.cs" />
-    <Compile Include="Assets\Scripts\MDP\MDP.cs" />
-    <Compile Include="Assets\Scripts\MDP\Nodo_Estado.cs" />
-    <Compile Include="Assets\Scripts\MDP\ResolucionMDP.cs" />
-    <Compile Include="Assets\Scripts\Serializacion\Objeto_Serializable.cs" />
-    <Compile Include="Assets\Scripts\Serializacion\Serializador.cs" />
-    <Compile Include="Assets\Scripts\Utilidades\CopiarMovRot.cs" />
-    <Compile Include="Assets\Scripts\Utilidades\Crear_Limites.cs" />
-    <Compile Include="Assets\Scripts\Utilidades\Dispersar.cs" />
-    <Compile Include="Assets\Scripts\Utilidades\Pointer.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\AutonomousVehicle.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\Biped.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\DetectableObject.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\DetectableObjectCreator.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\Examples\SteerForPathPredictiveTrivial.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\Examples\SteerForPathTrivial.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\PassiveVehicle.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\Radar.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\RadarPing.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\Speedometer.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SphericalObstacleData.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForAlignment.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForCharacterEvasion.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForCohesion.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForColliderRepulsion.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForEvasion.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForForward.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForNavmesh.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForNeighbors.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForPathSimplified.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForPoint.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForPursuit.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForSeparation.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForSpeed.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForSphericalObstacleAvoidance.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForSphericalObstacleRepulsion.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForTarget.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForTether.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForWander.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerForWanderPropio.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\SteerToFollow.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\Steering.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\TickedVehicle.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\Vehicle.cs" />
-    <Compile Include="Assets\UnitySteer\Behaviors\VehicleLookAtOverride.cs" />
-    <Compile Include="Assets\UnitySteer\Helpers\IRadarReceiver.cs" />
-    <Compile Include="Assets\UnitySteer\Helpers\RandomizeStartPosition.cs" />
-    <Compile Include="Assets\UnitySteer\Helpers\SteeringEvent.cs" />
-    <Compile Include="Assets\UnitySteer\IPathway.cs" />
-    <Compile Include="Assets\UnitySteer\OpenSteerUtility.cs" />
-    <Compile Include="Assets\UnitySteer\PathWay.cs" />
-    <Compile Include="Assets\UnitySteer\TickedPriorityQueue\UnityTickedQueue.cs" />
-    <Compile Include="Assets\UnitySteer\Vector3Pathway.cs" />
-    <None Include="Assets\Shaders\WorldUV.shader" />
-    <None Include="Assets\Path\License.txt" />
-    <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
-    <None Include="Assets\Behave\Changelog.txt" />
-    <None Include="Assets\Behave\Readme.txt" />
-    <None Include="Assets\Behave\License.txt" />
-    <None Include="Assets\ZipLib\Readme.txt" />
-    <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
-    <None Include="Assets\Shaders\No_Fog.shader" />
-    <None Include="Assets\ZipLib\Debug\Ionic.Zip.xml" />
-    <None Include="Assets\UnitySteer\License.txt" />
-    <None Include="Assets\Shaders\3D Text.shader" />
-    <None Include="Assets\Comportamiento\ComportamientoInfo.txt" />
-    <Reference Include="Behave.Unity.Assets">
-      <HintPath>Assets\Behave\Behave.Unity.Assets.dll</HintPath>
-    </Reference>
-    <Reference Include="Behave.Unity.Runtime">
-      <HintPath>Assets\Behave\Behave.Unity.Runtime.dll</HintPath>
-    </Reference>
-    <Reference Include="Behave">
-      <HintPath>Assets\Behave\Compatibility\Behave.dll</HintPath>
-    </Reference>
-    <Reference Include="ComportamientoBuild">
-      <HintPath>Assets\Comportamiento\ComportamientoBuild.dll</HintPath>
-    </Reference>
-    <Reference Include="PathRuntime">
-      <HintPath>Assets\Path\PathRuntime.dll</HintPath>
-    </Reference>
-    <Reference Include="TickedPriorityQueue">
-      <HintPath>Assets\UnitySteer\TickedPriorityQueue\TickedPriorityQueue.dll</HintPath>
-    </Reference>
-    <Reference Include="Ionic.Zip">
-      <HintPath>Assets\ZipLib\Release\Ionic.Zip.dll</HintPath>
-    </Reference>
+     <Compile Include="Assets\Behave\BehaveAsset.cs" />
+     <Compile Include="Assets\Scripts\Agente\Comportamiento\ACAliado.cs" />
+     <Compile Include="Assets\Scripts\Agente\Comportamiento\ACIr_A.cs" />
+     <Compile Include="Assets\Scripts\Agente\Comportamiento\ArbolComportamientoBase.cs" />
+     <Compile Include="Assets\Scripts\Agente\Control\Control_Directo.cs" />
+     <Compile Include="Assets\Scripts\Agente\Control\Control_Mouse_Click.cs" />
+     <Compile Include="Assets\Scripts\Agente\Controlador_Animaciones.cs" />
+     <Compile Include="Assets\Scripts\Camara\Camara_3Persona.cs" />
+     <Compile Include="Assets\Scripts\Camara\Camara_Mouse.cs" />
+     <Compile Include="Assets\Scripts\Efectos\Orbitar.cs" />
+     <Compile Include="Assets\Scripts\Efectos\Strobe.cs" />
+     <Compile Include="Assets\Scripts\Escenario\CrearGenerador.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Acciones.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Escenario.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Jugadores.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_MDP.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Mapa.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Navegacion.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Generadores\Generador_Objetivos.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Mapa.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Tile.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Utilidades\BSPTree.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Utilidades\Comparador_Arreglo_Vector3.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Utilidades\HeapBinario.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Utilidades\VisitadorConexion.cs" />
+     <Compile Include="Assets\Scripts\Escenario\Utilidades\VisitadorHabitacion.cs" />
+     <Compile Include="Assets\Scripts\Juego\Accion.cs" />
+     <Compile Include="Assets\Scripts\Juego\Estado.cs" />
+     <Compile Include="Assets\Scripts\Juego\Jugador.cs" />
+     <Compile Include="Assets\Scripts\Juego\Objetivo.cs" />
+     <Compile Include="Assets\Scripts\Juego\ObjetosMB\JuegoMB.cs" />
+     <Compile Include="Assets\Scripts\Juego\ObjetosMB\JugadorMB.cs" />
+     <Compile Include="Assets\Scripts\Juego\ObjetosMB\ObjetivoMB.cs" />
+     <Compile Include="Assets\Scripts\MDP\Arbol_Estados.cs" />
+     <Compile Include="Assets\Scripts\MDP\MDP.cs" />
+     <Compile Include="Assets\Scripts\MDP\Nodo_Estado.cs" />
+     <Compile Include="Assets\Scripts\MDP\ResolucionMDP.cs" />
+     <Compile Include="Assets\Scripts\Serializacion\Objeto_Serializable.cs" />
+     <Compile Include="Assets\Scripts\Serializacion\Serializador.cs" />
+     <Compile Include="Assets\Scripts\Utilidades\CopiarMovRot.cs" />
+     <Compile Include="Assets\Scripts\Utilidades\Crear_Limites.cs" />
+     <Compile Include="Assets\Scripts\Utilidades\Dispersar.cs" />
+     <Compile Include="Assets\Scripts\Utilidades\Pointer.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\AutonomousVehicle.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\Biped.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\DetectableObject.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\DetectableObjectCreator.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\Examples\SteerForPathPredictiveTrivial.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\Examples\SteerForPathTrivial.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\PassiveVehicle.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\Radar.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\RadarPing.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\Speedometer.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SphericalObstacleData.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForAlignment.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForCharacterEvasion.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForCohesion.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForColliderRepulsion.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForEvasion.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForForward.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForNavmesh.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForNeighbors.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForPathSimplified.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForPoint.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForPursuit.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForSeparation.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForSpeed.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForSphericalObstacleAvoidance.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForSphericalObstacleRepulsion.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForTarget.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForTether.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForWander.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerForWanderPropio.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\SteerToFollow.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\Steering.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\TickedVehicle.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\Vehicle.cs" />
+     <Compile Include="Assets\UnitySteer\Behaviors\VehicleLookAtOverride.cs" />
+     <Compile Include="Assets\UnitySteer\Helpers\IRadarReceiver.cs" />
+     <Compile Include="Assets\UnitySteer\Helpers\RandomizeStartPosition.cs" />
+     <Compile Include="Assets\UnitySteer\Helpers\SteeringEvent.cs" />
+     <Compile Include="Assets\UnitySteer\IPathway.cs" />
+     <Compile Include="Assets\UnitySteer\OpenSteerUtility.cs" />
+     <Compile Include="Assets\UnitySteer\PathWay.cs" />
+     <Compile Include="Assets\UnitySteer\TickedPriorityQueue\UnityTickedQueue.cs" />
+     <Compile Include="Assets\UnitySteer\Vector3Pathway.cs" />
+     <None Include="Assets\Shaders\WorldUV.shader" />
+     <None Include="Assets\Path\License.txt" />
+     <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Multiply.shader" />
+     <None Include="Assets\Behave\Changelog.txt" />
+     <None Include="Assets\Behave\Readme.txt" />
+     <None Include="Assets\Behave\License.txt" />
+     <None Include="Assets\ZipLib\Readme.txt" />
+     <None Include="Assets\Standard Assets\Projectors\Sources\Shaders\Projector Light.shader" />
+     <None Include="Assets\Shaders\No_Fog.shader" />
+     <None Include="Assets\ZipLib\Debug\Ionic.Zip.xml" />
+     <None Include="Assets\UnitySteer\License.txt" />
+     <None Include="Assets\Shaders\3D Text.shader" />
+     <None Include="Assets\Comportamiento\ComportamientoInfo.txt" />
+ <Reference Include="Behave.Unity.Assets">
+ <HintPath>Assets\Behave\Behave.Unity.Assets.dll</HintPath>
+ </Reference>
+ <Reference Include="Behave.Unity.Runtime">
+ <HintPath>Assets\Behave\Behave.Unity.Runtime.dll</HintPath>
+ </Reference>
+ <Reference Include="Behave">
+ <HintPath>Assets\Behave\Compatibility\Behave.dll</HintPath>
+ </Reference>
+ <Reference Include="ComportamientoBuild">
+ <HintPath>Assets\Comportamiento\ComportamientoBuild.dll</HintPath>
+ </Reference>
+ <Reference Include="PathRuntime">
+ <HintPath>Assets\Path\PathRuntime.dll</HintPath>
+ </Reference>
+ <Reference Include="TickedPriorityQueue">
+ <HintPath>Assets\UnitySteer\TickedPriorityQueue\TickedPriorityQueue.dll</HintPath>
+ </Reference>
+ <Reference Include="Ionic.Zip">
+ <HintPath>Assets\ZipLib\Release\Ionic.Zip.dll</HintPath>
+ </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
@@ -174,4 +173,5 @@
   <Target Name="AfterBuild">
   </Target>
   -->
+  
 </Project>

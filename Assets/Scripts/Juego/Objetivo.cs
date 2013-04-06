@@ -9,7 +9,6 @@ public class Objetivo : Objetivo_MDP, ISerializable {
    public static Dictionary<Waypoint, ObjetivoMB> mapeo_waypoint_objetivo = new Dictionary<Waypoint, ObjetivoMB>();
 
    public bool cumplido;
-   //public Vector2 posicion;
    public string nombre;
    public Objetivo complementario;
 

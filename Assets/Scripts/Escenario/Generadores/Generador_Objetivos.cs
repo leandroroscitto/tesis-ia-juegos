@@ -44,7 +44,7 @@ public class Generador_Objetivos : MonoBehaviour {
    }
 
    // Generacion
-   public void generar(int cant_objetivos) {
+   public void generar(int cant_objetivos, GameObject efecto_objetivo) {
 	  Generador_Mapa generador_mapa = GetComponent<Generador_Mapa>();
 	  Generador_Navegacion generador_navegacion = GetComponent<Generador_Navegacion>();
 
@@ -74,11 +74,15 @@ public class Generador_Objetivos : MonoBehaviour {
 		 zona_objetivo.transform.parent = objetivos_objeto.transform;
 		 zona_objetivo.transform.rotation = Quaternion.LookRotation(Vector3.down, Vector3.forward);
 
+		 GameObject efecto = Instantiate(efecto_objetivo) as GameObject;
+		 efecto.transform.parent = zona_objetivo.transform;
+		 efecto.transform.localPosition = Vector3.zero;
+
 		 TextMesh texto_objetivo = zona_objetivo.AddComponent<TextMesh>();
 		 zona_objetivo.AddComponent<MeshRenderer>();
 
 		 texto_objetivo.text = nombre_objetivo;
-		 texto_objetivo.fontSize = 48;
+		 texto_objetivo.fontSize = 24;
 		 texto_objetivo.characterSize = 0.5f;
 		 texto_objetivo.anchor = TextAnchor.MiddleCenter;
 		 texto_objetivo.alignment = TextAlignment.Center;
@@ -87,7 +91,7 @@ public class Generador_Objetivos : MonoBehaviour {
 
 		 ObjetivoMB objetivo_mb = texto_objetivo.gameObject.AddComponent<ObjetivoMB>();
 		 Objetivo objetivo = new Objetivo(i, nombre_objetivo, posicion, waypoint);
-		 objetivo_mb.inicializar(objetivo, 0.5f, "Jugador");
+		 objetivo_mb.inicializar(objetivo, 0.5f, "Jugador", efecto);
 		 Objetivo.mapeo_waypoint_objetivo.Add(waypoint, objetivo_mb);
 		 if (i % 2 == 1) {
 			objetivo.agregarComplementario(objetivos[i - 1]);

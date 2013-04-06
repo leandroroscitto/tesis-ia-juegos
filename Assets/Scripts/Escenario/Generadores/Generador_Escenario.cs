@@ -42,7 +42,6 @@ public class Generador_Escenario : MonoBehaviour {
 	  public int numero_jugadores = 2;
 	  public GameObject jugador;
 	  public GameObject companero;
-	  public Camara_3Persona camara;
    }
 
    [Serializable]
@@ -52,6 +51,7 @@ public class Generador_Escenario : MonoBehaviour {
 	  public Material piso_material;
 	  public Font fuente_objetivos;
 	  public Material fuente_material;
+	  public GameObject objetivo_efecto;
    }
 
    // Parametros
@@ -174,9 +174,9 @@ public class Generador_Escenario : MonoBehaviour {
 	  reiniciarEscenario();
 
 	  generador_mapa.generar(parametros_mapa);
-	  generador_objetivos.generar(parametros_objetivos.cantidad_objetivos);
+	  generador_objetivos.generar(parametros_objetivos.cantidad_objetivos, parametros_visuales.objetivo_efecto);
 	  generador_navegacion.generar();
-	  generador_jugadores.generar(parametros_jugadores.numero_jugadores, parametros_jugadores.jugador, parametros_jugadores.companero, parametros_jugadores.camara);
+	  generador_jugadores.generar(parametros_jugadores.numero_jugadores, parametros_jugadores.jugador, parametros_jugadores.companero);
 	  generador_acciones.generar();
 	  generador_mdp.generar();
 
