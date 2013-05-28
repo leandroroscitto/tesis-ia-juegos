@@ -34,7 +34,8 @@ public class Control_Directo : MonoBehaviour {
    void Start() {
 	  agente = GetComponent<Vehicle>();
 	  steerForPoint = GetComponent<SteerForPoint>();
-	  camara_3persona = GameObject.Find("ATripode").GetComponent<Camara_3Persona>();
+
+	  camara_3persona = GameObject.Find("Camara Principal").GetComponent<Camara_3Persona>();
 	  camara_3persona.target = transform;
    }
 

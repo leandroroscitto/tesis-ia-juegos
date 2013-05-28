@@ -144,11 +144,6 @@ public class MDP<S, A, O, T, R>
 			Utilidad_Aux[actor][objetivo_id] = new float[estados.Count];
 			Politica_Aux[actor][objetivo_id] = new A[estados.Count];
 			Value_Policy[actor][objetivo_id] = new float[estados.Count];
-			//foreach (S i in estados) {
-			//   Utilidad_Aux[actor][objetivo_id][i.id] = 0;
-			//   Politica_Aux[actor][objetivo_id][i.id] = null;
-			//   Value_Policy[actor][objetivo_id][i.id] = 0;
-			//}
 		 }
 	  }
 
@@ -193,11 +188,6 @@ public class MDP<S, A, O, T, R>
 			for (int actor = 0; actor < numero_actores; actor++) {
 			   for (int objetivo_id = 0; objetivo_id < objetivos.Count; objetivo_id++) {
 				  foreach (A a in i.accionesValidas(actor)) {
-					 //float value = 0;
-					 //foreach (S j in i.proximosEstados(actor)) {
-					 //   // Estaba calculando la utilidad para solo un jugador de la accion:
-					 //   value += transicion.valor(a, i, j) * Utilidad_Aux[actor][objetivo_id][j.id];
-					 //}
 					 float value = transicion.getValor(a, i, (S)i.hijoAccion(a)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(a).id];
 					 if (value > value_max[actor][objetivo_id]) {
 						value_max[actor][objetivo_id] = value;
@@ -217,9 +207,6 @@ public class MDP<S, A, O, T, R>
 
 			for (int actor = 0; actor < numero_actores; actor++) {
 			   for (int objetivo_id = 0; objetivo_id < objetivos.Count; objetivo_id++) {
-				  //foreach (S j in i.proximosEstados(actor)) {
-				  //   value_policy[actor][objetivo_id] += transicion.valor(Politica_Aux[actor][objetivo_id][i.id], i, j) * Utilidad_Aux[actor][objetivo_id][j.id];
-				  //}
 				  A accion_politica = Politica_Aux[actor][objetivo_id][i.id];
 				  value_policy[actor][objetivo_id] = transicion.getValor(accion_politica, i, (S)i.hijoAccion(accion_politica)) * Utilidad_Aux[actor][objetivo_id][i.hijoAccion(accion_politica).id];
 

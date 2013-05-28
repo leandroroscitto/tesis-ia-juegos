@@ -46,6 +46,7 @@ public class Generador_Escenario : MonoBehaviour {
 
    [Serializable]
    public class Parametros_Visuales {
+	  public Camara_3Persona camara;
 	  public float tamano_radar = 0.35f;
 	  public Material mesh_material;
 	  public Material piso_material;

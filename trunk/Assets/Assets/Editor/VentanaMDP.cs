@@ -150,7 +150,7 @@ public class VentanaMDP : EditorWindow {
 			   Nodo_Estado estado_actual = estados[estado_indice];
 			   Accion accion_actual = mdp.Politica[jugador_indice][objetivo_indice][estado_indice];
 			   int i = 0;
-			   while (estado_actual.estado_juego.posicion_jugadores[jugador_indice] != objetivos[objetivo_indice].posicion) {
+			   while (estado_actual.estado_juego.posicion_jugadores[jugador_indice] != objetivos[objetivo_indice].posicion && i < generador_mdp.arbol_estados.acciones.Count) {
 				  Vector3 origen = accion_actual.origen.Position;
 				  Vector3 destino = accion_actual.destino.Position;
 				  Vector3 centro = (origen + destino) / 2;
