@@ -193,8 +193,14 @@ public class JuegoMB : MonoBehaviour {
    }
 
    void Update() {
-	  actualizarEstadoActual();
-	  registrarAccionesJugadores();
+	  if (nodo_estado_actual.estado_juego.objetivos_no_cumplidos.Count != 0) {
+		 actualizarEstadoActual();
+		 registrarAccionesJugadores();
+	  }
+	  else {
+		 UnityEditor.EditorApplication.isPlaying = false;
+		 Application.Quit();
+	  }
    }
 
    // Estados
@@ -448,7 +454,8 @@ public class JuegoMB : MonoBehaviour {
 	  }
 	  if (evento.Parameter.Vehicles.Count > 0) {
 		 objetivomb.efecto.GetComponent<ParticleSystem>().startColor = Color.green;
-	  } else {
+	  }
+	  else {
 		 objetivomb.efecto.GetComponent<ParticleSystem>().startColor = Color.red;
 	  }
    }
